@@ -1,1 +1,1 @@
-export { default } from './app-global-styles'
+export { default } from './app-global-styles';

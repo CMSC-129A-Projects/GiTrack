@@ -1,6 +1,6 @@
-import RootRouter from 'routes/Root'
-import ContextProviders from './components/ContextProviders'
-import GlobalStyles from './components/GlobalStyles'
+import RootRouter from 'routes/Root';
+import ContextProviders from './components/ContextProviders';
+import GlobalStyles from './components/GlobalStyles';
 
 export default function App() {
   return (
@@ -10,5 +10,5 @@ export default function App() {
         <GlobalStyles />
       </ContextProviders>
     </>
-  )
+  );
 }

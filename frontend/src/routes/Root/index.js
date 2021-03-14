@@ -1,1 +1,1 @@
-export { default } from './root-router'
+export { default } from './root-router';

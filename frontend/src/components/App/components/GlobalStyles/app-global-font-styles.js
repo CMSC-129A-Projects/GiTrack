@@ -1,8 +1,8 @@
-import { css } from '@emotion/react'
+import { css } from '@emotion/react';
 
-import materialIcons_ttf from 'assets/fonts/MaterialIcons-Regular.ttf'
-import materialIcons_woff from 'assets/fonts/MaterialIcons-Regular.woff'
-import materialIcons_woff2 from 'assets/fonts/MaterialIcons-Regular.woff2'
+import materialIcons_ttf from 'assets/fonts/MaterialIcons-Regular.ttf';
+import materialIcons_woff from 'assets/fonts/MaterialIcons-Regular.woff';
+import materialIcons_woff2 from 'assets/fonts/MaterialIcons-Regular.woff2';
 
 export default css`
   @font-face {
@@ -15,4 +15,4 @@ export default css`
       url(${materialIcons_ttf}) format('truetype');
     font-display: swap;
   }
-`
+`;

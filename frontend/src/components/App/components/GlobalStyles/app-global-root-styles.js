@@ -1,4 +1,4 @@
-import { css } from '@emotion/react'
+import { css } from '@emotion/react';
 
 export default css`
   :root {
@@ -7,4 +7,4 @@ export default css`
     -moz-osx-font-smoothing: auto;
     font-size: 16px;
   }
-`
+`;

@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
+import Card from 'components/Card';
+
 export default function Board() {
-  return <div>Dashboard</div>;
+  return <Card>Dashboard</Card>;
 }

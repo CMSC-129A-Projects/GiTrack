@@ -1,4 +1,4 @@
-import { css } from '@emotion/react'
+import { css } from '@emotion/react';
 
 export default css`
   /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
@@ -357,4 +357,4 @@ export default css`
   [hidden] {
     display: none;
   }
-`
+`;

@@ -1,24 +1,24 @@
-const roboto = 'Roboto, Arial, Helvetica Neue, Helvetica, sans-serif'
-const raleway = 'Raleway, Arial, Helvetica Neue, Helvetica, sans-serif'
-const materialIcons = 'Material Icons'
+const roboto = 'Roboto, Arial, Helvetica Neue, Helvetica, sans-serif';
+const raleway = 'Raleway, Arial, Helvetica Neue, Helvetica, sans-serif';
+const materialIcons = 'Material Icons';
 
 const robotoM = {
   fontFamily: roboto,
   fontStyle: 'normal',
   fontWeight: 600,
-}
+};
 
 const robotoR = {
   fontFamily: roboto,
   fontStyle: 'normal',
   fontWeight: 400,
-}
+};
 
 const ralewayB = {
   fontFamily: raleway,
   fontStyle: 'normal',
   fontWeight: 700,
-}
+};
 
 const icon = {
   fontFamily: materialIcons,
@@ -30,9 +30,9 @@ const icon = {
   wordWrap: 'normal',
   whiteSpace: 'nowrap',
   direction: 'ltr',
-}
+};
 
-export default {
+const theme = {
   color: {
     primary: [
       '#fff', // Do not use
@@ -128,12 +128,14 @@ export default {
 
   transition: {
     default: (tags) => {
-      const lastIndex = tags.length - 1
+      const lastIndex = tags.length - 1;
       return tags.reduce(
         (accumulator, tag, index) =>
           (accumulator += `ease 0.2s ${tag}${index !== lastIndex ? ',' : ''} `),
         ''
-      )
+      );
     },
   },
-}
+};
+
+export default theme;
