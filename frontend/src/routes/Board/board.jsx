@@ -3,5 +3,5 @@
 import Card from 'components/Card';
 
 export default function Board() {
-  return <Card>Dashboard</Card>;
+  return <Card>Test</Card>;
 }
