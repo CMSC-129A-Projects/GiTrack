@@ -8,8 +8,8 @@ import * as style from './navbar-styles';
 export default function Navbar({ ...passedProps }) {
   return (
     <div css={style.navbar} {...passedProps}>
-      <div>
-        <img src={Logo} alt="gitrack logo" />
+      <div css={style.navbar_image}>
+        <img src={Logo} alt="gitrack logo" css={style.navbar_imageContainer}/>
       </div>
     </div>
   );

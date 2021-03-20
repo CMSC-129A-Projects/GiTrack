@@ -41,7 +41,6 @@ export const button___xlarge___primary = (theme) => css`
 export const button___large___primary = (theme) => css`
   ${base}
   ${theme.text.button2};
-  margin: 48px 0 0 0;
   padding: 16px 24px;
   background-color: ${theme.color.primary[3]};
   color: ${theme.color.neutral[0]};

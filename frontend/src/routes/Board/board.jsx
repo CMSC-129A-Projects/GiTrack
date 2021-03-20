@@ -5,12 +5,15 @@ import { BrowserRouter as Switch, Route } from 'react-router-dom';
 
 import Navbar from 'widgets/Navbar';
 
-const Index = lazy(() => import('./Index'))
+// Style
+import * as style from './board-styles';
+
+const BoardIndex = lazy(() => import('./BoardIndex'))
 const Add = lazy(() => import('./Add'))
 
 export default function Board() {
   return (
-    <div>
+    <div css={style.board}>
       <Navbar />
       <Suspense fallback={<div>loading</div>}>
         <Switch>
@@ -18,7 +21,7 @@ export default function Board() {
             <Add />
           </Route>
           <Route path="/board">
-            <Index />
+            <BoardIndex />
           </Route>
         </Switch>
       </Suspense>

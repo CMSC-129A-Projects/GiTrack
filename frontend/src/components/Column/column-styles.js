@@ -1,7 +1,13 @@
 import { css } from '@emotion/react';
 
 export const column = (theme) => css`
-  background-color: ${theme.color.neutral[0]};
+  background-color: ${theme.color.neutral[1]};
   border-radius: 16px;
-  box-shadow: 0px 12px 24px -12px rgba(0, 25, 68, 0.2);
+`;
+
+export const column_title = (theme) => css`
+  ${theme.text.titleMD};
+  color: ${theme.color.neutral[5]};
+  padding: 16px;
+  margin: 0;
 `;
