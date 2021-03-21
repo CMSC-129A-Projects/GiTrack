@@ -119,6 +119,21 @@ const theme = {
       fontSize: '1rem',
       lineHeight: '1.5em',
     },
+    button1: {
+      ...robotoM,
+      fontSize: '1.25rem',
+      lineHeight: '1',
+    },
+    button2: {
+      ...robotoM,
+      fontSize: '1rem',
+      lineHeight: '1',
+    },
+    button3: {
+      ...robotoM,
+      fontSize: '0.875rem',
+      lineHeight: '1',
+    },
     icon: {
       ...icon,
       fontSize: '1rem',

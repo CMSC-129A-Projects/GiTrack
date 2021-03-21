@@ -21,6 +21,10 @@ export default css`
     box-sizing: border-box;
   }
 
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+
   /* Sections
    ========================================================================== */
 
