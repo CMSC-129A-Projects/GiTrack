@@ -28,7 +28,7 @@ function newBoard(db, title){
 }
 
 //edit Board in database
-function editBoard(db, oldName, newName){ //change needed: update query so that only authorized users can make changes
+function editBoard(db, oldName, newName){
     db.serialize(function(){
         db.run("UPDATE Boards SET title = '"+newName+"' WHERE title = '"+oldName+"'", (err)=>{
             if(err){
@@ -42,7 +42,7 @@ function editBoard(db, oldName, newName){ //change needed: update query so that 
 }
 
 //delete Board in database
-function deleteBoard(db, title){ //change needed: update query so that only authorized users can make changes
+function deleteBoard(db, title){ 
     db.serialize(function(){
         db.run("DELETE FROM Boards WHERE title = '"+title+"'", (err)=>{
             if(err){
