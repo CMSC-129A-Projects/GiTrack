@@ -17,25 +17,21 @@ function openDB(){
 }
 
 //create Board in database
-function newBoard(title){
-    let db = openDB()
+function newBoard(db, title){
     db.serialize(function(){
         db.run("INSERT INTO Boards (title) VALUES ('"+title+"')", (err)=>{
             if(err){
                 console.error(err.message)
             }
             else{
-                console.log('Inserted into table Boards')
+                console.log('Inserted "'+title+'" into table Boards')
             }
         })
     })
-
-    db.close()
 }
 
 //edit Board in database
-function editBoard(oldName, newName){ //change needed: update query so that only authorized users can make changes
-    let db = openDB()
+function editBoard(db, oldName, newName){ //change needed: update query so that only authorized users can make changes
     db.serialize(function(){
         db.run("UPDATE Boards SET title = '"+newName+"' WHERE title = '"+oldName+"'", (err)=>{
             if(err){
@@ -46,13 +42,10 @@ function editBoard(oldName, newName){ //change needed: update query so that only
             }
         })
     })
-
-    db.close()
 }
 
 //delete Board in database
-function deleteBoard(title){ //change needed: update query so that only authorized users can make changes
-    let db = openDB()
+function deleteBoard(db, title){ //change needed: update query so that only authorized users can make changes
     db.serialize(function(){
         db.run("DELETE FROM Boards WHERE title = '"+title+"'", (err)=>{
             if(err){
@@ -63,6 +56,4 @@ function deleteBoard(title){ //change needed: update query so that only authoriz
             }
         })
     })
-
-    db.close()
 }
