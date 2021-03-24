@@ -9,6 +9,7 @@ const debug = require('debug')('backend:server');
 // Routers
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const app = express();
 const db = require('./db');
@@ -22,21 +23,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routers
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-// Add DB to request context
-app.use(function (req, _, next) {
-  req.context = {
-    db,
-  };
-  next();
-});
+app.use('/auth', authRouter);
 
 // Cleanup Middleware
 let isShuttingDown = false;
 
 app.use(function (_, res, next) {
   if (!isShuttingDown) {
-    return next();
+    next();
   }
 
   res.setHeader('Connection', 'close');
@@ -89,8 +83,7 @@ function cleanup() {
   isShuttingDown = true;
   server.close(function () {
     debug('Closing remaining connections');
-    db.close();
-    process.exit();
+    db.then((db) => db.close().then(process.exit()));
   });
 
   setTimeout(function () {
