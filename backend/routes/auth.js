@@ -5,6 +5,10 @@ const { registerUser, loginUser, userStatus } = require('../models/users');
 
 router.post('/register', async function (req, res) {
   const { username, password, email } = req.body;
+  if (!username || !password || !email) {
+    res.status(400);
+  }
+
   try {
     await registerUser(username, password, email);
     res.status(201).json({ username, email });
@@ -20,6 +24,9 @@ router.post('/register', async function (req, res) {
 
 router.post('/login', async function (req, res) {
   const { username, password, email } = req.body;
+  if (!password || (!email && !username)) {
+    res.status(400);
+  }
   try {
     await loginUser(username, password, email);
     res.status(200).json({ username, email, token: 'test' });

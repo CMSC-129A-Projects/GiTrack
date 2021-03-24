@@ -47,7 +47,6 @@ async function registerUser(username, password, email) {
 }
 
 async function loginUser(username, password, email) {
-  let hash = null;
   const db = await dbHandler;
 
   let result = null;
@@ -68,6 +67,7 @@ async function loginUser(username, password, email) {
   try {
     const success = await bcrypt.compare(password, result.password);
     if (!success) {
+      debug('Hash check failed');
       throw userStatus.USER_NOT_FOUND;
     }
   } catch (error) {
