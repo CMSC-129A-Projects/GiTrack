@@ -1,7 +1,7 @@
-const board = require('./board');
+const boards = require('./boards');
 
 const models = {
-  board,
+  boards,
 };
 
 module.exports = models;
