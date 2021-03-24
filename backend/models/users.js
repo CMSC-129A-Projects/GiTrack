@@ -3,11 +3,11 @@ const debug = require('debug')('backend:models-users');
 const bcrypt = require('bcrypt');
 
 const userStatus = {
-  SUCCESS: 'SUCCESS',
   HASH: 'HASH',
   DUPLICATE_USER: 'DUPLICATE_USER',
   DUPLICATE_EMAIL: 'DUPLICATE_EMAIL',
   INSERT_FAILED: 'INSERT_FAILED',
+  USER_NOT_FOUND: 'USER_NOT_FOUND',
 };
 
 async function registerUser(username, password, email) {
@@ -18,6 +18,7 @@ async function registerUser(username, password, email) {
     debug(error);
     throw userStatus.HASH;
   }
+
   const db = await dbHandler;
 
   const userResult = await db.get(
@@ -39,11 +40,43 @@ async function registerUser(username, password, email) {
     );
 
     debug(`Inserted ${username} into Users`);
-    return userStatus.SUCCESS;
   } catch (error) {
     debug(error);
     throw userStatus.INSERT_FAILED;
   }
 }
 
-module.exports = { userStatus, registerUser };
+async function loginUser(username, password, email) {
+  let hash = null;
+  const db = await dbHandler;
+
+  let result = null;
+  if (username !== null) {
+    result = await db.get(`SELECT password From Users where username = "${username}"`);
+    if (result === undefined) {
+      debug('Username not found');
+      throw userStatus.USER_NOT_FOUND;
+    }
+  } else if (email !== null) {
+    result = await db.get(`SELECT password From Users where email = "${email}"`);
+    if (result === undefined) {
+      debug('Email not found');
+      throw userStatus.USER_NOT_FOUND;
+    }
+  }
+
+  try {
+    const success = await bcrypt.compare(password, result.password);
+    if (!success) {
+      throw userStatus.USER_NOT_FOUND;
+    }
+  } catch (error) {
+    if (error === userStatus.USER_NOT_FOUND) {
+      throw error;
+    } else {
+      throw userStatus.HASH;
+    }
+  }
+}
+
+module.exports = { userStatus, registerUser, loginUser };
