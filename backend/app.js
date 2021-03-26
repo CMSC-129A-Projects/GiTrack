@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+const express = require('express');
+const path = require('path');
+const http = require('http');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const debug = require('debug')('backend:server');
+require('dotenv').config();
+
+// Routers
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
+const boardsRouter = require('./routes/boards');
+
+const app = express();
+const db = require('./db');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Routers
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/auth', authRouter);
+app.use('/boards', boardsRouter);
+
+// Cleanup Middleware
+let isShuttingDown = false;
+
+app.use(function (_, res, next) {
+  if (!isShuttingDown) {
+    next();
+  }
+
+  res.setHeader('Connection', 'close');
+  res.status(503).json({
+    message: 'Server is closing',
+  });
+});
+
+// Creating Server
+const port = normalizePort(process.env.PORT || '3000');
+
+app.set('port', port);
+const server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Cleanup connections on exit
+ */
+
+function cleanup() {
+  isShuttingDown = true;
+  server.close(function () {
+    debug('Closing remaining connections');
+    db.then((db) => db.close().then(process.exit()));
+  });
+
+  setTimeout(function () {
+    debug('Could not close connections in time, forcing shutdown');
+    process.exit(1);
+  }, 30 * 1000);
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
