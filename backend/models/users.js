@@ -2,13 +2,7 @@ const dbHandler = require('../db');
 const debug = require('debug')('backend:models-users');
 const bcrypt = require('bcrypt');
 
-const userStatus = {
-  HASH: 'HASH',
-  DUPLICATE_USER: 'DUPLICATE_USER',
-  DUPLICATE_EMAIL: 'DUPLICATE_EMAIL',
-  INSERT_FAILED: 'INSERT_FAILED',
-  USER_NOT_FOUND: 'USER_NOT_FOUND',
-};
+const { user: userErrorMessages } = require('../constants/error-messages');
 
 async function registerUser(username, password, email) {
   let hash = null;
@@ -16,7 +10,7 @@ async function registerUser(username, password, email) {
     hash = await bcrypt.hash(password, 10);
   } catch (error) {
     debug(error);
-    throw userStatus.HASH;
+    throw userErrorMessages.HASH;
   }
 
   const db = await dbHandler;
@@ -25,12 +19,12 @@ async function registerUser(username, password, email) {
     `SELECT username From Users where username = "${username}"`
   );
   if (userResult !== undefined) {
-    throw userStatus.DUPLICATE_USER;
+    throw userErrorMessages.DUPLICATE_USER;
   }
 
   const emailResult = await db.get(`SELECT email From Users where email = "${email}"`);
   if (emailResult !== undefined) {
-    throw userStatus.DUPLICATE_EMAIL;
+    throw userErrorMessages.DUPLICATE_EMAIL;
   }
 
   try {
@@ -42,25 +36,21 @@ async function registerUser(username, password, email) {
     debug(`Inserted ${username} into Users`);
   } catch (error) {
     debug(error);
-    throw userStatus.INSERT_FAILED;
+    throw userErrorMessages.INSERT_FAILED;
   }
 }
 
-async function loginUser(username, password, email) {
+async function loginUser(username, password) {
   const db = await dbHandler;
 
   let result = null;
   if (username !== null) {
-    result = await db.get(`SELECT password From Users where username = "${username}"`);
+    result = await db.get(
+      `SELECT password, id From Users where username = "${username}"`
+    );
     if (result === undefined) {
       debug('Username not found');
-      throw userStatus.USER_NOT_FOUND;
-    }
-  } else if (email !== null) {
-    result = await db.get(`SELECT password From Users where email = "${email}"`);
-    if (result === undefined) {
-      debug('Email not found');
-      throw userStatus.USER_NOT_FOUND;
+      throw userErrorMessages.USER_NOT_FOUND;
     }
   }
 
@@ -68,15 +58,17 @@ async function loginUser(username, password, email) {
     const success = await bcrypt.compare(password, result.password);
     if (!success) {
       debug('Hash check failed');
-      throw userStatus.USER_NOT_FOUND;
+      throw userErrorMessages.USER_NOT_FOUND;
     }
+
+    return result.id;
   } catch (error) {
-    if (error === userStatus.USER_NOT_FOUND) {
+    if (error === userErrorMessages.USER_NOT_FOUND) {
       throw error;
     } else {
-      throw userStatus.HASH;
+      throw userErrorMessages.HASH;
     }
   }
 }
 
-module.exports = { userStatus, registerUser, loginUser };
+module.exports = { userErrorMessages, registerUser, loginUser };

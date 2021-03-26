@@ -5,11 +5,13 @@ const http = require('http');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const debug = require('debug')('backend:server');
+require('dotenv').config();
 
 // Routers
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
+const boardsRouter = require('./routes/boards');
 
 const app = express();
 const db = require('./db');
@@ -24,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/boards', boardsRouter);
 
 // Cleanup Middleware
 let isShuttingDown = false;
