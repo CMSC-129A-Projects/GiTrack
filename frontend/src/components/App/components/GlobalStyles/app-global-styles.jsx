@@ -3,6 +3,7 @@ import { Global, css } from '@emotion/react';
 import global_font from './app-global-font-styles';
 import global_reset from './app-global-reset-styles';
 import global_root from './app-global-root-styles';
+import global_misc from './app-global-misc-styles';
 
 export default function GlobalStyles() {
   return (
@@ -11,6 +12,7 @@ export default function GlobalStyles() {
         ${global_font};
         ${global_reset};
         ${global_root};
+        ${global_misc};
       `}
     />
   );
