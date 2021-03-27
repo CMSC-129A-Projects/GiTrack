@@ -22,7 +22,11 @@ async function createBoard(title, userId) {
 async function editBoard(boardId, newName, userId) {
   const db = await dbHandler;
 
-  const userPermission = await db.get(`SELECT is_developer FROM Memberships JOIN Assignees ON Memberships.user_id = Assignees.user_id WHERE Memberships.user_id = ${userId} AND board_id = ${boardId}`)
+  const userPermission = await db.get(`SELECT is_developer
+  FROM Columns JOIN Tasks ON Tasks.column_id = Columns.id
+  JOIN Assignees ON Assignees.task_id = Tasks.id
+  JOIN Memberships ON Assignees.user_id = Memberships.user_id
+  WHERE Memberships.user_id = ${userId} AND Columns.board_id = ${boardId}`)
   if(userPermission){
     throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
   }
@@ -38,7 +42,11 @@ async function editBoard(boardId, newName, userId) {
 async function deleteBoard(boardId, userId) {
   const db = await dbHandler;
 
-  const userPermission = await db.get(`SELECT is_developer FROM Memberships JOIN Assignees ON Memberships.user_id = Assignees.user_id WHERE Memberships.user_id = ${userId} AND board_id = ${boardID}`)
+  const userPermission = await db.get(`SELECT is_developer
+  FROM Columns JOIN Tasks ON Tasks.column_id = Columns.id
+  JOIN Assignees ON Assignees.task_id = Tasks.id
+  JOIN Memberships ON Assignees.user_id = Memberships.user_id
+  WHERE Memberships.user_id = ${userId} AND Columns.board_id = ${boardId}`)
   if(userPermission){
     throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
   }
