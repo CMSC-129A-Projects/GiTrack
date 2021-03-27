@@ -9,7 +9,7 @@ async function createBoard(title, userId) {
   try {
     const boardResult = await db.run(`INSERT INTO Boards (title) VALUES ("${title}")`);
     await db.run(
-      `INSERT INTO Memberships (board_id, user_id) VALUES ("${boardResult.lastID}", ${userId})`
+      `INSERT INTO Memberships (board_id, user_id) VALUES (${boardResult.lastID}, ${userId})`
     );
 
     return boardResult.lastID;
