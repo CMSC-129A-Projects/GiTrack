@@ -19,31 +19,52 @@ async function createBoard(title, userId) {
   }
 }
 
-function editBoard(db, oldName, newName) {
-  db.run(
-    "UPDATE Boards SET title = '" + newName + "' WHERE title = '" + oldName + "'",
-    (err) => {
-      if (err) {
-        debug(err.message);
-      } else {
-        debug('Board ' + oldName + ' renamed into ' + newName + '.');
-      }
-    }
-  );
+async function editBoard(boardId, newName, userId) {
+  const db = await dbHandler;
+
+  const userPermission = await db.get(`SELECT is_developer FROM Memberships JOIN Assignees ON Memberships.user_id = Assignees.user_id WHERE Memberships.user_id = ${userId} AND board_id = ${boardId}`)
+  if(userPermission){
+    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
+  }
+
+  try {
+    await db.run(`UPDATE Boards SET title = "${newName}" WHERE id = ${boardId}`);
+    debug(`Board renamed to ${newName}.`);
+  } catch(err){
+    debug(err);
+  }
 }
 
-function deleteBoard(db, title) {
-  db.run("DELETE FROM Boards WHERE title = '" + title + "'", (err) => {
-    if (err) {
-      debug(err.message);
-    } else {
-      debug('Board ' + title + ' has been deleted.');
-    }
-  });
+async function deleteBoard(boardId, userId) {
+  const db = await dbHandler;
+
+  const userPermission = await db.get(`SELECT is_developer FROM Memberships JOIN Assignees ON Memberships.user_id = Assignees.user_id WHERE Memberships.user_id = ${userId} AND board_id = ${boardID}`)
+  if(userPermission){
+    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
+  }
+
+  try{
+    await db.run(`DELETE FROM Boards WHERE board_id = ${boardId}`)
+    debug(`Board deleted`);
+  } catch (err){
+    debug(err);
+  }
+
+}
+
+async function getBoardsWithUser(userId){
+  const db = await dbHandler;
+
+  try{
+    await db.run(`SELECT title FROM Memberships JOIN Boards ON Memberships.board_id = Boards.id WHERE user_id = ${userId}`)
+  } catch(err){
+    debug (err);
+  }
 }
 
 module.exports = {
   createBoard,
   editBoard,
   deleteBoard,
+  getBoardsWithUser
 };

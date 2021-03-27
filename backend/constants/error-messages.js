@@ -13,6 +13,8 @@ const user = {
 
 const board = {
   INSERT_FAILED: 'INSERT_FAILED',
+  NOT_ENOUGH_PERMISSIONS: 'NOT_ENOUGH_PERMISSIONS',
+  NOT_MEMBER_OF_BOARD: 'NOT_MEMBER_OF_BOARD'
 };
 
 module.exports = { user, board };
