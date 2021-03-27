@@ -1,13 +1,24 @@
+const dbHandler = require('../db');
 const debug = require('debug')('backend:models-board');
 
-function newBoard(db, title) {
-  db.run("INSERT INTO Boards (title) VALUES ('" + title + "')", (err) => {
-    if (err) {
-      debug(err.message);
-    } else {
-      debug('Inserted "' + title + '" into table Boards');
-    }
-  });
+const { board: boardErrorMessages } = require('../constants/error-messages');
+
+async function createBoard(title, userId) {
+  const db = await dbHandler;
+  let boardResult = null;
+
+  try {
+    boardResult = await db.run("INSERT INTO Boards (title) VALUES ('" + title + "')");
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.INSERT_FAILED;
+  }
+
+  if (boardResult === null) {
+    throw boardErrorMessages.INSERT_FAILED;
+  }
+
+  debug(boardResult);
 }
 
 function editBoard(db, oldName, newName) {
@@ -34,7 +45,7 @@ function deleteBoard(db, title) {
 }
 
 module.exports = {
-  newBoard,
+  createBoard,
   editBoard,
   deleteBoard,
 };

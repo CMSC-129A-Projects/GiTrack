@@ -11,4 +11,8 @@ const user = {
   TOKEN_INVALID: 'TOKEN_INVALID',
 };
 
-module.exports = { user };
+const board = {
+  INSERT_FAILED: 'INSERT_FAILED',
+};
+
+module.exports = { user, board };
