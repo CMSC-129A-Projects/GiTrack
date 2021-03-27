@@ -5,5 +5,4 @@ export const card = (theme) => css`
   border-radius: 16px;
   box-shadow: 0px 12px 24px -12px rgba(0, 25, 68, 0.2);
   height: max-content;
-  padding: 14px;
 `;

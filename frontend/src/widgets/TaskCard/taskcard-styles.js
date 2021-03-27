@@ -1,9 +1,8 @@
 import { css } from '@emotion/react';
 
 export const taskCard = (theme) => css`
-  margin-left: 14px;
-  margin-right: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  padding: 14px;
 `;
 
 export const taskCard_header = (theme) => css`
@@ -43,8 +42,4 @@ export const taskCard_tag = (theme) => css`
   border-radius: 8px;
   width: max-content;
   text-align: center;
-
-  :empty {
-    display: none;
-  }
 `;
