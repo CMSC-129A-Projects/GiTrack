@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useQuill } from 'react-quilljs';
 
 import 'quill/dist/quill.snow.css';
+import './text-editor-styles.css';
 
 export default function TextEditor({ children }) {
   const { quill, quillRef } = useQuill();
