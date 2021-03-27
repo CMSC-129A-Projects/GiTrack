@@ -1,0 +1,21 @@
+.ql-snow {
+  border-color: #e8e8e8 !important;
+  color: #2f2f2f !important;
+}
+
+.ql-stroke {
+  stroke: #2f2f2f !important;
+}
+
+.ql-picker {
+  color: #2f2f2f !important;
+}
+
+.ql-toolbar {
+  border-radius: 8px 8px 0 0;
+}
+
+.ql-container {
+  border-radius: 0 0 8px 8px;
+  font-size: 0.875rem !important;
+}
