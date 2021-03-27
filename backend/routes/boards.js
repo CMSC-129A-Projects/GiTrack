@@ -17,7 +17,9 @@ router.post('/create-board', authJWT, async function (req, res) {
   const { id: userId } = req.user;
 
   try {
-    await createBoard(title, userId);
+    const boardId = await createBoard(title, userId);
+
+    res.json({ boardId });
   } catch (err) {
     debug(err);
     res.status(500).json({ message: error });

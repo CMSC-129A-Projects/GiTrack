@@ -5,20 +5,18 @@ const { board: boardErrorMessages } = require('../constants/error-messages');
 
 async function createBoard(title, userId) {
   const db = await dbHandler;
-  let boardResult = null;
 
   try {
-    boardResult = await db.run("INSERT INTO Boards (title) VALUES ('" + title + "')");
+    const boardResult = await db.run(`INSERT INTO Boards (title) VALUES ("${title}")`);
+    await db.run(
+      `INSERT INTO Memberships (board_id, user_id) VALUES ("${boardResult.lastID}", ${userId})`
+    );
+
+    return boardResult.lastID;
   } catch (err) {
     debug(err);
     throw boardErrorMessages.INSERT_FAILED;
   }
-
-  if (boardResult === null) {
-    throw boardErrorMessages.INSERT_FAILED;
-  }
-
-  debug(boardResult);
 }
 
 function editBoard(db, oldName, newName) {
