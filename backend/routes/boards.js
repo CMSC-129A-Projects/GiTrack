@@ -40,7 +40,7 @@ router.post('/create-board', authJWT, async function (req, res) {
 
 router.post('/edit-board', authJWT, async function (req, res) {
   const { id } = req.body;
-  const { name: newName } = req.user;
+  const { name: newName } = req.body;
   const { id: userId } = req.user;
 
   if (!id) {
