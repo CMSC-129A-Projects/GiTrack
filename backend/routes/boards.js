@@ -1,10 +1,15 @@
 const express = require('express');
-const router = express.Router();
 const debug = require('debug')('backend:routes-boards');
 
+const router = express.Router();
 
 // Models
-const { createBoard, deleteBoard, getBoardsWithUser, editBoard } = require('../models/boards');
+const {
+  createBoard,
+  deleteBoard,
+  getBoardsWithUser,
+  editBoard,
+} = require('../models/boards');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -12,95 +17,108 @@ const { authJWT } = require('../middlewares/auth');
 // Constants
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
-router.get('/', authJWT, function (req, res) {
-  res.json({ message: req.user });
+router.get('/', authJWT, (req, res) => {
+  res.json({ error_message: req.user });
 });
 
-router.post('/create-board', authJWT, async function (req, res) {
+router.post('/create-board', authJWT, async (req, res) => {
   const { title } = req.body;
   const { id: userId } = req.user;
 
   if (!title) {
-    return res.status(400).json({ message: boardErrorMessages.MISSING_TITLE });
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.MISSING_TITLE });
   }
 
   if (!userId) {
-    return res.status(400).json({ message: boardErrorMessages.MISSING_ID });
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.MISSING_ID });
   }
 
   try {
     const boardId = await createBoard(title, userId);
 
-    res.json({ boardId });
+    return res.json({ id: boardId, error_message: null });
   } catch (err) {
     debug(err);
-    res.status(500).json({ message: error });
+    return res.status(500).json({ id: null, error_message: err });
   }
 });
 
-router.post('/edit-board', authJWT, async function (req, res) {
-  const { id } = req.body;
-  const { name: newName } = req.body;
+router.post('/edit-board', authJWT, async (req, res) => {
+  const { id, name } = req.body;
   const { id: userId } = req.user;
 
   if (!id) {
-    return res.status(400).json({ message: boardErrorMessages.MISSING_ID });
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.MISSING_ID });
   }
 
-  if(!newName){
-    return res.status(400).json({ message: boardErrorMessages.MISSING_NAME });
+  if (!name) {
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.MISSING_NAME });
   }
 
-  if(!userId){
-    return res.status(400).json({ message: boardErrorMessages.MISSING_USER_ID });
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.MISSING_USER_ID });
   }
 
   try {
-    const boardId = await editBoard(id, newName, userId);
+    const boardId = await editBoard(id, name, userId);
 
-    res.json({ boardId });
+    return res.json({ id: boardId, error_message: null });
   } catch (err) {
     debug(err);
-    res.status(500).json({ message: error });
+    return res.status(500).json({ id: null, error_message: err });
   }
 });
 
-router.post('/delete-board', authJWT, async function (req, res) {
+router.post('/delete-board', authJWT, async (req, res) => {
   const { id } = req.body;
   const { id: userId } = req.user;
 
   if (!id) {
-    return res.status(400).json({ message: boardErrorMessages.MISSING_ID });
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.MISSING_ID });
   }
 
-  if(!userId){
-    return res.status(400).json({ message: boardErrorMessages.MISSING_USER_ID });
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.MISSING_USER_ID });
   }
 
   try {
     const boardId = await deleteBoard(id, userId);
 
-    res.json({ boardId });
+    return res.json({ id: boardId, error_message: null });
   } catch (err) {
     debug(err);
-    res.status(500).json({ message: error });
+    return res.status(500).json({ id: null, error_message: err });
   }
 });
 
-router.post('/get-board', authJWT, async function (req, res) {
+router.post('/get-board', authJWT, async (req, res) => {
   const { id: userId } = req.body;
 
   if (!userId) {
-    return res.status(400).json({ message: boardErrorMessages.MISSING_USER_ID });
+    return res.status(400).json({ error_message: boardErrorMessages.MISSING_USER_ID });
   }
 
   try {
     const boardId = await getBoardsWithUser(userId);
 
-    res.json({ boardId });
+    return res.json({ boardId });
   } catch (err) {
     debug(err);
-    res.status(500).json({ message: error });
+    return res.status(500).json({ error_message: err });
   }
 });
 

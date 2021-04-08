@@ -8,8 +8,6 @@ const debug = require('debug')('backend:server');
 require('dotenv').config();
 
 // Routers
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 const boardsRouter = require('./routes/boards');
 
@@ -23,15 +21,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routers
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/boards', boardsRouter);
 
 // Cleanup Middleware
 let isShuttingDown = false;
 
-app.use(function (_, res, next) {
+app.use((_, res, next) => {
   if (!isShuttingDown) {
     next();
   }
@@ -43,6 +39,22 @@ app.use(function (_, res, next) {
 });
 
 // Creating Server
+function normalizePort(val) {
+  const tempPort = parseInt(val, 10);
+
+  if (Number.isNaN(tempPort)) {
+    // named pipe
+    return val;
+  }
+
+  if (tempPort >= 0) {
+    // port number
+    return tempPort;
+  }
+
+  return false;
+}
+
 const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);
@@ -53,30 +65,10 @@ const server = http.createServer(app);
  */
 
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-process.on('SIGINT', cleanup);
-process.on('SIGTERM', cleanup);
 
 /**
  * Normalize a port into a number, string, or false.
  */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
 
 /**
  * Cleanup connections on exit
@@ -84,12 +76,12 @@ function normalizePort(val) {
 
 function cleanup() {
   isShuttingDown = true;
-  server.close(function () {
+  server.close(() => {
     debug('Closing remaining connections');
-    db.then((db) => db.close().then(process.exit()));
+    db.then((_db) => _db.close().then(process.exit()));
   });
 
-  setTimeout(function () {
+  setTimeout(() => {
     debug('Could not close connections in time, forcing shutdown');
     process.exit(1);
   }, 30 * 1000);
@@ -104,16 +96,18 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+  const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      debug(`${bind} requires elevated privileges`);
       process.exit(1);
+      break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      debug(`${bind} is already in use`);
       process.exit(1);
+      break;
     default:
       throw error;
   }
@@ -124,7 +118,12 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  const addr = server.address();
+  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+  debug(`Listening on ${bind}`);
 }
+
+server.on('error', onError);
+server.on('listening', onListening);
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
