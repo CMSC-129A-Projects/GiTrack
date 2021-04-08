@@ -1,6 +1,7 @@
-const dbHandler = require('../db');
 const debug = require('debug')('backend:models-users');
 const bcrypt = require('bcrypt');
+
+const dbHandler = require('../db');
 
 const { user: userErrorMessages } = require('../constants/error-messages');
 

@@ -25,7 +25,7 @@ async function initDB() {
   } catch (err) {
     debug('Error connecting to the database');
     debug(err);
-    process.exit(1);
+    return process.exit(1);
   }
 }
 
