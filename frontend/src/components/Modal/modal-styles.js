@@ -28,7 +28,7 @@ export const modal___large = (theme) => css`
   max-width: 800px;
 `;
 
-export const modal_head = (theme) => css`
+export const modal_head = css`
   display: flex;
   align-items: center;
   margin: 0 0 32px 0;
@@ -55,7 +55,7 @@ export const modal_title = (theme) => css`
   color: ${theme.color.primary[3]};
 `;
 
-export const modal_actions_button = (theme) => css`
+export const modal_actions_button = css`
   margin: 0 0 0 12px;
 
   @media (max-width: 767px) {
@@ -64,7 +64,7 @@ export const modal_actions_button = (theme) => css`
   }
 `;
 
-export const modal_actions___two = (theme) => css`
+export const modal_actions___two = css`
   margin: 32px 0 0 0;
   width: 100%;
   display: flex;
@@ -75,13 +75,13 @@ export const modal_actions___two = (theme) => css`
   }
 `;
 
-export const modal_actions___one = (theme) => css`
+export const modal_actions___one = css`
   margin: 32px 0 0 0;
   display: flex;
   justify-content: center;
 `;
 
-export const modal___loading_spinner = (theme) => css`
+export const modal___loading_spinner = css`
   height: 100%;
   position: absolute;
   top: 0;

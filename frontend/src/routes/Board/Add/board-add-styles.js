@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-export const addBoard = (theme) => css`
+export const addBoard = css`
   display: flex;
   align-items: center;
   justify-content: center;

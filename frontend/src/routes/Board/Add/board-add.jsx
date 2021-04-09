@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 
-// Style
-import * as style from './board-add-styles';
-
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
+
+// Style
+import * as style from './board-add-styles';
 
 export default function AddBoard() {
   return (
@@ -15,9 +15,7 @@ export default function AddBoard() {
         placeholder="Type board name here..."
         name="name"
       />
-      <Button variant={buttonVariants.LARGE.PRIMARY}>
-        Create Board
-      </Button>
+      <Button variant={buttonVariants.LARGE.PRIMARY}>Create Board</Button>
     </div>
   );
 }

@@ -47,8 +47,8 @@ const theme = {
       '#E8E8E8', // 3
       '#88919B', // 4
       '#9E9E9E', // 5
-      '#fff', //6
-      '#2F2F2F', //7
+      '#fff', // 6
+      '#2F2F2F', // 7
     ],
     red: [
       '#fff', // Do not use
@@ -145,6 +145,7 @@ const theme = {
     default: (tags) => {
       const lastIndex = tags.length - 1;
       return tags.reduce(
+        /* eslint-disable */
         (accumulator, tag, index) =>
           (accumulator += `ease 0.2s ${tag}${index !== lastIndex ? ',' : ''} `),
         ''

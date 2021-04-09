@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
 
-// Style
-import * as style from './add-task-modal-styles';
-
 import Modal from 'components/Modal';
 import Input from 'components/Input';
 import Dropdown from 'components/Dropdown';
 import TextEditor from 'components/TextEditor';
 import buttonVariants from 'components/Button/constants';
 import modalSizes from 'components/Modal/constants';
+
+// Style
+import * as style from './add-task-modal-styles';
 
 export default function AddTaskModal({ isOpen, handleClose }) {
   return (
