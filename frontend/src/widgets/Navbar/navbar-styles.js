@@ -10,10 +10,10 @@ export const navbar = (theme) => css`
   right: 0;
 `;
 
-export const navbar_imageContainer = (theme) => css`
+export const navbar_imageContainer = css`
   width: 187px;
 `;
 
-export const navbar_image = (theme) => css`
+export const navbar_image = css`
   width: 100%;
 `;
