@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 
 // Routes
 import Board from '../Board';
+import LoginSignup from '../LoginSignup';
 
 export default function RootRouter() {
   return (
@@ -15,7 +16,11 @@ export default function RootRouter() {
         <Route path="/add">
           <Board />
         </Route>
-        <Redirect to="/board" />
+        {/* <Redirect to="/board" /> */}
+        <Route path="/login">
+          <LoginSignup />
+        </Route>
+        <Redirect to="/login" />
       </Switch>
     </Router>
   );
