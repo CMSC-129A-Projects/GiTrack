@@ -6,7 +6,7 @@ import Button from 'components/Button';
 // Style
 import * as style from './loginsignupcard-styles';
 
-export default function TaskCard({
+export default function LoginSignupCard({
   title,
   children,
   action,

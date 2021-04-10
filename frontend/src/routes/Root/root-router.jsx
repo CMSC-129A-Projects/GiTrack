@@ -16,7 +16,6 @@ export default function RootRouter() {
         <Route path="/add">
           <Board />
         </Route>
-        {/* <Redirect to="/board" /> */}
         <Route path="/login">
           <LoginSignup />
         </Route>
