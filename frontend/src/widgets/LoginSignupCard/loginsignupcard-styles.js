@@ -18,11 +18,6 @@ export const loginSignupCard_title = (theme) => css`
   padding-bottom: 28px;
   margin: 0;
 `;
-export const loginSignupCard_children = css`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
 
 export const loginSignupCard_button = css`
   margin-top: 28px;

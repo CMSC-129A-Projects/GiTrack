@@ -11,19 +11,19 @@ export default function LoginSignupCard({
   children,
   action,
   subtext,
-  linktext,
+  linkText,
   link,
   ...passedProps
 }) {
   return (
     <Card css={style.loginSignupCard} {...passedProps}>
       <p css={style.loginSignupCard_title}>{title}</p>
-      <div css={style.loginSignupCard_children}>{children}</div>
-      {action.map(({ name, variant, onClick, disabled, isLoading }) => (
+      {children}
+      {action.map(({ name, variant, onClick, disabled }) => (
         <Button
           css={style.loginSignupCard_button}
           variant={variant}
-          disabled={disabled || isLoading}
+          disabled={disabled}
           onClick={onClick}
         >
           {name}
@@ -32,7 +32,7 @@ export default function LoginSignupCard({
       <p css={style.loginSignupCard_subtext}>
         {subtext}
         <a href={link} css={style.loginSignupCard_link}>
-          {linktext}
+          {linkText}
         </a>
       </p>
     </Card>
