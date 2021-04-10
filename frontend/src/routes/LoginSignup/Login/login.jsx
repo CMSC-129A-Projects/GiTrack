@@ -18,7 +18,7 @@ export default function LoginPage() {
       <LoginSignupCard
         title="Hello 👋"
         subtext="Don't have an account yet? "
-        linktext="Sign Up"
+        linkText="Sign Up"
         link="./signup"
         action={[
           {
