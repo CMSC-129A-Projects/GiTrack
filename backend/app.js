@@ -5,9 +5,11 @@ const http = require('http');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const debug = require('debug')('backend:server');
+
 require('dotenv').config();
 
 // Routers
+const docsRouter = require('./routes/docs');
 const authRouter = require('./routes/auth');
 const boardsRouter = require('./routes/boards');
 
@@ -21,6 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routers
+app.use('/docs', docsRouter);
 app.use('/auth', authRouter);
 app.use('/boards', boardsRouter);
 

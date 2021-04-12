@@ -16,11 +16,12 @@ function authJWT(req, res, next) {
       }
 
       req.user = user;
-      return next();
     });
+  } else {
+    return res.status(403).json({ message: 'AUTH_NOT_FOUND' });
   }
 
-  return res.status(403).json({ message: 'AUTH_NOT_FOUND' });
+  return next();
 }
 
 module.exports = {
