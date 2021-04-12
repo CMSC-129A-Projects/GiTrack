@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-export const addTaskModal_input = (theme) => css`
+export const addTaskModal_input = css`
   margin: 0 0 16px 0;
 `;
 

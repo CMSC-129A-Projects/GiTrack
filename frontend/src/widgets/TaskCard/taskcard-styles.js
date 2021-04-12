@@ -1,11 +1,11 @@
 import { css } from '@emotion/react';
 
-export const taskCard = (theme) => css`
+export const taskCard = css`
   margin-bottom: 10px;
   padding: 14px;
 `;
 
-export const taskCard_header = (theme) => css`
+export const taskCard_header = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,11 +18,11 @@ export const taskCard_title = (theme) => css`
   margin: 0;
 `;
 
-export const taskCard_imageContainer = (theme) => css`
+export const taskCard_imageContainer = css`
   height: 25px;
 `;
 
-export const taskCard_image = (theme) => css`
+export const taskCard_image = css`
   height: 100%;
 `;
 

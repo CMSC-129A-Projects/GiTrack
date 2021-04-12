@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
 // Style
-import * as style from './button-styles'
+import * as style from './button-styles';
 
-import Icon from '../Icon'
+import Icon from '../Icon';
 
 export default function Button({
   children,
@@ -25,9 +25,9 @@ export default function Button({
       {icon && <Icon icon={icon} css={icon && children && style.button_icon} />}
       {children}
     </button>
-  )
+  );
 }
 
 Button.defaultProps = {
   type: 'button',
-}
+};

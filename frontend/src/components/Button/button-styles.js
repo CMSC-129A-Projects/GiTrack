@@ -17,7 +17,7 @@ const base = css`
   }
 `;
 
-export const button_icon = (theme) => css`
+export const button_icon = css`
   margin: 0 8px 0 0;
   font-size: 1.5rem;
 
