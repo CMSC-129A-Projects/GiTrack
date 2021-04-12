@@ -29,6 +29,7 @@ const options = {
  *       properties:
  *         error_message:
  *           type: string
+ *           nullable: true
  *           description: Specific error message causing the error
  *           example: MISSING_USERNAME
  */
