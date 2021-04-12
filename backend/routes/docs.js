@@ -20,6 +20,19 @@ const options = {
   apis: [path.join(__dirname, '**/*.js')],
 };
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Error:
+ *       type: object
+ *       properties:
+ *         error_message:
+ *           type: string
+ *           description: Specific error message causing the error
+ *           example: MISSING_USERNAME
+ */
+
 const specs = swaggerJsdoc(options);
 router.use('/', swaggerUi.serve);
 router.get('/', swaggerUi.setup(specs));
