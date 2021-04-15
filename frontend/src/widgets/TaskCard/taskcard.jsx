@@ -18,11 +18,11 @@ export default function TaskCard({
     <Card css={style.taskCard} {...passedProps}>
       <div css={style.taskCard_header}>
         <p css={style.taskCard_title}>{title}</p>
-        <div css={style.taskCard_image}>
+        <div css={style.taskCard_imageContainer}>
           <img
             src={assigneeImage || placeholder}
             alt="user"
-            css={style.taskCard_imageContainer}
+            css={style.taskCard_image}
           />
         </div>
       </div>

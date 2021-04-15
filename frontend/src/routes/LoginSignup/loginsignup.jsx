@@ -19,6 +19,7 @@ export default function Board() {
           backgroundImage: `url(${Background})`,
           width: '100vw',
           height: '100vh',
+          backgroundSize: 'cover',
         }}
       >
         <Suspense fallback={<div>loading</div>}>

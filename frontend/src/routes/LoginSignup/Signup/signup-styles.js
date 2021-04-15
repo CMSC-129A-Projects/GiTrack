@@ -15,11 +15,11 @@ export const signupCard = css`
 `;
 
 export const signupPage_image = css`
-  width: 262px;
+  width: 100%;
 `;
 
 export const signupPage_imageContainer = css`
-  width: 100%;
+  width: 262px;
 `;
 
 export const signupPage_inputs = css`

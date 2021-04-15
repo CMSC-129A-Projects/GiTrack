@@ -15,11 +15,11 @@ export const loginCard = css`
 `;
 
 export const loginPage_image = css`
-  width: 262px;
+  width: 100%;
 `;
 
 export const loginPage_imageContainer = css`
-  width: 100%;
+  width: 262px;
 `;
 
 export const loginPage_inputs = css`

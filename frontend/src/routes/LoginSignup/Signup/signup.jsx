@@ -12,8 +12,8 @@ import * as style from './signup-styles';
 export default function SignupPage() {
   return (
     <div css={style.signupPage}>
-      <div css={style.signupPage_image}>
-        <img src={Logo} alt="gitrack logo" css={style.signupPage_imageContainer} />
+      <div css={style.signupPage_imageContainer}>
+        <img src={Logo} alt="gitrack logo" css={style.signupPage_image} />
       </div>
       <LoginSignupCard
         css={style.signupCard}
