@@ -9,7 +9,7 @@ import { BrowserRouter as Switch, Route } from 'react-router-dom';
 import * as style from './loginsignup-styles';
 
 const Login = lazy(() => import('./Login'));
-// const Signup = lazy(() => import('./Signup'));
+const Signup = lazy(() => import('./Signup'));
 
 export default function Board() {
   return (
@@ -26,9 +26,9 @@ export default function Board() {
             <Route path="/login">
               <Login />
             </Route>
-            {/* <Route path="/signup">
-            <Signup />
-          </Route> */}
+            <Route path="/signup">
+              <Signup />
+            </Route>
           </Switch>
         </Suspense>
       </div>

@@ -16,6 +16,7 @@ export default function LoginPage() {
         <img src={Logo} alt="gitrack logo" css={style.loginPage_imageContainer} />
       </div>
       <LoginSignupCard
+        css={style.loginCard}
         title="Hello 👋"
         subtext="Don't have an account yet? "
         linkText="Sign Up"
@@ -29,7 +30,7 @@ export default function LoginPage() {
         ]}
       >
         <Input css={style.loginPage_inputs} placeholder="Username" />
-        <Input placeholder="Password" />
+        <Input placeholder="Password" type="password" />
       </LoginSignupCard>
       <p css={style.loginPage_footer}>Project management with Git</p>
     </div>

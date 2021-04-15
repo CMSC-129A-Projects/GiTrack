@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-export const loginPage = css`
+export const signupPage = css`
   padding: 48px;
   height: 100vh;
   display: flex;
@@ -9,24 +9,24 @@ export const loginPage = css`
   align-items: center;
 `;
 
-export const loginCard = css`
+export const signupCard = css`
   width: 420px;
-  height: 385px;
+  height: 507px;
 `;
 
-export const loginPage_image = css`
+export const signupPage_image = css`
   width: 262px;
 `;
 
-export const loginPage_imageContainer = css`
+export const signupPage_imageContainer = css`
   width: 100%;
 `;
 
-export const loginPage_inputs = css`
+export const signupPage_inputs = css`
   padding-bottom: 20px;
 `;
 
-export const loginPage_footer = (theme) => css`
+export const signupPage_footer = (theme) => css`
   color: ${theme.color.neutral[0]};
   ${theme.text.bodyLG}
   padding: 80px;
