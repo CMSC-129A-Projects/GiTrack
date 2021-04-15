@@ -18,11 +18,11 @@ export const taskCard_title = (theme) => css`
   margin: 0;
 `;
 
-export const taskCard_imageContainer = css`
+export const taskCard_image = css`
   height: 25px;
 `;
 
-export const taskCard_image = css`
+export const taskCard_imageContainer = css`
   height: 100%;
 `;
 

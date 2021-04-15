@@ -6,8 +6,6 @@ export const loginSignupCard = css`
   flex-direction: column;
   justify-content: center;
 
-  width: 420px;
-  height: 385px;
   margin-top: 48px;
 `;
 
