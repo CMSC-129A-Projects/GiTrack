@@ -3,13 +3,12 @@ const dbHandler = require('../db');
 
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
-async function getPermissions(db, userId, boardId){
+async function getPermissions(db, userId, boardId) {
   const userPermission = await db.get(`SELECT is_developer
   FROM Memberships WHERE user_id = ${userId} AND board_id = ${boardId}`);
   if (userPermission) {
-    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS
-  }
-  else{
+    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
+  } else {
     return true;
   }
 }
@@ -33,7 +32,7 @@ async function createBoard(title, userId) {
 async function editBoard(boardId, newName, userId) {
   const db = await dbHandler;
 
-  const userPermission = await getPermissions(db, userId, boardId);
+  await getPermissions(db, userId, boardId);
 
   try {
     await db.run(`UPDATE Boards SET title = "${newName}" WHERE id = ${boardId}`);
@@ -50,7 +49,7 @@ async function editBoard(boardId, newName, userId) {
 async function deleteBoard(boardId, userId) {
   const db = await dbHandler;
 
-  const userPermission = await getPermissions(db, userId, boardId);
+  await getPermissions(db, userId, boardId);
 
   try {
     await db.run(`DELETE FROM Boards WHERE board_id = ${boardId}`);
@@ -83,5 +82,5 @@ module.exports = {
   createBoard,
   editBoard,
   deleteBoard,
-  getBoardsWithUser
+  getBoardsWithUser,
 };
