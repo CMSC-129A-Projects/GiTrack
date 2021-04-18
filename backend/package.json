@@ -15,6 +15,7 @@
     "express": "~4.16.1",
     "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.1",
+    "nodejs": "*",
     "sqlite": "^4.0.19",
     "sqlite3": "^5.0.2",
     "swagger-jsdoc": "^6.1.0",
