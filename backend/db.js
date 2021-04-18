@@ -14,11 +14,13 @@ async function initDB() {
 
     debug('Connected to the tables database');
     debug('Adding tables to DB');
-    schema.forEach((val) => {
-      db.run(val).catch((err) => {
+    schema.forEach(async (val) => {
+      try {
+        db.run(val);
+      } catch (err) {
         debug('Error creating table');
         debug(err);
-      });
+      }
     });
 
     return db;

@@ -24,8 +24,14 @@ const board = {
   MISSING_USER_ID: 'MISSING_USER_ID',
 };
 
+const task = {
+  INSERT_FAILED: 'INSERT_FAILED',
+  MISSING_TITLE : 'MISSING_TITLE',
+  MISSING_DESCRIPTION : 'MISSING_DESCRIPTION'
+}
+
 const logic = {
   INACCESSIBLE_CODE: 'INACCESSIBLE_CODE',
 };
 
-module.exports = { user, board, logic };
+module.exports = { user, board, logic, task };
