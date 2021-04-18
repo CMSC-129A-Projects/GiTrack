@@ -12,6 +12,7 @@ require('dotenv').config();
 const docsRouter = require('./routes/docs');
 const authRouter = require('./routes/auth');
 const boardsRouter = require('./routes/boards');
+const taskRouter = require('./routes/tasks')
 
 const app = express();
 const db = require('./db');
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/docs', docsRouter);
 app.use('/auth', authRouter);
 app.use('/boards', boardsRouter);
+app.use('/tasks', taskRouter);
 
 // Cleanup Middleware
 let isShuttingDown = false;

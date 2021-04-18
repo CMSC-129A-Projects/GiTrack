@@ -3,13 +3,24 @@ const dbHandler = require('../db');
 
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
+async function getPermissions(db, userId, boardId){
+  const userPermission = await db.get(`SELECT is_developer
+  FROM Memberships WHERE user_id = ${userId} AND board_id = ${boardId}`);
+  if (userPermission) {
+    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS
+  }
+  else{
+    return true;
+  }
+}
+
 async function createBoard(title, userId) {
   const db = await dbHandler;
 
   try {
     const boardResult = await db.run(`INSERT INTO Boards (title) VALUES ("${title}")`);
     await db.run(
-      `INSERT INTO Memberships (board_id, user_id) VALUES (${boardResult.lastID}, ${userId})`
+      `INSERT INTO Memberships (board_id, user_id, is_developer) VALUES (${boardResult.lastID}, ${userId}, "true")`
     );
 
     return boardResult.lastID;
@@ -22,14 +33,7 @@ async function createBoard(title, userId) {
 async function editBoard(boardId, newName, userId) {
   const db = await dbHandler;
 
-  const userPermission = await db.get(`SELECT is_developer
-  FROM Columns JOIN Tasks ON Tasks.column_id = Columns.id
-  JOIN Assignees ON Assignees.task_id = Tasks.id
-  JOIN Memberships ON Assignees.user_id = Memberships.user_id
-  WHERE Memberships.user_id = ${userId} AND Columns.board_id = ${boardId}`);
-  if (userPermission) {
-    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
-  }
+  const userPermission = await getPermissions(db, userId, boardId);
 
   try {
     await db.run(`UPDATE Boards SET title = "${newName}" WHERE id = ${boardId}`);
@@ -46,14 +50,7 @@ async function editBoard(boardId, newName, userId) {
 async function deleteBoard(boardId, userId) {
   const db = await dbHandler;
 
-  const userPermission = await db.get(`SELECT is_developer
-  FROM Columns JOIN Tasks ON Tasks.column_id = Columns.id
-  JOIN Assignees ON Assignees.task_id = Tasks.id
-  JOIN Memberships ON Assignees.user_id = Memberships.user_id
-  WHERE Memberships.user_id = ${userId} AND Columns.board_id = ${boardId}`);
-  if (userPermission) {
-    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
-  }
+  const userPermission = await getPermissions(db, userId, boardId);
 
   try {
     await db.run(`DELETE FROM Boards WHERE board_id = ${boardId}`);
@@ -86,5 +83,5 @@ module.exports = {
   createBoard,
   editBoard,
   deleteBoard,
-  getBoardsWithUser,
+  getBoardsWithUser
 };

@@ -47,7 +47,7 @@ router.post('/create-board', authJWT, async (req, res) => {
   }
 });
 
-router.post('/edit-board', authJWT, async (req, res) => {
+router.patch('/edit-board', authJWT, async (req, res) => {
   const { id, name } = req.body;
   const { id: userId } = req.user;
 
