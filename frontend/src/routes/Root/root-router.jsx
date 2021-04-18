@@ -19,6 +19,9 @@ export default function RootRouter() {
         <Route path="/login">
           <LoginSignup />
         </Route>
+        <Route path="/signup">
+          <LoginSignup />
+        </Route>
         <Redirect to="/login" />
       </Switch>
     </Router>

@@ -9,15 +9,15 @@ function authJWT(req, res, next) {
   if (authHeader) {
     const token = authHeader.split(' ')[1];
 
-    jwt.verify(token, accessTokenSecret, (err, user) => {
+    req.user = jwt.verify(token, accessTokenSecret, (err, user) => {
       if (err) {
         debug(err);
         return res.status(403).json({ message: 'TOKEN_INVALID' });
       }
 
-      req.user = user;
+      return user;
     });
-  } else{
+  } else {
     return res.status(403).json({ message: 'AUTH_NOT_FOUND' });
   }
 
