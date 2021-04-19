@@ -309,24 +309,20 @@ router.post('/refresh-token', (req, res) => {
       .json({ access_token: null, error_message: userErrorMessages.TOKEN_INVALID });
   }
 
-  jwt.verify(refreshToken, refreshTokenSecret, (err, user) => {
-    if (err) {
-      debug(err);
-      return res
-        .status(403)
-        .json({ access_token: null, error_message: userErrorMessages.TOKEN_INVALID });
-    }
+  try {
+    const user = jwt.verify(refreshToken, refreshTokenSecret);
 
     const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, {
       expiresIn: '20m',
     });
 
     return res.json({ access_token: accessToken, error_message: null });
-  });
-
-  return res
-    .status(500)
-    .json({ access_token: null, error_message: logicErrorMessages.INACCESSIBLE_CODE });
+  } catch (err) {
+    debug(err);
+    return res
+      .status(403)
+      .json({ access_token: null, error_message: userErrorMessages.TOKEN_INVALID });
+  }
 });
 
 /**
