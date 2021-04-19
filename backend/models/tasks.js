@@ -24,7 +24,7 @@ async function addTask(title, description, userId, boardId) {
 
   try {
     await db.run(
-      `INSERT INTO Tasks (title, description, board_id, column_id) VALUES ("${title}", "${description}", ${boardId}, 0)`
+      'INSERT INTO Tasks (title, description, board_id, column_id) VALUES ("?", "?", ?, 0)', title, description, boardId
     );
 
     return title;
@@ -42,7 +42,7 @@ async function removeTask(title, userId, boardId) {
 
   try {
     await db.run(
-      `DELETE FROM Tasks WHERE title = "${title}" AND board_id = ${boardId}`
+      'DELETE FROM Tasks WHERE title = "?" AND board_id = ?', title, boardId
     );
 
     return title;
@@ -60,7 +60,7 @@ async function getBoardTasks(userId, boardId) {
 
   try {
     const taskList = await db.all(
-      `SELECT title FROM Tasks WHERE board_id = ${boardId}`
+      'SELECT title FROM Tasks WHERE board_id = ?', boardId
     );
 
     return taskList;

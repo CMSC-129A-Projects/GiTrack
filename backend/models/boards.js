@@ -21,11 +21,11 @@ async function createBoard(title, userId) {
 
   try {
     const boardResult = await db.run(
-      'INSERT INTO Boards (title) VALUES ("(?)")',
+      'INSERT INTO Boards (title) VALUES (?)',
       title
     );
     await db.run(
-      'INSERT INTO Memberships (board_id, user_id, is_developer) VALUES ((?), (?), 0)',
+      'INSERT INTO Memberships (board_id, user_id, is_developer) VALUES (?, ?, 0)',
       boardResult.lastID,
       userId
     );
@@ -43,7 +43,7 @@ async function editBoard(boardId, newName, userId) {
   await getPermissions(db, userId, boardId);
 
   try {
-    await db.run('UPDATE Boards SET title = "(?)" WHERE id = (?)', newName, boardId);
+    await db.run('UPDATE Boards SET title = ? WHERE id = ?', newName, boardId);
     debug(`Board renamed to ${newName}.`);
 
     return true;
