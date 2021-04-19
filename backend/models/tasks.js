@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 const debug = require('debug')('backend:models-tasks');
 const dbHandler = require('../db');
 
@@ -8,8 +7,11 @@ const {
 } = require('../constants/error-messages');
 
 async function getPermissions(db, userId, boardId) {
-  const userPermission = await db.get(`SELECT is_developer
-    FROM Memberships WHERE user_id = ${userId} AND board_id = ${boardId}`);
+  const userPermission = await db.get(
+    'SELECT is_developer FROM Memberships WHERE user_id = ? AND board_id = ?',
+    userId,
+    boardId
+  );
   if (!userPermission) {
     throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
   } else {
@@ -24,7 +26,10 @@ async function addTask(title, description, userId, boardId) {
 
   try {
     await db.run(
-      'INSERT INTO Tasks (title, description, board_id, column_id) VALUES ("?", "?", ?, 0)', title, description, boardId
+      'INSERT INTO Tasks (title, description, board_id, column_id) VALUES (?, ?, ?, 0)',
+      title,
+      description,
+      boardId
     );
 
     return title;
@@ -41,17 +46,15 @@ async function removeTask(title, userId, boardId) {
   await getPermissions(db, userId, boardId);
 
   try {
-    await db.run(
-      'DELETE FROM Tasks WHERE title = "?" AND board_id = ?', title, boardId
-    );
+    await db.run('DELETE FROM Tasks WHERE title = ? AND board_id = ?', title, boardId);
 
     return title;
   } catch (err) {
     debug(err);
-    
+
     throw taskErrorMessages.TASK_NOT_FOUND;
   }
-};
+}
 
 async function getBoardTasks(userId, boardId) {
   const db = await dbHandler;
@@ -60,7 +63,8 @@ async function getBoardTasks(userId, boardId) {
 
   try {
     const taskList = await db.all(
-      'SELECT title FROM Tasks WHERE board_id = ?', boardId
+      'SELECT title FROM Tasks WHERE board_id = ?',
+      boardId
     );
 
     return taskList;
@@ -73,5 +77,5 @@ async function getBoardTasks(userId, boardId) {
 module.exports = {
   addTask,
   removeTask,
-  getBoardTasks
+  getBoardTasks,
 };

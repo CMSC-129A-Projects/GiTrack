@@ -2,6 +2,7 @@ const debug = require('debug')('backend:models-board');
 const dbHandler = require('../db');
 
 const { board: boardErrorMessages } = require('../constants/error-messages');
+
 async function getPermissions(db, userId, boardId) {
   const userPermission = await db.get(
     'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (?)',
@@ -19,10 +20,7 @@ async function createBoard(title, userId) {
   const db = await dbHandler;
 
   try {
-    const boardResult = await db.run(
-      'INSERT INTO Boards (title) VALUES (?)',
-      title
-    );
+    const boardResult = await db.run('INSERT INTO Boards (title) VALUES (?)', title);
     await db.run(
       'INSERT INTO Memberships (board_id, user_id, is_developer) VALUES (?, ?, 0)',
       boardResult.lastID,
@@ -38,7 +36,7 @@ async function createBoard(title, userId) {
 
 async function editBoard(boardId, newName, userId) {
   const db = await dbHandler;
-  
+
   await getPermissions(db, userId, boardId);
 
   try {
@@ -55,7 +53,7 @@ async function editBoard(boardId, newName, userId) {
 
 async function deleteBoard(boardId, userId) {
   const db = await dbHandler;
-  
+
   await getPermissions(db, userId, boardId);
 
   try {
@@ -90,5 +88,5 @@ module.exports = {
   createBoard,
   editBoard,
   deleteBoard,
-  getBoardsWithUser
+  getBoardsWithUser,
 };
