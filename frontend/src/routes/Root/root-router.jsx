@@ -17,10 +17,13 @@ export default function RootRouter() {
         <Route path="/board">
           <Board />
         </Route>
-        <Route path="/">
+        <Route path="/login">
           <LoginSignup />
         </Route>
-        <Redirect from="/" to="/login" />
+        <Route path="/signup">
+          <LoginSignup />
+        </Route>
+        <Redirect to="/login" />
       </Switch>
     </Router>
   );
