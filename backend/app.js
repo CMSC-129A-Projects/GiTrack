@@ -5,6 +5,7 @@ const http = require('http');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const debug = require('debug')('backend:server');
+const cors = require('cors');
 
 require('dotenv').config();
 
@@ -12,7 +13,7 @@ require('dotenv').config();
 const docsRouter = require('./routes/docs');
 const authRouter = require('./routes/auth');
 const boardsRouter = require('./routes/boards');
-const taskRouter = require('./routes/tasks')
+const taskRouter = require('./routes/tasks');
 
 const app = express();
 const db = require('./db');
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
 // Routers
 app.use('/docs', docsRouter);

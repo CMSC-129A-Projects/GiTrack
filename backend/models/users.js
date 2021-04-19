@@ -17,21 +17,24 @@ async function registerUser(username, password, email) {
   const db = await dbHandler;
 
   const userResult = await db.get(
-    `SELECT username From Users where username = "${username}"`
+    'SELECT username From Users where username = ?',
+    username
   );
   if (userResult !== undefined) {
     throw userErrorMessages.DUPLICATE_USER;
   }
 
-  const emailResult = await db.get(`SELECT email From Users where email = "${email}"`);
+  const emailResult = await db.get('SELECT email From Users where email = ?', email);
   if (emailResult !== undefined) {
     throw userErrorMessages.DUPLICATE_EMAIL;
   }
 
   try {
     await db.run(
-      `INSERT INTO Users (username, password, email)
-     VALUES ("${username}", "${hash}", "${email}")`
+      'INSERT INTO Users (username, password, email) VALUES (?,?,?)',
+      username,
+      hash,
+      email
     );
 
     debug(`Inserted ${username} into Users`);
@@ -47,7 +50,8 @@ async function loginUser(username, password) {
   let result = null;
   if (username !== null) {
     result = await db.get(
-      `SELECT password, id From Users where username = "${username}"`
+      'SELECT password, id From Users where username = ?',
+      username
     );
     if (result === undefined) {
       debug('Username not found');
