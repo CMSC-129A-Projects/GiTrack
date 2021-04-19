@@ -25,8 +25,8 @@ export default function LoginPage() {
 
       dispatch(
         usersActions.loginActions.loginUpdate({
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token,
           user: {
             id: data.id,
             username: data.username,

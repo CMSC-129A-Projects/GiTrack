@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
 import Logo from 'assets/images/logowhite.svg';
@@ -13,19 +14,38 @@ import LoginSignupCard from 'widgets/LoginSignupCard';
 // services
 import AuthService from 'services/AuthService';
 
+// actions
+import { actions as usersActions } from 'ducks/reducers/users';
+
 // Style
 import * as style from './signup-styles';
 
 export default function SignupPage() {
-  const {
-    register,
-    handleSubmit,
-    // formState: { errors },
-  } = useForm();
+  const dispatch = useDispatch();
 
-  const onSubmit = (data) => {
-    AuthService.register({ body: data }).then((registerResponse) => {
-      console.log(registerResponse);
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = (formData) => {
+    AuthService.register({ body: formData }).then(() => {
+      AuthService.login({
+        body: {
+          username: formData.username,
+          password: formData.password,
+        },
+      }).then((loginResponse) => {
+        const { data } = loginResponse;
+
+        dispatch(
+          usersActions.loginActions.loginUpdate({
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token,
+            user: {
+              id: data.id,
+              username: data.username,
+            },
+          })
+        );
+      });
     });
   };
 
