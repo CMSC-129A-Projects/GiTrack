@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
 
-// Style
-import * as style from './remove-task-modal-styles';
-
 import Modal from 'components/Modal';
 import buttonVariants from 'components/Button/constants';
 import modalSizes from 'components/Modal/constants';
+
+// Style
+import * as style from './remove-task-modal-styles';
 
 export default function RemoveTaskModal({ isOpen, handleClose }) {
   return (

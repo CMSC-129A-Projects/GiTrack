@@ -22,7 +22,7 @@ export default function RootRouter() {
         <Route path="/signup">
           <LoginSignup />
         </Route>
-        <Redirect to="/login" />
+        <Redirect to="/board" />
       </Switch>
     </Router>
   );

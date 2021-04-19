@@ -12,10 +12,11 @@ export default function TaskCard({
   body,
   assigneeImage,
   tag,
+  onClick,
   ...passedProps
 }) {
   return (
-    <Card css={style.taskCard} {...passedProps}>
+    <Card onClick={onClick} css={style.taskCard} {...passedProps}>
       <div css={style.taskCard_header}>
         <p css={style.taskCard_title}>{title}</p>
         <div css={style.taskCard_imageContainer}>
