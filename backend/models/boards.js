@@ -4,9 +4,12 @@ const dbHandler = require('../db');
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
 async function getPermissions(db, userId, boardId) {
-  const userPermission = await db.get(`SELECT is_developer
-  FROM Memberships WHERE user_id = ${userId} AND board_id = ${boardId}`);
-  if (userPermission) {
+  const userPermission = await db.get(
+    'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (?)',
+    userId,
+    boardId
+  );
+  if (!userPermission) {
     throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
   } else {
     return true;
@@ -17,9 +20,14 @@ async function createBoard(title, userId) {
   const db = await dbHandler;
 
   try {
-    const boardResult = await db.run(`INSERT INTO Boards (title) VALUES ("${title}")`);
+    const boardResult = await db.run(
+      'INSERT INTO Boards (title) VALUES ("(?)")',
+      title
+    );
     await db.run(
-      `INSERT INTO Memberships (board_id, user_id, is_developer) VALUES (${boardResult.lastID}, ${userId}, "true")`
+      'INSERT INTO Memberships (board_id, user_id, is_developer) VALUES ((?), (?), 0)',
+      boardResult.lastID,
+      userId
     );
 
     return boardResult.lastID;
@@ -35,7 +43,7 @@ async function editBoard(boardId, newName, userId) {
   await getPermissions(db, userId, boardId);
 
   try {
-    await db.run(`UPDATE Boards SET title = "${newName}" WHERE id = ${boardId}`);
+    await db.run('UPDATE Boards SET title = "(?)" WHERE id = (?)', newName, boardId);
     debug(`Board renamed to ${newName}.`);
 
     return true;
@@ -52,7 +60,7 @@ async function deleteBoard(boardId, userId) {
   await getPermissions(db, userId, boardId);
 
   try {
-    await db.run(`DELETE FROM Boards WHERE board_id = ${boardId}`);
+    await db.run('DELETE FROM Boards WHERE board_id = (?)', boardId);
 
     return true;
   } catch (err) {
@@ -66,8 +74,9 @@ async function getBoardsWithUser(userId) {
   const db = await dbHandler;
 
   try {
-    const boards = await db.run(
-      `SELECT title FROM Memberships JOIN Boards ON Memberships.board_id = Boards.id WHERE user_id = ${userId}`
+    const boards = await db.all(
+      'SELECT id, title FROM Memberships JOIN Boards ON Memberships.board_id = Boards.id WHERE user_id = (?)',
+      userId
     );
 
     return boards;

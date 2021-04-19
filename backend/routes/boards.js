@@ -105,7 +105,7 @@ router.post('/delete-board', authJWT, async (req, res) => {
   }
 });
 
-router.post('/get-board', authJWT, async (req, res) => {
+router.get('/get-board', authJWT, async (req, res) => {
   const { id: userId } = req.body;
 
   if (!userId) {
@@ -115,7 +115,7 @@ router.post('/get-board', authJWT, async (req, res) => {
   try {
     const boardId = await getBoardsWithUser(userId);
 
-    return res.json({ boardId });
+    return res.json(boardId);
   } catch (err) {
     debug(err);
     return res.status(500).json({ error_message: err });
