@@ -361,7 +361,7 @@ router.post('/refresh-token', (req, res) => {
  *               $ref: '#/components/schemas/Error'
  */
 router.post('/logout', authJWT, (req, res) => {
-  const { refreshToken } = req.body;
+  const { refresh_token: refreshToken } = req.body;
 
   if (!refreshToken) {
     return res
