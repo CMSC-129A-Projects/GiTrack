@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
-
-import Background from 'assets/images/Vector.svg';
-
 import { lazy, Suspense } from 'react';
-import { BrowserRouter as Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Switch, Redirect } from 'react-router-dom';
+
+import NoAuthRoute from 'hocs/NoAuthRoute';
+import Background from 'assets/images/Vector.svg';
 
 // Style
 import * as style from './loginsignup-styles';
@@ -11,7 +11,7 @@ import * as style from './loginsignup-styles';
 const Login = lazy(() => import('./Login'));
 const Signup = lazy(() => import('./Signup'));
 
-export default function Board() {
+export default function LoginSignup() {
   return (
     <div css={style.login}>
       <div
@@ -24,12 +24,13 @@ export default function Board() {
       >
         <Suspense fallback={<div>loading</div>}>
           <Switch>
-            <Route path="/login">
+            <NoAuthRoute path="/login">
               <Login />
-            </Route>
-            <Route path="/signup">
+            </NoAuthRoute>
+            <NoAuthRoute path="/signup">
               <Signup />
-            </Route>
+            </NoAuthRoute>
+            <Redirect from="/" to="login" />
           </Switch>
         </Suspense>
       </div>

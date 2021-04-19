@@ -2,27 +2,29 @@
 
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
+import PrivateRoute from 'hocs/PrivateRoute';
+
 // Routes
 import Board from '../Board';
 import LoginSignup from '../LoginSignup';
+import Logout from '../Public/Logout';
 
 export default function RootRouter() {
   return (
     <Router>
       <Switch>
-        <Route path="/board">
+        <PrivateRoute
+          path="/logout"
+          name="Logout"
+          render={(props) => <Logout {...props} />}
+        />
+        <PrivateRoute exact path="/board">
           <Board />
-        </Route>
-        <Route path="/add">
-          <Board />
-        </Route>
-        <Route path="/login">
+        </PrivateRoute>
+        <Route path="/">
           <LoginSignup />
         </Route>
-        <Route path="/signup">
-          <LoginSignup />
-        </Route>
-        <Redirect to="/login" />
+        <Redirect from="/" to="/login" />
       </Switch>
     </Router>
   );

@@ -14,6 +14,7 @@ export const addBoard_input = (theme) => css`
   border: none;
   outline: none;
   text-align: center;
+  margin: 0 0 32px 0;
 
   &::placeholder {
     opacity: 0.2;

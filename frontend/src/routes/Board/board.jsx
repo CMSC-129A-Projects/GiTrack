@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Switch, Route } from 'react-router-dom';
 
 import Navbar from 'widgets/Navbar';
@@ -8,8 +8,8 @@ import Navbar from 'widgets/Navbar';
 // Style
 import * as style from './board-styles';
 
-const BoardIndex = lazy(() => import('./BoardIndex'))
-const Add = lazy(() => import('./Add'))
+const BoardIndex = lazy(() => import('./BoardIndex'));
+const Add = lazy(() => import('./Add'));
 
 export default function Board() {
   return (
@@ -17,10 +17,10 @@ export default function Board() {
       <Navbar />
       <Suspense fallback={<div>loading</div>}>
         <Switch>
-          <Route path="/add">
+          <Route exact path="/board/add">
             <Add />
           </Route>
-          <Route path="/board">
+          <Route exact path="/board">
             <BoardIndex />
           </Route>
         </Switch>
