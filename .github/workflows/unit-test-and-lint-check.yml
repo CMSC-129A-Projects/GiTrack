@@ -41,7 +41,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend
+        working-directory: frontend
 
     steps:
     - uses: actions/checkout@v2
