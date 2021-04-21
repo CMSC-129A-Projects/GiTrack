@@ -26,8 +26,7 @@ export const viewTaskModal_body = css`
 export const viewTaskModal_bodyTitle = (theme) => css`
   ${theme.text.titleMD};
   color: ${theme.color.neutral[7]};
-  margin-top: 24px;
-  margin-bottom: 0px;
+  margin: 24px 0 0 0;
 `;
 
 export const viewTaskModal_bodyText = (theme) => css`
@@ -43,7 +42,7 @@ export const viewTaskModal_list = (theme) => css`
   li:before {
     content: '-';
     position: absolute;
-    margin-left: -10px;
+    margin: 0 0 0 -10px;
   }
 `;
 
@@ -54,8 +53,7 @@ export const viewTaskModal_progress = (theme) => css`
   align-items: center;
 
   ${theme.text.bodyXS};
-  margin-top: 4px;
-  margin-bottom: 0;
+  margin: 4px 0 0 0;
 `;
 
 export const viewTaskModal_progressTime = (theme) => css`
@@ -71,10 +69,10 @@ export const viewTaskModal_progressTime = (theme) => css`
 
 export const viewTaskModal_progressText = (theme) => css`
   color: ${theme.color.neutral[7]};
-  padding-left: 8px;
+  padding: 0 0 0 8px;
 `;
 
-export const viewTaskModal_Card = css`
+export const viewTaskModal_optionsCard = css`
   width: 260px;
   padding: 20px;
 `;

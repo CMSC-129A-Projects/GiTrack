@@ -68,7 +68,7 @@ export default function ViewTaskModal({ isOpen, handleClose }) {
               <p css={style.viewTaskModal_progressText}>added initial setup</p>
             </div>
           </div>
-          <Card css={style.viewTaskModal_Card}>
+          <Card css={style.viewTaskModal_optionsCard}>
             <Dropdown css={style.viewTaskModal_input} label="Assignee" />
             <Dropdown css={style.viewTaskModal_input} label="Branch" />
           </Card>

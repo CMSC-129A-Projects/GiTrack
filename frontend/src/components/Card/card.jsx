@@ -22,7 +22,7 @@ export default function Card({
       onKeyPress={onClick ? keyPressHandler : null}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      css={style.card}
+      css={onClick ? style.card___clickable : style.card}
       {...passedProps}
     >
       {children}

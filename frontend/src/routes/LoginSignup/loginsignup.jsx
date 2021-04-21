@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
 
-import Background from 'assets/images/Vector.svg';
-
 import { lazy, Suspense } from 'react';
 import { BrowserRouter as Switch, Route } from 'react-router-dom';
 
@@ -14,14 +12,7 @@ const Signup = lazy(() => import('./Signup'));
 export default function Board() {
   return (
     <div css={style.login}>
-      <div
-        css={{
-          backgroundImage: `url(${Background})`,
-          width: '100vw',
-          height: '100vh',
-          backgroundSize: 'cover',
-        }}
-      >
+      <div css={style.login_background}>
         <Suspense fallback={<div>loading</div>}>
           <Switch>
             <Route path="/login">
