@@ -9,11 +9,6 @@ export const signupPage = css`
   align-items: center;
 `;
 
-export const signupCard = css`
-  width: 420px;
-  height: 507px;
-`;
-
 export const signupPage_image = css`
   width: 100%;
 `;

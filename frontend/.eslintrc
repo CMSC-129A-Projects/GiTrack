@@ -1,5 +1,6 @@
 {
   "extends": ["airbnb", "prettier"],
+  "parser": "babel-eslint",
   "settings": {
     "import/resolver": {
       "node": {
@@ -14,7 +15,10 @@
     "react/prop-types": 0,
     "react/jsx-props-no-spreading": 0,
     "react/button-has-type": 0,
+    "react/forbid-prop-types": 0,
     "react/react-in-jsx-scope": "off",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "consistent-return": 0,
+    "no-param-reassign": 0
   }
 }
