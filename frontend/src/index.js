@@ -1,12 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
+
+import { Provider } from 'react-redux';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import { configureStore } from 'configureStore';
+import { configureAxios } from 'configureAxios';
 import reportWebVitals from './reportWebVitals';
+import App from './components/App';
+
+const store = configureStore();
+configureAxios(store);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistStore(store)}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </PersistGate>
+  </Provider>,
   document.getElementById('root')
 );
 

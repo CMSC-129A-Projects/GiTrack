@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 // Style
-import * as style from './input-styles'
+import * as style from './input-styles';
 
 export default function Input({
   placeholder,
@@ -34,9 +34,9 @@ export default function Input({
       />
       {error && <p css={style.input_errorMessage}>{error}</p>}
     </div>
-  )
+  );
 }
 
 Input.defaultProps = {
   type: 'text',
-}
+};

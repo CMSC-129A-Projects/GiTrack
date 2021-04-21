@@ -12,16 +12,20 @@ function authJWT(req, res, next) {
     req.user = jwt.verify(token, accessTokenSecret, (err, user) => {
       if (err) {
         debug(err);
-        return res.status(403).json({ message: 'TOKEN_INVALID' });
+        return false;
       }
 
       return user;
     });
-  } else {
-    return res.status(403).json({ message: 'AUTH_NOT_FOUND' });
+
+    if (req.user) {
+      return next();
+    }
+
+    return res.status(403).json({ error_message: 'TOKEN_INVALID' });
   }
 
-  return next();
+  return res.status(403).json({ error_message: 'AUTH_NOT_FOUND' });
 }
 
 module.exports = {

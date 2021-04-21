@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./app.js",
-    "dev": "env DEBUG=backend:* nodemon ./app.js",
-    "lint": "eslint *.js"
+    "start": "env NODE_ENV=PROD node ./app.js",
+    "dev": "env NODE_ENV=DEV DEBUG=backend:* nodemon ./app.js",
+    "lint": "eslint *.js",
+    "test": "rm -f gitrack-test.db && env NODE_ENV=TEST mocha"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -22,11 +23,16 @@
     "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
     "eslint": "^7.23.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-chai-friendly": "^0.6.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-mocha": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
+    "mocha": "^8.3.2",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1"
   }

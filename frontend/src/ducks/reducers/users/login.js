@@ -30,8 +30,8 @@ export const actions = {
     type: types.LOGIN_UPDATE,
     payload: {
       user,
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      accessToken,
+      refreshToken,
     },
   }),
   loginRestart: () => ({

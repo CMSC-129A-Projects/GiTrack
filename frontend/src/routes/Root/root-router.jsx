@@ -5,15 +5,16 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 // Routes
 import Board from '../Board';
 import LoginSignup from '../LoginSignup';
+import Logout from '../Public/Logout';
 
 export default function RootRouter() {
   return (
     <Router>
       <Switch>
-        <Route path="/board">
-          <Board />
+        <Route path="/logout">
+          <Logout />
         </Route>
-        <Route path="/add">
+        <Route path="/board">
           <Board />
         </Route>
         <Route path="/login">
