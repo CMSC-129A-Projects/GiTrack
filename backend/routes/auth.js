@@ -202,6 +202,8 @@ router.post('/login', async (req, res) => {
   try {
     const id = await loginUser(username, password);
 
+    console.log(accessTokenSecret);
+    console.log(refreshTokenSecret);
     const accessToken = jwt.sign({ id }, accessTokenSecret, {
       expiresIn: '20m',
     });
