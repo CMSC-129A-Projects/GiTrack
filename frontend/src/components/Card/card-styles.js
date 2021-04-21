@@ -16,9 +16,9 @@ export const card___clickable = (theme) => css`
   transition: background-color 0.3s;
   cursor: pointer;
 
-  .card___clickable:hover,
-  .card___clickable:focus,
-  .card___clickable:active {
+  &:hover,
+  &:focus,
+  &:active {
     background-color: ${theme.color.neutral[0]};
   }
 `;
