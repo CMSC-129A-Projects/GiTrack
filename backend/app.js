@@ -18,7 +18,7 @@ const taskRouter = require('./routes/tasks');
 const app = express();
 const db = require('./db');
 
-app.use(logger('dev'));
+app.use(logger('dev', { skip: () => process.env.NODE_ENV === 'TEST' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -134,3 +134,5 @@ server.on('error', onError);
 server.on('listening', onListening);
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
+
+module.exports = server;

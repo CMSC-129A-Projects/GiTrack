@@ -5,10 +5,25 @@ const schema = require('./schema');
 
 sqlite3.verbose();
 
+let filename;
+
+switch (process.env.NODE_ENV) {
+  case 'PROD':
+    filename = './gitrack-prod.db';
+    break;
+  case 'TEST':
+    filename = './gitrack-test.db';
+    break;
+  default:
+  case 'DEV':
+    filename = './gitrack-dev.db';
+    break;
+}
+
 async function initDB() {
   try {
     const db = await open({
-      filename: './gitrack.db',
+      filename,
       driver: sqlite3.Database,
     });
 
