@@ -9,26 +9,28 @@ import * as style from './loginsignupcard-styles';
 export default function LoginSignupCard({
   title,
   children,
-  action,
+  action: { variant, disabled, onClick, name },
   subtext,
   linkText,
   link,
+  onSubmit,
   ...passedProps
 }) {
   return (
     <Card css={style.loginSignupCard} {...passedProps}>
       <p css={style.loginSignupCard_title}>{title}</p>
-      {children}
-      {action.map(({ name, variant, onClick, disabled }) => (
+      <form onSubmit={onSubmit}>
+        {children}
         <Button
           css={style.loginSignupCard_button}
           variant={variant}
           disabled={disabled}
           onClick={onClick}
+          type="submit"
         >
           {name}
         </Button>
-      ))}
+      </form>
       <p css={style.loginSignupCard_subtext}>
         {subtext}
         <a href={link} css={style.loginSignupCard_link}>
