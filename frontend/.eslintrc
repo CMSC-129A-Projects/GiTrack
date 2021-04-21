@@ -19,5 +19,10 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "consistent-return": 0,
     "no-param-reassign": 0
+  },
+  "globals": {
+    "localStorage": true,
+    "fetch": true,
+    "document": true
   }
 }
