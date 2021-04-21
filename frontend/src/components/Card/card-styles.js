@@ -12,13 +12,12 @@ export const card___clickable = (theme) => css`
   border-radius: 16px;
   box-shadow: 0px 12px 24px -12px rgba(0, 25, 68, 0.2);
   height: max-content;
-
-  transition: background-color 0.3s;
   cursor: pointer;
 
   &:hover,
   &:focus,
   &:active {
-    background-color: ${theme.color.neutral[0]};
+    box-shadow: 0px 0px 0px 0px;
+    border: 1px solid rgba(32, 87, 227, 0.3);
   }
 `;
