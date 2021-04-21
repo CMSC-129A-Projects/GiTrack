@@ -5,7 +5,7 @@
   "scripts": {
     "start": "env NODE_ENV=PROD node ./app.js",
     "dev": "env NODE_ENV=DEV DEBUG=backend:* nodemon ./app.js",
-    "lint": "eslint *.js",
+    "lint": "eslint '**/*.js'",
     "test": "rm -f gitrack-test.db && env NODE_ENV=TEST mocha"
   },
   "dependencies": {

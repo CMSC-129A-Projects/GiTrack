@@ -11,10 +11,7 @@ const { registerUser, loginUser } = require('../models/users');
 const { authJWT } = require('../middlewares/auth');
 
 // Constants
-const {
-  user: userErrorMessages,
-  logic: logicErrorMessages,
-} = require('../constants/error-messages');
+const { user: userErrorMessages } = require('../constants/error-messages');
 
 // Secrets
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
