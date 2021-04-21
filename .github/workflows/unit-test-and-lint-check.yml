@@ -51,5 +51,5 @@ jobs:
       with:
         node-version: 15.x
     - run: npm ci
-    - run: npm test -- --watchAll=false
+    - run: npm test -- --watchAll=false --passWithNoTests
     - run: npm run lint
