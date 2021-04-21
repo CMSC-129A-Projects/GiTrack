@@ -20,10 +20,14 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 15.x
-      env:
-        ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-        REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+
+    - name: Create env file
+      run: |
+        touch .env
+        echo ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }} >> .env
+        echo REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }} >> .env
+
+    - name: Run test and lint
       uses: actions/setup-node@v2
       with:
         node-version: 15.x
