@@ -91,7 +91,7 @@ describe('Boards', function () {
               password: 'generic123',
               email: 'juan@pen.duko',
             })
-            .end(function (err, res) {
+            .end(function () {
               chai
                 .request(server)
                 .post('/auth/login')
@@ -99,7 +99,7 @@ describe('Boards', function () {
                   username: 'pedro',
                   password: 'generic123',
                 })
-                .end(function (err, res) {
+                .end(function () {
                   accessToken = res.body.access_token;
                   refreshToken = res.body.refresh_token;
                   chai
@@ -111,7 +111,7 @@ describe('Boards', function () {
                       name: 'board',
                       userId: 2,
                     })
-                    .end(function (err, res) {
+                    .end(function () {
                       res.should.have.status(403);
                       res.body.should.have
                         .property('error_message')
@@ -182,6 +182,6 @@ describe('Boards', function () {
           res.body.should.have.property('error_message').eql('MISSING_NAME');
           done();
         });
-    })
+    });
   });
 });
