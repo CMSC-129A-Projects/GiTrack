@@ -46,13 +46,11 @@ async function editBoard(boardId, newName) {
   }
 }
 
-async function deleteBoard(boardId, userId) {
+async function deleteBoard(boardId) {
   const db = await dbHandler;
 
-  await getPermissions(db, userId, boardId);
-
   try {
-    await db.run('DELETE FROM Boards WHERE board_id = (?)', boardId);
+    await db.run('DELETE FROM Boards WHERE id = (?)', boardId);
 
     return true;
   } catch (err) {
@@ -85,7 +83,7 @@ async function getBoardById(boardId) {
   try {
     const boardName = await db.get('SELECT title FROM Boards WHERE id = ?', boardId);
 
-    return boardName.title;
+    return boardName;
   } catch (err) {
     debug(err);
 

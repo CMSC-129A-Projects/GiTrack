@@ -69,7 +69,7 @@ router.patch('/edit-board', authJWT, async (req, res) => {
 
   const currentName = await getBoardById(id);
 
-  if (name === currentName) {
+  if (name === currentName.title) {
     return res
       .status(409)
       .json({ id: null, error_message: boardErrorMessages.SAME_NAME });
@@ -85,24 +85,38 @@ router.patch('/edit-board', authJWT, async (req, res) => {
   }
 });
 
-router.post('/delete-board', authJWT, async (req, res) => {
+router.delete('/delete-board', authJWT, async (req, res) => {
   const { id } = req.body;
   const { id: userId } = req.user;
 
-  if (!id) {
+  if (id === undefined) {
     return res
       .status(400)
       .json({ id: null, error_message: boardErrorMessages.MISSING_ID });
   }
 
-  if (!userId) {
+  if (userId === undefined) {
     return res
       .status(400)
       .json({ id: null, error_message: boardErrorMessages.MISSING_USER_ID });
   }
 
+  const userPermissions = await getPermissions(userId, id);
+
+  if (userPermissions === undefined) {
+    return res
+      .status(403)
+      .json({ id: null, error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS });
+  }
+
+  if ((await getBoardById(id)) === undefined) {
+    return res
+      .status(400)
+      .json({ id: null, error_message: boardErrorMessages.DELETE_FAILED });
+  }
+
   try {
-    const boardId = await deleteBoard(id, userId);
+    const boardId = await deleteBoard(id);
 
     return res.json({ id: boardId, error_message: null });
   } catch (err) {
