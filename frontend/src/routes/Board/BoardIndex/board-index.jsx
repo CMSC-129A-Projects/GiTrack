@@ -8,18 +8,24 @@ import buttonVariants from 'components/Button/constants';
 import TaskCard from 'widgets/TaskCard';
 
 import AddTaskModal from 'widgets/AddTaskModal';
+import ViewTaskModal from 'widgets/ViewTaskModal';
 
 // Style
 import * as style from './board-index-styles';
 
 export default function BoardIndex() {
   const [isAddTaskModalOpened, setIsAddTaskModalOpened] = useState(false);
+  const [isViewTaskModalOpened, setIsViewTaskModalOpened] = useState(false);
 
   return (
     <>
       <AddTaskModal
         isOpen={isAddTaskModalOpened}
         handleClose={() => setIsAddTaskModalOpened(false)}
+      />
+      <ViewTaskModal
+        isOpen={isViewTaskModalOpened}
+        handleClose={() => setIsViewTaskModalOpened(false)}
       />
       <div css={style.boardIndex}>
         <div css={style.boardIndex_header}>
@@ -38,6 +44,7 @@ export default function BoardIndex() {
               title="[Frontend] Add Card Component"
               body="Create a Card component"
               tag="feature/add-card"
+              onClick={() => setIsViewTaskModalOpened(true)}
             />
           </Column>
           <Column title="Merged" count={2}>

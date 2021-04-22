@@ -3,8 +3,6 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter as Switch, Redirect, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import Background from 'assets/images/Vector.svg';
-
 // Style
 import * as style from './loginsignup-styles';
 
@@ -20,14 +18,7 @@ export default function LoginSignup() {
 
   return (
     <div css={style.login}>
-      <div
-        css={{
-          backgroundImage: `url(${Background})`,
-          width: '100vw',
-          height: '100vh',
-          backgroundSize: 'cover',
-        }}
-      >
+      <div css={style.login_background}>
         <Suspense fallback={<div>loading</div>}>
           <Switch>
             <Route path="/login">
