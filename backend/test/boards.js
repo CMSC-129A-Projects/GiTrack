@@ -82,7 +82,7 @@ describe('Boards', function () {
         .post('/auth/logout')
         .auth(accessToken, { type: 'bearer' })
         .send({ refresh_token: refreshToken })
-        .end(function (err, res) {
+        .end(function () {
           chai
             .request(server)
             .post('/auth/register')
@@ -91,7 +91,7 @@ describe('Boards', function () {
               password: 'generic123',
               email: 'juan@pen.duko',
             })
-            .end(function (err1, res1) {
+            .end(function () {
               chai
                 .request(server)
                 .post('/auth/login')
