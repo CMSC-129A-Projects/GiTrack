@@ -5,9 +5,11 @@ const router = express.Router();
 
 // Models
 const {
+  getPermissions,
   createBoard,
   deleteBoard,
   getBoardsWithUser,
+  getBoardById,
   editBoard,
 } = require('../models/boards');
 
@@ -25,22 +27,16 @@ router.post('/create-board', authJWT, async (req, res) => {
   const { title } = req.body;
   const { id: userId } = req.user;
 
-  if (!title) {
+  if (title === undefined) {
     return res
       .status(400)
       .json({ id: null, error_message: boardErrorMessages.MISSING_TITLE });
   }
 
-  if (!userId) {
-    return res
-      .status(400)
-      .json({ id: null, error_message: boardErrorMessages.MISSING_ID });
-  }
-
   try {
     const boardId = await createBoard(title, userId);
 
-    return res.json({ id: boardId, error_message: null });
+    return res.status(201).json({ id: boardId, error_message: null });
   } catch (err) {
     debug(err);
     return res.status(500).json({ id: null, error_message: err });
@@ -51,28 +47,38 @@ router.patch('/edit-board', authJWT, async (req, res) => {
   const { id, name } = req.body;
   const { id: userId } = req.user;
 
-  if (!id) {
+  if (id === undefined) {
     return res
       .status(400)
       .json({ id: null, error_message: boardErrorMessages.MISSING_ID });
   }
 
-  if (!name) {
+  if (name === undefined) {
     return res
       .status(400)
       .json({ id: null, error_message: boardErrorMessages.MISSING_NAME });
   }
 
-  if (!userId) {
+  const userPermissions = await getPermissions(userId, id);
+
+  if (userPermissions === undefined) {
     return res
-      .status(400)
-      .json({ id: null, error_message: boardErrorMessages.MISSING_USER_ID });
+      .status(403)
+      .json({ id: null, error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS });
+  }
+
+  const currentName = await getBoardById(id);
+
+  if (name === currentName) {
+    return res
+      .status(409)
+      .json({ id: null, error_message: boardErrorMessages.SAME_NAME });
   }
 
   try {
     const boardId = await editBoard(id, name, userId);
 
-    return res.json({ id: boardId, error_message: null });
+    return res.json({ id: boardId, title: name, error_message: null });
   } catch (err) {
     debug(err);
     return res.status(500).json({ id: null, error_message: err });
