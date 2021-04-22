@@ -6,7 +6,7 @@ const debug = require('debug')('backend:routes-github');
 const router = express.Router();
 
 // Models
-const { addGithubToken, getGithubToken } = require('../models/users');
+const { addGithubToken } = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -15,7 +15,7 @@ const { authJWT } = require('../middlewares/auth');
 const { github: githubErrorMessages } = require('../constants/error-messages');
 
 // Secrets
-const { GH_API_CLIENT_ID, GH_API_SECRET, AES_SECRET } = process.env;
+const { GH_API_CLIENT_ID, GH_API_SECRET } = process.env;
 
 let states = [];
 
