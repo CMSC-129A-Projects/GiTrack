@@ -91,7 +91,7 @@ describe('Boards', function () {
               password: 'generic123',
               email: 'juan@pen.duko',
             })
-            .end(function () {
+            .end(function (err1, res1) {
               chai
                 .request(server)
                 .post('/auth/login')
@@ -99,9 +99,9 @@ describe('Boards', function () {
                   username: 'pedro',
                   password: 'generic123',
                 })
-                .end(function () {
-                  accessToken = res.body.access_token;
-                  refreshToken = res.body.refresh_token;
+                .end(function (err2, res2) {
+                  accessToken = res2.body.access_token;
+                  refreshToken = res2.body.refresh_token;
                   chai
                     .request(server)
                     .patch('/boards/edit-board')
@@ -111,9 +111,9 @@ describe('Boards', function () {
                       name: 'board',
                       userId: 2,
                     })
-                    .end(function () {
-                      res.should.have.status(403);
-                      res.body.should.have
+                    .end(function (errF, resF) {
+                      resF.should.have.status(403);
+                      resF.body.should.have
                         .property('error_message')
                         .eql('NOT_ENOUGH_PERMISSIONS');
                       done();
