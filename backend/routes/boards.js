@@ -59,9 +59,15 @@ router.patch('/edit-board', authJWT, async (req, res) => {
       .json({ id: null, error_message: boardErrorMessages.MISSING_NAME });
   }
 
-  const userPermissions = await getPermissions(userId, id);
-
-  if (userPermissions === undefined) {
+  try {
+    const userPermissions = await getPermissions(userId, id);
+    if (!userPermissions) {
+      return res
+        .status(403)
+        .json({ id: null, error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS });
+    }
+  } catch (err) {
+    debug(err);
     return res
       .status(403)
       .json({ id: null, error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS });
@@ -101,9 +107,15 @@ router.delete('/delete-board', authJWT, async (req, res) => {
       .json({ id: null, error_message: boardErrorMessages.MISSING_USER_ID });
   }
 
-  const userPermissions = await getPermissions(userId, id);
-
-  if (userPermissions === undefined) {
+  try {
+    const userPermissions = await getPermissions(userId, id);
+    if (!userPermissions) {
+      return res
+        .status(403)
+        .json({ id: null, error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS });
+    }
+  } catch (err) {
+    debug(err);
     return res
       .status(403)
       .json({ id: null, error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS });

@@ -5,12 +5,17 @@ const { board: boardErrorMessages } = require('../constants/error-messages');
 
 async function getPermissions(userId, boardId) {
   const db = await dbHandler;
-  const userPermission = await db.get(
-    'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (?)',
-    userId,
-    boardId
-  );
-  return userPermission;
+  try {
+    const userPermission = await db.get(
+      'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (?)',
+      userId,
+      boardId
+    );
+    return userPermission;
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.NOT_MEMBER_OF_BOARD;
+  }
 }
 
 async function createBoard(title, userId) {
