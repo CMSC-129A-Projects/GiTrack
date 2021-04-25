@@ -3,16 +3,18 @@ const dbHandler = require('../db');
 
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
-async function getPermissions(db, userId, boardId) {
-  const userPermission = await db.get(
-    'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (?)',
-    userId,
-    boardId
-  );
-  if (!userPermission) {
-    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
-  } else {
-    return true;
+async function getPermissions(userId, boardId) {
+  const db = await dbHandler;
+  try {
+    const userPermission = await db.get(
+      'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (?)',
+      userId,
+      boardId
+    );
+    return userPermission;
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.NOT_MEMBER_OF_BOARD;
   }
 }
 
@@ -34,10 +36,8 @@ async function createBoard(title, userId) {
   }
 }
 
-async function editBoard(boardId, newName, userId) {
+async function editBoard(boardId, newName) {
   const db = await dbHandler;
-
-  await getPermissions(db, userId, boardId);
 
   try {
     await db.run('UPDATE Boards SET title = ? WHERE id = ?', newName, boardId);
@@ -51,13 +51,11 @@ async function editBoard(boardId, newName, userId) {
   }
 }
 
-async function deleteBoard(boardId, userId) {
+async function deleteBoard(boardId) {
   const db = await dbHandler;
 
-  await getPermissions(db, userId, boardId);
-
   try {
-    await db.run('DELETE FROM Boards WHERE board_id = (?)', boardId);
+    await db.run('DELETE FROM Boards WHERE id = (?)', boardId);
 
     return true;
   } catch (err) {
@@ -84,9 +82,25 @@ async function getBoardsWithUser(userId) {
   }
 }
 
+async function getBoardById(boardId) {
+  const db = await dbHandler;
+
+  try {
+    const boardName = await db.get('SELECT title FROM Boards WHERE id = ?', boardId);
+
+    return boardName;
+  } catch (err) {
+    debug(err);
+
+    throw boardErrorMessages.GET_FAILED;
+  }
+}
+
 module.exports = {
+  getPermissions,
   createBoard,
   editBoard,
   deleteBoard,
+  getBoardById,
   getBoardsWithUser,
 };

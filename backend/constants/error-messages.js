@@ -23,6 +23,7 @@ const board = {
   MISSING_ID: 'MISSING_ID',
   MISSING_NAME: 'MISSING_NAME',
   MISSING_USER_ID: 'MISSING_USER_ID',
+  SAME_NAME: 'SAME_NAME',
 };
 
 const task = {
