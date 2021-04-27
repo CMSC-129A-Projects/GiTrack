@@ -46,13 +46,17 @@ async function removeTask(id, userId, boardId) {
   await getPermissions(db, userId, boardId);
 
   try {
-    await db.run('DELETE FROM Tasks WHERE id = ? AND board_id = ?', id, boardId);
+    const result = await db.run('DELETE FROM Tasks WHERE id = ?', id);
+
+    if (result.changes === 0) {
+      throw taskErrorMessages.TASK_NOT_FOUND;
+    }
 
     return id;
   } catch (err) {
     debug(err);
 
-    throw taskErrorMessages.TASK_NOT_FOUND;
+    throw err;
   }
 }
 

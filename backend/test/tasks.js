@@ -8,7 +8,6 @@ chai.use(chaiHttp);
 
 describe('Tasks', function () {
   let accessToken = null;
-  let refreshToken = null;
   beforeEach(function (done) {
     chai
       .request(server)
@@ -19,7 +18,6 @@ describe('Tasks', function () {
       })
       .end(function (err, res) {
         accessToken = res.body.access_token;
-        refreshToken = res.body.refresh_token;
         done();
       });
   });
@@ -34,7 +32,6 @@ describe('Tasks', function () {
           id: 1,
           title: 'Sample Task',
           description: 'This is a sample task',
-          userId: 1,
         })
         .end(function (err, res) {
           res.should.have.status(200);
@@ -51,7 +48,6 @@ describe('Tasks', function () {
         .send({
           id: 1,
           description: 'This is a sample task',
-          userId: 1,
         })
         .end(function (err, res) {
           res.should.have.status(400);
@@ -68,7 +64,6 @@ describe('Tasks', function () {
         .send({
           id: 1,
           title: 'sample',
-          userId: 1,
         })
         .end(function (err, res) {
           res.should.have.status(400);
@@ -87,7 +82,6 @@ describe('Tasks', function () {
         .send({
           id: 1,
           boardId: 1,
-          userId: 1,
         })
         .end(function (err, res) {
           res.should.have.status(200);
@@ -104,11 +98,10 @@ describe('Tasks', function () {
         .send({
           id: 1,
           boardId: 1,
-          userId: 1,
         })
         .end(function (err, res) {
-          res.should.have.status(403);
-          res.body.should.have.property('error_message').eql(null);
+          res.should.have.status(404);
+          res.body.should.have.property('error_message').eql('TASK_NOT_FOUND');
           done();
         });
     });
