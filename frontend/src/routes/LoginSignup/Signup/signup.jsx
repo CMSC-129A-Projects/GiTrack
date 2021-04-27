@@ -46,14 +46,14 @@ export default function SignupPage() {
         username: formData.username,
         password: formData.password,
       },
-    }).then(() => {
-      AuthService.login({
-        body: {
-          username: formData.username,
-          password: formData.password,
-        },
-      })
-        .then((loginResponse) => {
+    })
+      .then(() => {
+        AuthService.login({
+          body: {
+            username: formData.username,
+            password: formData.password,
+          },
+        }).then((loginResponse) => {
           const { data } = loginResponse;
 
           dispatch(
@@ -66,14 +66,20 @@ export default function SignupPage() {
               },
             })
           );
-        })
-        .catch(() => {
-          setError('email', {
-            type: 'manual',
-            message: 'A user with this email address already exists',
-          });
         });
-    });
+      })
+      .catch(
+        ({
+          response: {
+            data: { error_message: errorMessage },
+          },
+        }) => {
+          setError('overall', {
+            type: 'manual',
+            message: errorMessage,
+          });
+        }
+      );
   };
 
   return (
@@ -119,6 +125,9 @@ export default function SignupPage() {
           type="password"
           {...register('confirm_password', { required: 'This field is required' })}
         />
+        {errors.overall && (
+          <p css={style.signupPage_errorMessage}>{errors.overall.message}</p>
+        )}
       </LoginSignupCard>
     </div>
   );
