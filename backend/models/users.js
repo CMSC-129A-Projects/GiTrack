@@ -1,9 +1,14 @@
-const debug = require('debug')('backend:models-users');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const debug = require('debug')('backend:models-users');
 
 const dbHandler = require('../db');
 
 const { user: userErrorMessages } = require('../constants/error-messages');
+
+const { AES_SECRET } = process.env;
+
+const AES_KEY = Buffer.from(AES_SECRET.split('.').map(Number));
 
 async function registerUser(username, password, email) {
   let hash = null;
@@ -17,14 +22,14 @@ async function registerUser(username, password, email) {
   const db = await dbHandler;
 
   const userResult = await db.get(
-    'SELECT username From Users where username = ?',
+    'SELECT username FROM Users WHERE username = ?',
     username
   );
   if (userResult !== undefined) {
     throw userErrorMessages.DUPLICATE_USER;
   }
 
-  const emailResult = await db.get('SELECT email From Users where email = ?', email);
+  const emailResult = await db.get('SELECT email FROM Users WHERE email = ?', email);
   if (emailResult !== undefined) {
     throw userErrorMessages.DUPLICATE_EMAIL;
   }
@@ -50,7 +55,7 @@ async function loginUser(username, password) {
   let result = null;
   if (username !== null) {
     result = await db.get(
-      'SELECT password, id From Users where username = ?',
+      'SELECT password, id FROM Users WHERE username = ?',
       username
     );
     if (result === undefined) {
@@ -76,4 +81,58 @@ async function loginUser(username, password) {
   }
 }
 
-module.exports = { userErrorMessages, registerUser, loginUser };
+function encrypt(token) {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv('aes-192-ctr', AES_KEY, iv);
+  const encrypted = Buffer.concat([cipher.update(token), cipher.final()]);
+  return { token: encrypted.toString('hex'), iv: iv.toString('hex') };
+}
+
+function decrypt(tokenObj) {
+  const iv = Buffer.from(tokenObj.iv, 'hex');
+  const token = Buffer.from(tokenObj.token, 'hex');
+  const decipher = crypto.createDecipheriv('aes-192-ctr', AES_KEY, iv);
+  const decrypted = Buffer.concat([decipher.update(token), decipher.final()]);
+  return decrypted.toString();
+}
+
+async function addGithubToken(id, githubAuthToken) {
+  const db = await dbHandler;
+
+  const currentAuth = await db.get('SELECT github_auth FROM Users WHERE id = ?', id);
+
+  if (currentAuth && currentAuth.github_auth !== null) {
+    throw userErrorMessages.ALREADY_GITHUB_AUTHENTICATED;
+  }
+
+  const { token, iv } = encrypt(githubAuthToken);
+
+  try {
+    await db.run(
+      'UPDATE Users SET github_auth = ?, github_iv = ? WHERE id = ?',
+      token,
+      iv,
+      id
+    );
+  } catch (err) {
+    debug(err);
+    throw userErrorMessages.INSERT_FAILED;
+  }
+}
+
+async function getGithubToken(id) {
+  const db = await dbHandler;
+
+  const auth = await db.get(
+    'SELECT github_auth, github_iv FROM Users where id = ?',
+    id
+  );
+
+  if (auth === undefined) {
+    throw userErrorMessages.USER_NOT_FOUND;
+  }
+
+  return decrypt({ token: auth.github_auth, iv: auth.github_iv });
+}
+
+module.exports = { registerUser, loginUser, addGithubToken, getGithubToken };

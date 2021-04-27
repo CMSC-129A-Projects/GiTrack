@@ -9,6 +9,7 @@ const user = {
   MISSING_PASSWORD: 'MISSING_PASSWORD',
   MISSING_EMAIL: 'MISSING_EMAIL',
   TOKEN_INVALID: 'TOKEN_INVALID',
+  ALREADY_GITHUB_AUTHENTICATED: 'ALREADY_GITHUB_AUTHENTICATED',
 };
 
 const board = {
@@ -36,4 +37,10 @@ const logic = {
   INACCESSIBLE_CODE: 'INACCESSIBLE_CODE',
 };
 
-module.exports = { user, board, logic, task };
+const github = {
+  STATE_MISMATCH: 'STATE_MISMATCH',
+  MISSING_CODE: 'MISSING_CODE',
+  MISSING_STATE: 'MISSING_STATE',
+};
+
+module.exports = { user, board, logic, task, github };

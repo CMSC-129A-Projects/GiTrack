@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const debug = require('debug')('backend:middlewares-auth');
 
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const { ACCESS_TOKEN_SECRET } = process.env;
 
 function authJWT(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -9,7 +9,7 @@ function authJWT(req, res, next) {
   if (authHeader) {
     const token = authHeader.split(' ')[1];
 
-    req.user = jwt.verify(token, accessTokenSecret, (err, user) => {
+    req.user = jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
       if (err) {
         debug(err);
         return false;

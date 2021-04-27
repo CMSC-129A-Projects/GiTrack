@@ -11,14 +11,10 @@ const { registerUser, loginUser } = require('../models/users');
 const { authJWT } = require('../middlewares/auth');
 
 // Constants
-const {
-  user: userErrorMessages,
-  logic: logicErrorMessages,
-} = require('../constants/error-messages');
+const { user: userErrorMessages } = require('../constants/error-messages');
 
 // Secrets
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
+const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
 let refreshTokens = [];
 
@@ -205,10 +201,10 @@ router.post('/login', async (req, res) => {
   try {
     const id = await loginUser(username, password);
 
-    const accessToken = jwt.sign({ id }, accessTokenSecret, {
+    const accessToken = jwt.sign({ id }, ACCESS_TOKEN_SECRET, {
       expiresIn: '20m',
     });
-    const refreshToken = jwt.sign({ id }, refreshTokenSecret);
+    const refreshToken = jwt.sign({ id }, REFRESH_TOKEN_SECRET);
     refreshTokens.push(refreshToken);
 
     return res.json({
@@ -310,9 +306,9 @@ router.post('/refresh-token', (req, res) => {
   }
 
   try {
-    const user = jwt.verify(refreshToken, refreshTokenSecret);
+    const user = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
 
-    const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, {
+    const accessToken = jwt.sign({ id: user.id }, ACCESS_TOKEN_SECRET, {
       expiresIn: '20m',
     });
 
