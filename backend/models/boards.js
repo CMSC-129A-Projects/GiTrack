@@ -11,10 +11,13 @@ async function getPermissions(userId, boardId) {
       userId,
       boardId
     );
-    return userPermission;
+
+    if (userPermission === undefined) {
+      throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
+    }
   } catch (err) {
     debug(err);
-    throw boardErrorMessages.NOT_MEMBER_OF_BOARD;
+    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
   }
 }
 
@@ -41,9 +44,6 @@ async function editBoard(boardId, newName) {
 
   try {
     await db.run('UPDATE Boards SET title = ? WHERE id = ?', newName, boardId);
-    debug(`Board renamed to ${newName}.`);
-
-    return true;
   } catch (err) {
     debug(err);
 
@@ -56,8 +56,7 @@ async function deleteBoard(boardId) {
 
   try {
     await db.run('DELETE FROM Boards WHERE id = (?)', boardId);
-
-    return true;
+    await db.run('DELETE FROM Memberships WHERE board_id = (?)', boardId);
   } catch (err) {
     debug(err);
 
@@ -86,9 +85,9 @@ async function getBoardById(boardId) {
   const db = await dbHandler;
 
   try {
-    const boardName = await db.get('SELECT title FROM Boards WHERE id = ?', boardId);
+    const board = await db.get('SELECT title, id FROM Boards WHERE id = ?', boardId);
 
-    return boardName;
+    return board;
   } catch (err) {
     debug(err);
 

@@ -100,6 +100,22 @@ describe('Authentication', function () {
           done();
         });
     });
+
+    it('It should allow creating another user', function (done) {
+      chai
+        .request(server)
+        .post('/auth/register')
+        .send({
+          username: 'pedro',
+          password: 'generic123',
+          email: 'juan@pen.duko',
+        })
+        .end(function (err, res) {
+          res.should.have.status(201);
+          res.body.should.have.property('error_message').eql(null);
+          done();
+        });
+    });
   });
 
   describe('Login', function () {
