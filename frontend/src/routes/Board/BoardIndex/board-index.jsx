@@ -7,7 +7,7 @@ import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
 import TaskCard from 'widgets/TaskCard';
 
-import AddTaskModal from 'widgets/AddTaskModal';
+import AddTaskModal from 'widgets/AddRepoModal';
 import ViewTaskModal from 'widgets/ViewTaskModal';
 
 // Style
