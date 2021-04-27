@@ -41,7 +41,7 @@ export default function LoginPage() {
         );
       })
       .catch(() => {
-        setError('total', {
+        setError('overall', {
           type: 'manual',
           message: 'Incorrect username or password',
         });
@@ -78,8 +78,8 @@ export default function LoginPage() {
           type="password"
           {...register('password', { required: 'Please input your password' })}
         />
-        {errors.total && (
-          <p css={style.loginPage_errorMessage}>{errors.total.message}</p>
+        {errors.overall && (
+          <p css={style.loginPage_errorMessage}>{errors.overall.message}</p>
         )}
       </LoginSignupCard>
       <p css={style.loginPage_footer}>Project management with Git</p>
