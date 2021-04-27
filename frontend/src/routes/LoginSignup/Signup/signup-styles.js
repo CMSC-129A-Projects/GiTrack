@@ -26,3 +26,8 @@ export const signupPage_footer = (theme) => css`
   ${theme.text.bodyLG}
   padding: 80px;
 `;
+
+export const signupPage_errorMessage = (theme) => css`
+  color: ${theme.color.red[3]};
+  ${theme.text.bodySM}
+`;
