@@ -27,3 +27,8 @@ export const loginPage_footer = (theme) => css`
   margin: 80px;
   text-align: center;
 `;
+
+export const loginPage_errorMessage = (theme) => css`
+  color: ${theme.color.red[3]};
+  ${theme.text.bodySM}
+`;

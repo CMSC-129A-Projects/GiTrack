@@ -17,23 +17,35 @@ import * as style from './login-styles';
 export default function LoginPage() {
   const dispatch = useDispatch();
 
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = (formData) => {
-    AuthService.login({ body: formData }).then((loginResponse) => {
-      const { data } = loginResponse;
+    AuthService.login({ body: formData })
+      .then((loginResponse) => {
+        const { data } = loginResponse;
 
-      dispatch(
-        usersActions.loginActions.loginUpdate({
-          accessToken: data.access_token,
-          refreshToken: data.refresh_token,
-          user: {
-            id: data.id,
-            username: data.username,
-          },
-        })
-      );
-    });
+        dispatch(
+          usersActions.loginActions.loginUpdate({
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token,
+            user: {
+              id: data.id,
+              username: data.username,
+            },
+          })
+        );
+      })
+      .catch(() => {
+        setError('total', {
+          type: 'manual',
+          message: 'Incorrect username or password',
+        });
+      });
   };
 
   return (
@@ -55,15 +67,20 @@ export default function LoginPage() {
       >
         <Input
           css={style.loginPage_input}
+          error={errors.username ? errors.username.message : null}
           placeholder="Username"
-          {...register('username', { required: true })}
+          {...register('username', { required: 'Please input your username' })}
         />
         <Input
           css={style.loginPage_input}
+          error={errors.password ? errors.password.message : null}
           placeholder="Password"
           type="password"
-          {...register('password', { required: true })}
+          {...register('password', { required: 'Please input your password' })}
         />
+        {errors.total && (
+          <p css={style.loginPage_errorMessage}>{errors.total.message}</p>
+        )}
       </LoginSignupCard>
       <p css={style.loginPage_footer}>Project management with Git</p>
     </div>
