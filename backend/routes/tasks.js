@@ -58,11 +58,11 @@ router.get('/get-board-tasks', authJWT, async (req, res) => {
 });
 
 router.delete('/remove-task', authJWT, async (req, res) => {
-  const { title, id } = req.body;
+  const { id, id: boardId } = req.body;
   const { id: userId } = req.user;
 
   try {
-    const taskId = await removeTask(title, userId, id);
+    const taskId = await removeTask(id, userId, boardId);
 
     return res.json({ title: taskId, error_message: null });
   } catch (err) {

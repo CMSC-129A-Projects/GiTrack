@@ -40,15 +40,15 @@ async function addTask(title, description, userId, boardId) {
   }
 }
 
-async function removeTask(title, userId, boardId) {
+async function removeTask(id, userId, boardId) {
   const db = await dbHandler;
 
   await getPermissions(db, userId, boardId);
 
   try {
-    await db.run('DELETE FROM Tasks WHERE title = ? AND board_id = ?', title, boardId);
+    await db.run('DELETE FROM Tasks WHERE id = ? AND board_id = ?', id, boardId);
 
-    return title;
+    return id;
   } catch (err) {
     debug(err);
 
