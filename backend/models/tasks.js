@@ -1,38 +1,20 @@
 const debug = require('debug')('backend:models-tasks');
 const dbHandler = require('../db');
 
-const {
-  board: boardErrorMessages,
-  task: taskErrorMessages,
-} = require('../constants/error-messages');
+const { task: taskErrorMessages } = require('../constants/error-messages');
 
-async function getPermissions(db, userId, boardId) {
-  const userPermission = await db.get(
-    'SELECT is_developer FROM Memberships WHERE user_id = ? AND board_id = ?',
-    userId,
-    boardId
-  );
-  if (!userPermission) {
-    throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
-  } else {
-    return true;
-  }
-}
-
-async function addTask(title, description, userId, boardId) {
+async function addTask(title, description, boardId) {
   const db = await dbHandler;
 
-  await getPermissions(db, userId, boardId);
-
   try {
-    await db.run(
+    const taskResult = await db.run(
       'INSERT INTO Tasks (title, description, board_id, column_id) VALUES (?, ?, ?, 0)',
       title,
       description,
       boardId
     );
 
-    return title;
+    return taskResult.lastID;
   } catch (err) {
     debug(err);
 
@@ -40,10 +22,25 @@ async function addTask(title, description, userId, boardId) {
   }
 }
 
-async function removeTask(id, userId, boardId) {
+async function getTask(id) {
   const db = await dbHandler;
 
-  await getPermissions(db, userId, boardId);
+  try {
+    const task = await db.get(
+      'SELECT title, description, id, board_id, column_id FROM Tasks where id = ?',
+      id
+    );
+
+    return task;
+  } catch (err) {
+    debug(err);
+
+    throw taskErrorMessages.GET_FAILED;
+  }
+}
+
+async function removeTask(id) {
+  const db = await dbHandler;
 
   try {
     const result = await db.run('DELETE FROM Tasks WHERE id = ?', id);
@@ -63,8 +60,6 @@ async function removeTask(id, userId, boardId) {
 async function getBoardTasks(userId, boardId) {
   const db = await dbHandler;
 
-  await getPermissions(db, userId, boardId);
-
   try {
     const taskList = await db.all(
       'SELECT title FROM Tasks WHERE board_id = ?',
@@ -80,6 +75,7 @@ async function getBoardTasks(userId, boardId) {
 
 module.exports = {
   addTask,
+  getTask,
   removeTask,
   getBoardTasks,
 };

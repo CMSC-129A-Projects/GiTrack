@@ -198,7 +198,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
     return res.status(403).json({
       id: null,
       title: null,
-      error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS,
+      error_message: err,
     });
   }
 
@@ -281,7 +281,7 @@ router.patch('/:id(\\d+)', authJWT, async (req, res) => {
     return res.status(403).json({
       id: null,
       title: null,
-      error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS,
+      error_message: err,
     });
   }
 
@@ -334,9 +334,7 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
     await getPermissions(userId, id);
   } catch (err) {
     debug(err);
-    return res
-      .status(403)
-      .json({ error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS });
+    return res.status(403).json({ id: null, title: null, error_message: err });
   }
 
   let board = null;
@@ -359,7 +357,7 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
     return res.json({ id: board.id, title: board.title, error_message: null });
   } catch (err) {
     debug(err);
-    return res.status(500).json({ id: null, error_message: err });
+    return res.status(500).json({ id: null, title: null, error_message: err });
   }
 });
 
