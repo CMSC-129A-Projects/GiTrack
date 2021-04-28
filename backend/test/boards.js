@@ -203,7 +203,7 @@ describe('Boards', function () {
     it('It should allow users with sufficient permissions to delete the board', function (done) {
       chai
         .request(server)
-        .delete('/board/1')
+        .delete('/board/2')
         .auth(accessToken, { type: 'bearer' })
         .end(function (err, res) {
           res.should.have.status(200);

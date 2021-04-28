@@ -40,19 +40,23 @@ async function addTask(title, description, userId, boardId) {
   }
 }
 
-async function removeTask(title, userId, boardId) {
+async function removeTask(id, userId, boardId) {
   const db = await dbHandler;
 
   await getPermissions(db, userId, boardId);
 
   try {
-    await db.run('DELETE FROM Tasks WHERE title = ? AND board_id = ?', title, boardId);
+    const result = await db.run('DELETE FROM Tasks WHERE id = ?', id);
 
-    return title;
+    if (result.changes === 0) {
+      throw taskErrorMessages.TASK_NOT_FOUND;
+    }
+
+    return id;
   } catch (err) {
     debug(err);
 
-    throw taskErrorMessages.TASK_NOT_FOUND;
+    throw err;
   }
 }
 
