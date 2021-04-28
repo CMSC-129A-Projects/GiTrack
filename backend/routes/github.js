@@ -6,7 +6,7 @@ const debug = require('debug')('backend:routes-github');
 const router = express.Router();
 
 // Models
-const { addGithubToken } = require('../models/users');
+const { addGithubToken, getGithubToken } = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -46,7 +46,7 @@ router.get('/link/callback', async (req, res) => {
     return res.status(400).json({ error_message: githubErrorMessages.MISSING_CODE });
   }
 
-  if (code === undefined) {
+  if (state === undefined) {
     return res.status(400).json({ error_message: githubErrorMessages.MISSING_STATE });
   }
 
@@ -92,6 +92,42 @@ router.get('/link/callback', async (req, res) => {
     debug(err);
     return res.status(503).json({ error_message: JSON.stringify(err) });
   }
+});
+
+router.get('/repo', authJWT, async (req, res) => {
+  const { id: userId } = req.user;
+
+  let authToken = null;
+
+  try {
+    authToken = await getGithubToken(userId);
+  } catch (err) {
+    return res.status(403).json({ repos: null,  error_message: err });
+  }
+
+  try {
+    const { status, data } = await axios.get('https://api.github.com/user/repos', {
+      headers: {
+        Accept: 'application/vnd.github.v3+json',
+        Authorization: `token ${authToken}`,
+      },
+    });
+
+    if (status !== 200) {
+      throw data;
+    }
+
+    const newData = data.map((curr) => ({
+      id: curr.id,
+      full_name: curr.full_name,
+      url: curr.url,
+    }));
+
+    return res.json({ repos: newData, error_message: null });
+  } catch (err) {
+    debug(err);
+    return res.status(503).json({ repos: null, error_message: JSON.stringify(err) });
+  }  
 });
 
 module.exports = router;
