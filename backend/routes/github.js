@@ -2,11 +2,16 @@ const axios = require('axios');
 const crypto = require('crypto');
 const express = require('express');
 const debug = require('debug')('backend:routes-github');
+const { request } = require('@octokit/request');
 
 const router = express.Router();
 
 // Models
-const { addGithubToken } = require('../models/users');
+const {
+  addGithubToken,
+  getGithubToken,
+  removeGithubToken,
+} = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -20,7 +25,7 @@ const { GH_API_CLIENT_ID, GH_API_SECRET } = process.env;
 let states = [];
 
 router.get('/link', authJWT, (req, res) => {
-  const scope = ['repo:status', 'write:repo_hook'];
+  const scope = ['repo', 'write:repo_hook'];
 
   const state = Buffer.from(
     JSON.stringify({
@@ -46,7 +51,7 @@ router.get('/link/callback', async (req, res) => {
     return res.status(400).json({ error_message: githubErrorMessages.MISSING_CODE });
   }
 
-  if (code === undefined) {
+  if (state === undefined) {
     return res.status(400).json({ error_message: githubErrorMessages.MISSING_STATE });
   }
 
@@ -78,20 +83,57 @@ router.get('/link/callback', async (req, res) => {
 
     const { id } = JSON.parse(Buffer.from(state, 'base64').toString('utf-8'));
 
-    debug(data.access_token);
-
     try {
       await addGithubToken(id, data.access_token);
     } catch (err) {
       debug(err);
-      return res.status(503).json({ error_message: err });
+      return res.status(500).json({ error_message: err });
     }
 
     return res.json({ error_message: null });
   } catch (err) {
     debug(err);
-    return res.status(503).json({ error_message: JSON.stringify(err) });
+    return res.status(500).json({ error_message: JSON.stringify(err) });
   }
 });
 
+router.get('/repo', authJWT, async (req, res) => {
+  const { id: userId } = req.user;
+
+  let authToken = null;
+
+  try {
+    authToken = await getGithubToken(userId);
+  } catch (err) {
+    return res.status(401).json({ repos: null, error_message: err });
+  }
+
+  try {
+    const { data } = await request('GET /user/repos', {
+      headers: {
+        authorization: `token ${authToken}`,
+      },
+      visibility: 'all',
+    });
+
+    const repos = data.map((curr) => ({
+      id: curr.id,
+      full_name: curr.full_name,
+      url: curr.url,
+    }));
+
+    return res.json({ repos, error_message: null });
+  } catch (err) {
+    if (err.status === 401) {
+      await removeGithubToken(userId);
+
+      return res.status(401).json({
+        repos: null,
+        error_message: githubErrorMessages.NOT_GITHUB_AUTHENTICATED,
+      });
+    }
+
+    return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
+  }
+});
 module.exports = router;
