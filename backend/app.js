@@ -12,7 +12,7 @@ require('dotenv').config();
 // Routers
 const docsRouter = require('./routes/docs');
 const authRouter = require('./routes/auth');
-const boardsRouter = require('./routes/boards');
+const boardRouter = require('./routes/boards');
 const taskRouter = require('./routes/tasks');
 const githubRouter = require('./routes/github');
 
@@ -29,8 +29,8 @@ app.use(cors());
 // Routers
 app.use('/docs', docsRouter);
 app.use('/auth', authRouter);
-app.use('/board', boardsRouter);
-app.use('/tasks', taskRouter);
+app.use('/board', boardRouter);
+app.use('/task', taskRouter);
 app.use('/github', githubRouter);
 
 // Cleanup Middleware
