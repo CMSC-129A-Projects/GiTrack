@@ -111,6 +111,9 @@ router.get('/repo', authJWT, async (req, res) => {
         Accept: 'application/vnd.github.v3+json',
         Authorization: `token ${authToken}`,
       },
+      params: {
+        type: 'private',
+      },
     });
 
     if (status !== 200) {
@@ -127,7 +130,7 @@ router.get('/repo', authJWT, async (req, res) => {
   } catch (err) {
     debug(err);
     return res.status(503).json({ repos: null, error_message: JSON.stringify(err) });
-  }  
+  }
 });
 
 module.exports = router;
