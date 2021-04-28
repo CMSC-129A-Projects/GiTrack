@@ -7,7 +7,11 @@ const { request } = require('@octokit/request');
 const router = express.Router();
 
 // Models
-const { addGithubToken, getGithubToken } = require('../models/users');
+const {
+  addGithubToken,
+  getGithubToken,
+  removeGithubToken,
+} = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -79,19 +83,17 @@ router.get('/link/callback', async (req, res) => {
 
     const { id } = JSON.parse(Buffer.from(state, 'base64').toString('utf-8'));
 
-    debug(data.access_token);
-
     try {
       await addGithubToken(id, data.access_token);
     } catch (err) {
       debug(err);
-      return res.status(503).json({ error_message: err });
+      return res.status(500).json({ error_message: err });
     }
 
     return res.json({ error_message: null });
   } catch (err) {
     debug(err);
-    return res.status(503).json({ error_message: JSON.stringify(err) });
+    return res.status(500).json({ error_message: JSON.stringify(err) });
   }
 });
 
@@ -103,20 +105,16 @@ router.get('/repo', authJWT, async (req, res) => {
   try {
     authToken = await getGithubToken(userId);
   } catch (err) {
-    return res.status(403).json({ repos: null, error_message: err });
+    return res.status(401).json({ repos: null, error_message: err });
   }
 
   try {
-    const { data, status } = await request('GET /user/repos', {
+    const { data } = await request('GET /user/repos', {
       headers: {
         authorization: `token ${authToken}`,
       },
       visibility: 'all',
     });
-
-    if (status !== 200) {
-      throw JSON.stringify({ status, data });
-    }
 
     const repos = data.map((curr) => ({
       id: curr.id,
@@ -126,8 +124,16 @@ router.get('/repo', authJWT, async (req, res) => {
 
     return res.json({ repos, error_message: null });
   } catch (err) {
-    debug(err);
-    return res.status(503).json({ repos: null, error_message: JSON.stringify(err) });
+    if (err.status === 401) {
+      await removeGithubToken(userId);
+
+      return res.status(401).json({
+        repos: null,
+        error_message: githubErrorMessages.NOT_GITHUB_AUTHENTICATED,
+      });
+    }
+
+    return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
   }
 });
 
