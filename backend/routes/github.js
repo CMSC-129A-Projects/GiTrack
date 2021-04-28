@@ -2,6 +2,7 @@ const axios = require('axios');
 const crypto = require('crypto');
 const express = require('express');
 const debug = require('debug')('backend:routes-github');
+const { request } = require('@octokit/request');
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ const { GH_API_CLIENT_ID, GH_API_SECRET } = process.env;
 let states = [];
 
 router.get('/link', authJWT, (req, res) => {
-  const scope = ['repo:status', 'write:repo_hook'];
+  const scope = ['repo', 'write:repo_hook'];
 
   const state = Buffer.from(
     JSON.stringify({
@@ -102,31 +103,28 @@ router.get('/repo', authJWT, async (req, res) => {
   try {
     authToken = await getGithubToken(userId);
   } catch (err) {
-    return res.status(403).json({ repos: null,  error_message: err });
+    return res.status(403).json({ repos: null, error_message: err });
   }
 
   try {
-    const { status, data } = await axios.get('https://api.github.com/user/repos', {
+    const { data, status } = await request('GET /user/repos', {
       headers: {
-        Accept: 'application/vnd.github.v3+json',
-        Authorization: `token ${authToken}`,
+        authorization: `token ${authToken}`,
       },
-      params: {
-        type: 'private',
-      },
+      visibility: 'all',
     });
 
     if (status !== 200) {
-      throw data;
+      throw JSON.stringify({ status, data });
     }
 
-    const newData = data.map((curr) => ({
+    const repos = data.map((curr) => ({
       id: curr.id,
       full_name: curr.full_name,
       url: curr.url,
     }));
 
-    return res.json({ repos: newData, error_message: null });
+    return res.json({ repos, error_message: null });
   } catch (err) {
     debug(err);
     return res.status(503).json({ repos: null, error_message: JSON.stringify(err) });
