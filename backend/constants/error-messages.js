@@ -22,7 +22,8 @@ const board = {
   MISSING_ID: 'MISSING_ID',
   MISSING_NAME: 'MISSING_NAME',
   MISSING_USER_ID: 'MISSING_USER_ID',
-  SAME_NAME: 'SAME_NAME',
+  MISSING_FULL_NAME: 'MISSING_FULL_NAME',
+  MISSING_URL: 'MISSING_URL',
 };
 
 const task = {
@@ -46,4 +47,8 @@ const github = {
   NOT_GITHUB_AUTHENTICATED: 'NOT_GITHUB_AUTHENTICATED',
 };
 
-module.exports = { user, board, logic, task, github };
+const repo = {
+  CONNECTION_FAILED: 'CONNECTION_FAILED',
+};
+
+module.exports = { user, board, logic, task, github, repo };
