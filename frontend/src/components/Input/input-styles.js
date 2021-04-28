@@ -29,7 +29,7 @@ export const input = (theme) => css`
 `;
 
 export const input___error = (theme) => css`
-  border: 1px solid ${theme.color.red[4]};
+  border: 1px solid ${theme.color.red[3]};
 `;
 
 export const input_label = (theme) => css`
@@ -39,7 +39,7 @@ export const input_label = (theme) => css`
 `;
 
 export const input_errorMessage = (theme) => css`
-  color: ${theme.color.red[4]};
+  color: ${theme.color.red[3]};
   ${theme.text.bodySM};
   margin: 4px 0 0 0;
 `;

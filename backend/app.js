@@ -29,7 +29,7 @@ app.use(cors());
 // Routers
 app.use('/docs', docsRouter);
 app.use('/auth', authRouter);
-app.use('/boards', boardsRouter);
+app.use('/board', boardsRouter);
 app.use('/tasks', taskRouter);
 app.use('/github', githubRouter);
 

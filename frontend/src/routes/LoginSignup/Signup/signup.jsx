@@ -23,30 +23,63 @@ import * as style from './signup-styles';
 export default function SignupPage() {
   const dispatch = useDispatch();
 
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = (formData) => {
-    AuthService.register({ body: formData }).then(() => {
-      AuthService.login({
-        body: {
-          username: formData.username,
-          password: formData.password,
-        },
-      }).then((loginResponse) => {
-        const { data } = loginResponse;
-
-        dispatch(
-          usersActions.loginActions.loginUpdate({
-            accessToken: data.access_token,
-            refreshToken: data.refresh_token,
-            user: {
-              id: data.id,
-              username: data.username,
-            },
-          })
-        );
+    if (formData.password !== formData.confirm_password) {
+      setError('confirm_password', {
+        type: 'manual',
+        message: 'Passwords must match',
       });
-    });
+
+      return;
+    }
+
+    AuthService.register({
+      body: {
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+      },
+    })
+      .then(() => {
+        AuthService.login({
+          body: {
+            username: formData.username,
+            password: formData.password,
+          },
+        }).then((loginResponse) => {
+          const { data } = loginResponse;
+
+          dispatch(
+            usersActions.loginActions.loginUpdate({
+              accessToken: data.access_token,
+              refreshToken: data.refresh_token,
+              user: {
+                id: data.id,
+                username: data.username,
+              },
+            })
+          );
+        });
+      })
+      .catch(
+        ({
+          response: {
+            data: { error_message: errorMessage },
+          },
+        }) => {
+          setError('overall', {
+            type: 'manual',
+            message: errorMessage,
+          });
+        }
+      );
   };
 
   return (
@@ -68,22 +101,33 @@ export default function SignupPage() {
       >
         <Input
           css={style.signupPage_inputs}
+          error={errors.email ? errors.email.message : null}
           placeholder="Email"
           type="email"
-          {...register('email', { required: true })}
+          {...register('email', { required: 'This field is required' })}
         />
         <Input
           css={style.signupPage_inputs}
+          error={errors.username ? errors.username.message : null}
           placeholder="Username"
-          {...register('username', { required: true })}
+          {...register('username', { required: 'This field is required' })}
         />
         <Input
           css={style.signupPage_inputs}
+          error={errors.password ? errors.password.message : null}
           placeholder="Password"
           type="password"
-          {...register('password', { required: true })}
+          {...register('password', { required: 'This field is required' })}
         />
-        <Input placeholder="Confirm Password" type="password" />
+        <Input
+          error={errors.confirm_password ? errors.confirm_password.message : null}
+          placeholder="Confirm Password"
+          type="password"
+          {...register('confirm_password', { required: 'This field is required' })}
+        />
+        {errors.overall && (
+          <p css={style.signupPage_errorMessage}>{errors.overall.message}</p>
+        )}
       </LoginSignupCard>
     </div>
   );

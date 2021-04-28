@@ -8,7 +8,6 @@ chai.use(chaiHttp);
 
 describe('Boards', function () {
   let accessToken = null;
-  let refreshToken = null;
   beforeEach(function (done) {
     chai
       .request(server)
@@ -19,7 +18,6 @@ describe('Boards', function () {
       })
       .end(function (err, res) {
         accessToken = res.body.access_token;
-        refreshToken = res.body.refresh_token;
         done();
       });
   });
@@ -28,14 +26,15 @@ describe('Boards', function () {
     it('It should create a board', function (done) {
       chai
         .request(server)
-        .post('/boards/create-board')
+        .post('/board')
         .auth(accessToken, { type: 'bearer' })
         .send({
           title: 'board',
-          userId: 1,
         })
         .end(function (err, res) {
           res.should.have.status(201);
+          res.body.should.have.property('id').eql(1);
+          res.body.should.have.property('title').eql('board');
           res.body.should.have.property('error_message').eql(null);
           done();
         });
@@ -44,14 +43,77 @@ describe('Boards', function () {
     it('It should not create a board without a title', function (done) {
       chai
         .request(server)
-        .post('/boards/create-board')
+        .post('/board')
         .auth(accessToken, { type: 'bearer' })
-        .send({
-          userId: 1,
-        })
         .end(function (err, res) {
           res.should.have.status(400);
+          res.body.should.have.property('id').eql(null);
+          res.body.should.have.property('title').eql(null);
           res.body.should.have.property('error_message').eql('MISSING_TITLE');
+          done();
+        });
+    });
+
+    it('It should create another board', function (done) {
+      chai
+        .request(server)
+        .post('/board')
+        .auth(accessToken, { type: 'bearer' })
+        .send({
+          title: 'MinimaLine',
+        })
+        .end(function (err, res) {
+          res.should.have.status(201);
+          res.body.should.have.property('id').eql(2);
+          res.body.should.have.property('title').eql('MinimaLine');
+          res.body.should.have.property('error_message').eql(null);
+          done();
+        });
+    });
+  });
+
+  describe('Get Board', function () {
+    it('It should get a specific board', function (done) {
+      chai
+        .request(server)
+        .get('/board/1')
+        .auth(accessToken, { type: 'bearer' })
+        .end(function (err, res) {
+          res.should.have.status(200);
+          res.body.should.have.property('id').eql(1);
+          res.body.should.have.property('title').eql('board');
+          res.body.should.have.property('error_message').eql(null);
+          done();
+        });
+    });
+
+    it('It should not get a specific board with incorrect board id', function (done) {
+      chai
+        .request(server)
+        .get('/board/23')
+        .auth(accessToken, { type: 'bearer' })
+        .end(function (err, res) {
+          res.should.have.status(403);
+          res.body.should.have.property('id').eql(null);
+          res.body.should.have.property('title').eql(null);
+          res.body.should.have.property('error_message').eql('NOT_ENOUGH_PERMISSIONS');
+          done();
+        });
+    });
+
+    it('It should get all boards', function (done) {
+      chai
+        .request(server)
+        .get('/board')
+        .auth(accessToken, { type: 'bearer' })
+        .end(function (err, res) {
+          res.should.have.status(200);
+          res.body.boards.length.should.be.eql(2);
+          res.body.boards[0].should.have.property('id').eql(1);
+          res.body.boards[0].should.have.property('title').eql('board');
+          res.body.boards[1].should.have.property('id').eql(2);
+          res.body.boards[1].should.have.property('title').eql('MinimaLine');
+          res.body.should.have.property('error_message').eql(null);
           done();
         });
     });
@@ -61,12 +123,10 @@ describe('Boards', function () {
     it('It should allow users with sufficient permissions to edit the board', function (done) {
       chai
         .request(server)
-        .patch('/boards/edit-board')
+        .patch('/board/1')
         .auth(accessToken, { type: 'bearer' })
         .send({
-          id: 1,
-          name: 'new and improved gitrack board',
-          userId: 1,
+          name: 'Ayo',
         })
         .end(function (err, res) {
           res.should.have.status(200);
@@ -75,108 +135,38 @@ describe('Boards', function () {
         });
     });
 
-    it('It should not alow users without sufficient permissions to edit the board', function (done) {
-      // logout current user
-      chai
-        .request(server)
-        .post('/auth/logout')
-        .auth(accessToken, { type: 'bearer' })
-        .send({ refresh_token: refreshToken })
-        .end(function () {
-          chai
-            .request(server)
-            .post('/auth/register')
-            .send({
-              username: 'pedro',
-              password: 'generic123',
-              email: 'juan@pen.duko',
-            })
-            .end(function () {
-              chai
-                .request(server)
-                .post('/auth/login')
-                .send({
-                  username: 'pedro',
-                  password: 'generic123',
-                })
-                .end(function (err2, res2) {
-                  accessToken = res2.body.access_token;
-                  refreshToken = res2.body.refresh_token;
-                  chai
-                    .request(server)
-                    .patch('/boards/edit-board')
-                    .auth(accessToken, { type: 'bearer' })
-                    .send({
-                      id: 1,
-                      name: 'board',
-                      userId: 2,
-                    })
-                    .end(function (errF, resF) {
-                      resF.should.have.status(403);
-                      resF.body.should.have
-                        .property('error_message')
-                        .eql('NOT_ENOUGH_PERMISSIONS');
-                      done();
-                    });
-                });
-              // register new user
-            });
-        });
-    });
-
-    it('It should not allow an edit which does not change anything', function (done) {
+    it('It should not allow users without sufficient permissions to edit the board', function (done) {
       chai
         .request(server)
         .post('/auth/login')
         .send({
-          username: 'juan',
+          username: 'pedro',
           password: 'generic123',
         })
-        .end(function (err, res) {
-          accessToken = res.body.access_token;
-          refreshToken = res.body.refresh_token;
-        });
-      chai
-        .request(server)
-        .patch('/boards/edit-board')
-        .auth(accessToken, { type: 'bearer' })
-        .send({
-          id: 1,
-          name: 'new and improved gitrack board',
-          userId: 1,
-        })
-        .end(function (err, res) {
-          res.should.have.status(409);
-          res.body.should.have.property('error_message').eql('SAME_NAME');
-          done();
-        });
-    });
-
-    it('It should not allow missing boardId', function (done) {
-      chai
-        .request(server)
-        .patch('/boards/edit-board')
-        .auth(accessToken, { type: 'bearer' })
-        .send({
-          name: 'board',
-          userId: 1,
-        })
-        .end(function (err, res) {
-          res.should.have.status(400);
-          res.body.should.have.property('error_message').eql('MISSING_ID');
-          done();
+        .end(function (err2, res2) {
+          accessToken = res2.body.access_token;
+          chai
+            .request(server)
+            .patch('/board/1')
+            .auth(accessToken, { type: 'bearer' })
+            .send({
+              name: 'Mercado',
+            })
+            .end(function (errF, resF) {
+              resF.should.have.status(403);
+              resF.body.should.have
+                .property('error_message')
+                .eql('NOT_ENOUGH_PERMISSIONS');
+              done();
+            });
         });
     });
 
     it('It should not allow missing new name', function (done) {
       chai
         .request(server)
-        .patch('/boards/edit-board')
+        .patch('/board/1')
         .auth(accessToken, { type: 'bearer' })
-        .send({
-          id: 1,
-          userId: 1,
-        })
         .end(function (err, res) {
           res.should.have.status(400);
           res.body.should.have.property('error_message').eql('MISSING_NAME');
@@ -186,14 +176,35 @@ describe('Boards', function () {
   });
 
   describe('Delete Board', function () {
+    it('It should not allow users without sufficient permissions to delete the board', function (done) {
+      chai
+        .request(server)
+        .post('/auth/login')
+        .send({
+          username: 'pedro',
+          password: 'generic123',
+        })
+        .end(function (midErr, midRes) {
+          accessToken = midRes.body.access_token;
+          chai
+            .request(server)
+            .delete('/board/1')
+            .auth(accessToken, { type: 'bearer' })
+            .end(function (err, res) {
+              res.should.have.status(403);
+              res.body.should.have
+                .property('error_message')
+                .eql('NOT_ENOUGH_PERMISSIONS');
+              done();
+            });
+        });
+    });
+
     it('It should allow users with sufficient permissions to delete the board', function (done) {
       chai
         .request(server)
-        .delete('/boards/delete-board')
+        .delete('/board/1')
         .auth(accessToken, { type: 'bearer' })
-        .send({
-          id: 1,
-        })
         .end(function (err, res) {
           res.should.have.status(200);
           res.body.should.have.property('error_message').eql(null);
@@ -201,82 +212,15 @@ describe('Boards', function () {
         });
     });
 
-    it('It should not allow users without sufficient permissions to delete the board', function (done) {
-      chai
-        .request(server)
-        .post('/boards/create-board')
-        .auth(accessToken, { type: 'bearer' })
-        .send({
-          title: 'board',
-          userId: 1,
-        })
-        .end(function () {
-          chai
-            .request(server)
-            .post('/auth/logout')
-            .auth(accessToken, { type: 'bearer' })
-            .send({ refresh_token: refreshToken })
-            .end(function () {
-              chai
-                .request(server)
-                .post('/auth/register')
-                .send({
-                  username: 'pedro',
-                  password: 'generic123',
-                  email: 'juan@pen.duko',
-                })
-                .end(function () {
-                  chai
-                    .request(server)
-                    .post('/auth/login')
-                    .send({
-                      username: 'pedro',
-                      password: 'generic123',
-                    })
-                    .end(function (err2, res2) {
-                      accessToken = res2.body.access_token;
-                      refreshToken = res2.body.refresh_token;
-                      chai
-                        .request(server)
-                        .delete('/boards/delete-board')
-                        .auth(accessToken, { type: 'bearer' })
-                        .send({
-                          id: 1,
-                        })
-                        .end(function (errF, resF) {
-                          resF.should.have.status(403);
-                          resF.body.should.have
-                            .property('error_message')
-                            .eql('NOT_ENOUGH_PERMISSIONS');
-                          done();
-                        });
-                    });
-                });
-            });
-        });
-    });
-
     it('It should not allow users to delete non-existent boards', function (done) {
       chai
         .request(server)
-        .delete('/boards/delete-board')
+        .delete('/board/100')
         .auth(accessToken, { type: 'bearer' })
-        .send({
-          id: 1,
-        })
-        .end(function () {
-          chai
-            .request(server)
-            .delete('/boards/delete-board')
-            .auth(accessToken, { type: 'bearer' })
-            .send({
-              id: 1,
-            })
-            .end(function (err, res) {
-              res.should.have.status(400);
-              res.body.should.have.property('error_message').eql('DELETE_FAILED');
-              done();
-            });
+        .end(function (err, res) {
+          res.should.have.status(403);
+          res.body.should.have.property('error_message').eql('NOT_ENOUGH_PERMISSIONS');
+          done();
         });
     });
   });
