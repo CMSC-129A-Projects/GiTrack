@@ -8,6 +8,7 @@ chai.use(chaiHttp);
 
 describe('Tasks', function () {
   let accessToken = null;
+  let refreshToken = null;
   beforeEach(function (done) {
     chai
       .request(server)
@@ -96,13 +97,68 @@ describe('Tasks', function () {
         .delete('/tasks/remove-task')
         .auth(accessToken, { type: 'bearer' })
         .send({
-          id: 1,
+          id: 2,
           boardId: 1,
         })
         .end(function (err, res) {
           res.should.have.status(404);
           res.body.should.have.property('error_message').eql('TASK_NOT_FOUND');
           done();
+        });
+    });
+
+    it('It should not allow users without sufficient permissions to remove a task', function (done) {
+      chai
+        .request(server)
+        .delete('/tasks/remove-task')
+        .auth(accessToken, { type: 'bearer' })
+        .send({
+          id: 2,
+          boardId: 1,
+        })
+        .end(function (err, res) {
+          chai
+            .request(server)
+            .post('/auth/logout')
+            .auth(accessToken, { type: 'bearer' })
+            .send({ refresh_token: refreshToken })
+            .end(function () {
+              chai
+                .request(server)
+                .post('/auth/register')
+                .send({
+                  username: 'pedro',
+                  password: 'generic123',
+                  email: 'juan@pen.duko',
+                })
+                .end(function () {
+                  chai
+                    .request(server)
+                    .post('/auth/login')
+                    .send({
+                      username: 'pedro',
+                      password: 'generic123',
+                    })
+                    .end(function (err2, res2) {
+                      accessToken = res2.body.access_token;
+                      refreshToken = res2.body.refresh_token;
+                      chai
+                        .request(server)
+                        .delete('/boards/delete-board')
+                        .auth(accessToken, { type: 'bearer' })
+                        .send({
+                          id: 1,
+                        })
+                        .end(function (errF, resF) {
+                          resF.should.have.status(403);
+                          resF.body.should.have
+                            .property('error_message')
+                            .eql('NOT_ENOUGH_PERMISSIONS');
+                          done();
+                        });
+                    });
+                });
+            });
         });
     });
   });
