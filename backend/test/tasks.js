@@ -36,6 +36,7 @@ describe('Tasks', function () {
         })
         .end(function (err, res) {
           res.should.have.status(200);
+          console.log(res.body.error_message);
           res.body.should.have.property('error_message').eql(null);
           done();
         });
