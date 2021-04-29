@@ -9,6 +9,7 @@
     "test": "rm -f gitrack-test.db && env NODE_ENV=TEST mocha"
   },
   "dependencies": {
+    "@octokit/request": "^5.4.15",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cookie-parser": "~1.4.4",

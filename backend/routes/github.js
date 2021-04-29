@@ -26,7 +26,7 @@ const { GH_API_CLIENT_ID, GH_API_SECRET } = process.env;
 let states = [];
 
 router.get('/link', authJWT, (req, res) => {
-  const scope = ['repo:status', 'write:repo_hook'];
+  const scope = ['repo', 'write:repo_hook'];
 
   const state = Buffer.from(
     JSON.stringify({
@@ -52,7 +52,7 @@ router.get('/link/callback', async (req, res) => {
     return res.status(400).json({ error_message: githubErrorMessages.MISSING_CODE });
   }
 
-  if (code === undefined) {
+  if (state === undefined) {
     return res.status(400).json({ error_message: githubErrorMessages.MISSING_STATE });
   }
 
@@ -84,19 +84,17 @@ router.get('/link/callback', async (req, res) => {
 
     const { id } = JSON.parse(Buffer.from(state, 'base64').toString('utf-8'));
 
-    debug(data.access_token);
-
     try {
       await addGithubToken(id, data.access_token);
     } catch (err) {
       debug(err);
-      return res.status(503).json({ error_message: err });
+      return res.status(500).json({ error_message: err });
     }
 
     return res.json({ error_message: null });
   } catch (err) {
     debug(err);
-    return res.status(503).json({ error_message: JSON.stringify(err) });
+    return res.status(500).json({ error_message: JSON.stringify(err) });
   }
 });
 

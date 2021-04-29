@@ -4,7 +4,10 @@ const debug = require('debug')('backend:models-users');
 
 const dbHandler = require('../db');
 
-const { user: userErrorMessages } = require('../constants/error-messages');
+const {
+  user: userErrorMessages,
+  github: githubErrorMessages,
+} = require('../constants/error-messages');
 
 const { AES_SECRET } = process.env;
 
@@ -102,7 +105,7 @@ async function addGithubToken(id, githubAuthToken) {
   const currentAuth = await db.get('SELECT github_auth FROM Users WHERE id = ?', id);
 
   if (currentAuth && currentAuth.github_auth !== null) {
-    throw userErrorMessages.ALREADY_GITHUB_AUTHENTICATED;
+    throw githubErrorMessages.ALREADY_GITHUB_AUTHENTICATED;
   }
 
   const { token, iv } = encrypt(githubAuthToken);
@@ -128,11 +131,26 @@ async function getGithubToken(id) {
     id
   );
 
-  if (auth === undefined) {
-    throw userErrorMessages.USER_NOT_FOUND;
+  if (auth.github_auth === null) {
+    throw githubErrorMessages.NOT_GITHUB_AUTHENTICATED;
   }
 
   return decrypt({ token: auth.github_auth, iv: auth.github_iv });
 }
 
-module.exports = { registerUser, loginUser, addGithubToken, getGithubToken };
+async function removeGithubToken(id) {
+  const db = await dbHandler;
+
+  await db.run(
+    'UPDATE Users SET github_auth = NULL, github_iv = NULL WHERE id = ?',
+    id
+  );
+}
+
+module.exports = {
+  registerUser,
+  loginUser,
+  addGithubToken,
+  getGithubToken,
+  removeGithubToken,
+};

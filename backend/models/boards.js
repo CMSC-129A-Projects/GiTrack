@@ -3,7 +3,7 @@ const dbHandler = require('../db');
 
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
-async function getPermissions(userId, boardId) {
+async function getPermissions(userId, boardId, isDeveloper = 0) {
   const db = await dbHandler;
   try {
     const userPermission = await db.get(
@@ -12,7 +12,7 @@ async function getPermissions(userId, boardId) {
       boardId
     );
 
-    if (userPermission === undefined) {
+    if (userPermission === undefined || userPermission > isDeveloper) {
       throw boardErrorMessages.NOT_ENOUGH_PERMISSIONS;
     }
   } catch (err) {

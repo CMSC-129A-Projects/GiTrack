@@ -12,6 +12,7 @@ const {
   getBoardById,
   editBoard,
 } = require('../models/boards');
+const { connectRepository } = require('../models/repositories');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -358,6 +359,90 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
   } catch (err) {
     debug(err);
     return res.status(500).json({ id: null, title: null, error_message: err });
+  }
+});
+
+router.post('/:id(\\d+)/connect', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+  const { id: repoId, full_name: fullName, url, board_id: boardId } = req.body;
+
+  if (id === undefined) {
+    return res.status(400).json({
+      id: null,
+      full_name: null,
+      board_id: null,
+      error_message: boardErrorMessages.MISSING_ID,
+    });
+  }
+
+  if (fullName === undefined) {
+    return res.status(400).json({
+      id: null,
+      full_name: null,
+      board_id: null,
+      error_message: boardErrorMessages.MISSING_FULL_NAME,
+    });
+  }
+
+  if (url === undefined) {
+    return res.status(400).json({
+      id: null,
+      full_name: null,
+      board_id: null,
+      error_message: boardErrorMessages.MISSING_URL,
+    });
+  }
+
+  try {
+    await getPermissions(userId, id, 1);
+  } catch (err) {
+    debug(err);
+    return res
+      .status(403)
+      .json({ id: null, full_name: null, board_id: null, error_message: err });
+  }
+
+  let board = null;
+
+  try {
+    board = await getBoardById(id);
+  } catch (err) {
+    debug(err);
+
+    return res.json({
+      id: null,
+      full_name: null,
+      board_id: null,
+      error_message: err,
+    });
+  }
+
+  if (board === undefined) {
+    return res.status(403).json({
+      id: null,
+      full_name: null,
+      board_id: null,
+      error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS,
+    });
+  }
+
+  try {
+    await connectRepository(repoId, fullName, url, boardId);
+
+    return res.json({
+      id: repoId,
+      full_name: fullName,
+      board_id: boardId,
+      error_message: null,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      id: null,
+      full_name: null,
+      board_id: null,
+      error_message: err,
+    });
   }
 });
 
