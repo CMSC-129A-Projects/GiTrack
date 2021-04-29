@@ -60,7 +60,7 @@ export default function LoginPage() {
         link="./signup"
         action={{
           name: 'Sign In',
-          onClick: handleSubmit(onSubmit),
+          onClick: () => {},
           variant: buttonVariants.SMALL.PRIMARY,
         }}
         onSubmit={handleSubmit(onSubmit)}
