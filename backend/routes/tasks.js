@@ -4,7 +4,14 @@ const debug = require('debug')('backend:routes-tasks');
 const router = express.Router();
 
 // Models
-const { addTask, getTask, getBoardTasks, removeTask } = require('../models/tasks');
+const {
+  addTask,
+  getTask,
+  getBoardTasks,
+  removeTask,
+  getTaskBoard,
+  connectBranch,
+} = require('../models/tasks');
 const { getPermissions } = require('../models/boards');
 
 // Middlewares
@@ -211,6 +218,66 @@ router.get('/get-board-tasks', authJWT, async (req, res) => {
     debug(err);
 
     return res.status(204).json({ title: null, error_message: err });
+  }
+});
+
+router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+  const { repoId, branchName } = req.body;
+  if (id === undefined) {
+    return res
+      .status(400)
+      .json({ name: null, repo_id: null, error_message: taskErrorMessages.MISSING_ID });
+  }
+
+  if (repoId === undefined) {
+    return res.status(400).json({
+      name: null,
+      repo_id: null,
+      error_message: taskErrorMessages.MISSING_REPO_ID,
+    });
+  }
+
+  if (branchName === undefined) {
+    return res.status(400).json({
+      name: null,
+      repo_id: null,
+      error_message: taskErrorMessages.MISSING_BRANCH_NAME,
+    });
+  }
+
+  let boardId = null;
+
+  try {
+    boardId = await getTaskBoard(id);
+  } catch (err) {
+    debug(err);
+    return res.status(500).json({ name: null, repo_id: null, error_message: err });
+  }
+
+  try {
+    await getPermissions(userId, boardId, 1);
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({
+      name: null,
+      repo_id: null,
+      error_message: err,
+    });
+  }
+
+  try {
+    await connectBranch(id, branchName, repoId);
+
+    return res.json({ name: branchName, repo_id: repoId, error_message: null });
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({
+      name: null,
+      repo_id: null,
+      error_message: err,
+    });
   }
 });
 

@@ -73,9 +73,39 @@ async function getBoardTasks(userId, boardId) {
   }
 }
 
+async function connectBranch(taskId, branch, repoId) {
+  const db = await dbHandler;
+
+  try {
+    await db.run(
+      'UPDATE Tasks SET branch_name = ?, repo_id = ? WHERE id = ?',
+      branch,
+      repoId,
+      taskId
+    );
+  } catch (err) {
+    debug(err);
+    throw taskErrorMessages.CONNECTION_FAILED;
+  }
+}
+
+async function getTaskBoard(taskId) {
+  const db = await dbHandler;
+
+  try {
+    const boardId = await db.get('SELECT board_id FROM Tasks WHERE id = ?', taskId);
+    return boardId.board_id;
+  } catch (err) {
+    debug(err);
+    throw taskErrorMessages.TASK_NOT_FOUND;
+  }
+}
+
 module.exports = {
   addTask,
   getTask,
   removeTask,
   getBoardTasks,
+  connectBranch,
+  getTaskBoard,
 };

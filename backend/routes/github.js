@@ -2,11 +2,17 @@ const axios = require('axios');
 const crypto = require('crypto');
 const express = require('express');
 const debug = require('debug')('backend:routes-github');
+const { request } = require('@octokit/request');
 
 const router = express.Router();
 
 // Models
-const { addGithubToken } = require('../models/users');
+const {
+  addGithubToken,
+  getGithubToken,
+  removeGithubToken,
+} = require('../models/users');
+const { getBoardRepo } = require('../models/boards');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -94,4 +100,102 @@ router.get('/link/callback', async (req, res) => {
   }
 });
 
+router.get('/repo', authJWT, async (req, res) => {
+  const { id: userId } = req.user;
+
+  let authToken = null;
+
+  try {
+    authToken = await getGithubToken(userId);
+  } catch (err) {
+    return res.status(401).json({ repos: null, error_message: err });
+  }
+
+  try {
+    const { data } = await request('GET /user/repos', {
+      headers: {
+        authorization: `token ${authToken}`,
+      },
+      visibility: 'all',
+    });
+
+    const repos = data.map((curr) => ({
+      id: curr.id,
+      full_name: curr.full_name,
+      url: curr.url,
+    }));
+
+    return res.json({ repos, error_message: null });
+  } catch (err) {
+    if (err.status === 401) {
+      await removeGithubToken(userId);
+
+      return res.status(401).json({
+        repos: null,
+        error_message: githubErrorMessages.NOT_GITHUB_AUTHENTICATED,
+      });
+    }
+
+    return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
+  }
+});
+
+router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+
+  let authToken = null;
+  let fullName = null;
+  let rep = null;
+
+  if (id === undefined) {
+    return res.status(400).json({
+      id: null,
+      title: null,
+      error_message: githubErrorMessages.MISSING_REPO_ID,
+    });
+  }
+
+  try {
+    authToken = await getGithubToken(userId);
+  } catch (err) {
+    return res.status(401).json({ branches: null, error_message: err });
+  }
+
+  try {
+    fullName = await getBoardRepo(id);
+  } catch (err) {
+    return res.status(400).json({ branches: null, error_message: err });
+  }
+
+  rep = fullName.split('/');
+
+  try {
+    const { data } = await request('GET /repos/{owner}/{repo}/branches', {
+      headers: {
+        authorization: `token ${authToken}`,
+      },
+      owner: rep[0],
+      repo: rep[1],
+    });
+
+    const branches = data.map((curr) => ({
+      repo_id: id,
+      name: curr.name,
+    }));
+
+    return res.json({ branches, error_message: null });
+  } catch (err) {
+    if (err.status === 401) {
+      await removeGithubToken(userId);
+
+      return res.status(401).json({
+        repos: null,
+        error_message: githubErrorMessages.NOT_GITHUB_AUTHENTICATED,
+      });
+    }
+
+    return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
+  }
+});
 module.exports = router;

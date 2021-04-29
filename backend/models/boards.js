@@ -95,6 +95,30 @@ async function getBoardById(boardId) {
   }
 }
 
+async function getBoardRepo(id) {
+  const db = await dbHandler;
+
+  try {
+    const repo = await db.get('SELECT name FROM Repositories WHERE id = ?', id);
+    return repo.name;
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.GET_FAILED;
+  }
+}
+
+async function getBoardRepoId(boardId) {
+  const db = await dbHandler;
+
+  try {
+    const id = await db.get('SELECT id FROM Repositories WHERE board_id = ?', boardId);
+    return id;
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.GET_FAILED;
+  }
+}
+
 module.exports = {
   getPermissions,
   createBoard,
@@ -102,4 +126,6 @@ module.exports = {
   deleteBoard,
   getBoardById,
   getBoardsWithUser,
+  getBoardRepo,
+  getBoardRepoId,
 };
