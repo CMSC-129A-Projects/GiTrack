@@ -11,17 +11,23 @@ const {
   getBoardsWithUser,
   getBoardById,
   editBoard,
+  userInBoard,
+  addDevToBoard,
 } = require('../models/boards');
 
 const { getTasksInBoard } = require('../models/tasks');
 
 const { connectRepository } = require('../models/repositories');
 
+const { findUser } = require('../models/users');
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
 
 // Constants
-const { board: boardErrorMessages } = require('../constants/error-messages');
+const {
+  board: boardErrorMessages,
+  user: userErrorMessages,
+} = require('../constants/error-messages');
 
 /**
  * @swagger
@@ -480,6 +486,53 @@ router.get('/:id(\\d+)/tasks', authJWT, async (req, res) => {
   } catch (err) {
     debug(err);
     return res.status(500).json({ tasks: null, error_message: err });
+  }
+});
+
+router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+  const { devId } = req.body;
+
+  if (id === undefined) {
+    return res
+      .status(400)
+      .json({ id: null, title: null, error_message: boardErrorMessages.MISSING_ID });
+  }
+
+  try {
+    await getPermissions(userId, id);
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({ board_id: null, dev_id: null, error_message: err });
+  }
+
+  if ((await findUser(devId)) === undefined) {
+    return res.status(400).json({
+      board_id: null,
+      dev_id: null,
+      error_message: userErrorMessages.USER_NOT_FOUND,
+    });
+  }
+
+  try {
+    await userInBoard(id, devId);
+  } catch (err) {
+    debug(err);
+    return res.status(400).json({ board_id: null, dev_id: null, error_message: err });
+  }
+
+  try {
+    let dev = await addDevToBoard(id, devId);
+
+    return res.json({ board_id: id, dev_id: devId, error_message: null });
+  } catch (err) {
+    debug(err);
+    return res.status(500).json({
+      board_id: null,
+      dev_id: null,
+      error_message: err,
+    });
   }
 });
 

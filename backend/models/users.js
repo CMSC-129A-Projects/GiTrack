@@ -147,10 +147,24 @@ async function removeGithubToken(id) {
   );
 }
 
+async function findUser(id) {
+  const db = await dbHandler;
+
+  try {
+    const user = db.get('SELECT id FROM Users WHERE id = ?', id);
+
+    return user;
+  } catch (err) {
+    debug(err);
+    throw userErrorMessages.USER_NOT_FOUND;
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
   addGithubToken,
   getGithubToken,
   removeGithubToken,
+  findUser,
 };

@@ -1,7 +1,10 @@
 const debug = require('debug')('backend:models-board');
 const dbHandler = require('../db');
 
-const { board: boardErrorMessages } = require('../constants/error-messages');
+const {
+  board: boardErrorMessages,
+  user: userErrorMessages,
+} = require('../constants/error-messages');
 
 async function getPermissions(userId, boardId, isDeveloper = 0) {
   const db = await dbHandler;
@@ -119,6 +122,39 @@ async function getBoardRepoId(boardId) {
   }
 }
 
+async function userInBoard(boardId, userId) {
+  const db = await dbHandler;
+
+  const user = await db.get(
+    'SELECT user_id FROM Memberships WHERE board_id = ? AND user_id = ?',
+    boardId,
+    userId
+  );
+
+  if (user !== undefined) {
+    throw userErrorMessages.DUPLICATE_USER;
+  } else {
+    return user;
+  }
+}
+
+async function addDevToBoard(boardId, devId) {
+  const db = await dbHandler;
+
+  try {
+    const dev = await db.run(
+      'INSERT INTO Memberships VALUES (?, ?, 1)',
+      boardId,
+      devId
+    );
+
+    return dev;
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.INSERT_FAILED;
+  }
+}
+
 module.exports = {
   getPermissions,
   createBoard,
@@ -128,4 +164,6 @@ module.exports = {
   getBoardsWithUser,
   getBoardRepo,
   getBoardRepoId,
+  addDevToBoard,
+  userInBoard,
 };
