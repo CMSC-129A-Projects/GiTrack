@@ -33,8 +33,8 @@ export const input___error = (theme) => css`
 `;
 
 export const input_label = (theme) => css`
-  color: ${theme.color.neutral[5]};
-  ${theme.text.bodyMD};
+  color: ${theme.color.neutral[7]};
+  ${theme.text.titleMD};
   margin: 0 0 4px 0;
 `;
 
