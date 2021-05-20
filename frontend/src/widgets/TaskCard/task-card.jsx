@@ -4,12 +4,11 @@ import Card from 'components/Card';
 import placeholder from 'assets/images/user-image.svg';
 
 // Style
-import * as style from './taskcard-styles';
+import * as style from './task-card-styles';
 
 export default function TaskCard({
   children,
   title,
-  body,
   assigneeImage,
   tag,
   onClick,
@@ -27,7 +26,6 @@ export default function TaskCard({
           />
         </div>
       </div>
-      <p css={style.taskCard_body}>{body}</p>
       {tag && <p css={style.taskCard_tag}>{tag}</p>}
     </Card>
   );

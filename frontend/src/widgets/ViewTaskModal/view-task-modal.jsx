@@ -13,7 +13,7 @@ import Card from 'components/Card';
 // Style
 import * as style from './view-task-modal-styles';
 
-export default function ViewTaskModal({ isOpen, handleClose }) {
+export default function ViewTaskModal({ task, isOpen, handleClose }) {
   const [isRemoveTaskModalOpened, setIsRemoveTaskModalOpened] = useState(false);
 
   return (
@@ -43,19 +43,16 @@ export default function ViewTaskModal({ isOpen, handleClose }) {
           },
         ]}
       >
-        <p css={style.viewTaskModal_title}>[Frontend] Add Card Component</p>
+        <p css={style.viewTaskModal_title}>{task.title}</p>
         <div css={style.viewTaskModal_body}>
           <div>
             <p css={style.viewTaskModal_bodyTitle}>Description</p>
             <p css={style.viewTaskModal_bodyText}>
-              Create a card component with the following props:
+              <span dangerouslySetInnerHTML={{ __html: task.description }} />
             </p>
-            <ul css={style.viewTaskModal_list}>
-              <li>className</li>
-              <li>children</li>
-            </ul>
             <p css={style.viewTaskModal_bodyTitle}>Progress</p>
-            <div css={style.viewTaskModal_progress}>
+            <p css={style.viewTaskModal_bodyText}>No branch added yet</p>
+            {/* <div css={style.viewTaskModal_progress}>
               <p css={style.viewTaskModal_progressTime}>2 hours ago</p>
               <p css={style.viewTaskModal_progressText}>added tests</p>
             </div>
@@ -66,7 +63,7 @@ export default function ViewTaskModal({ isOpen, handleClose }) {
             <div css={style.viewTaskModal_progress}>
               <p css={style.viewTaskModal_progressTime}>3 days ago</p>
               <p css={style.viewTaskModal_progressText}>added initial setup</p>
-            </div>
+            </div> */}
           </div>
           <Card css={style.viewTaskModal_optionsCard}>
             <Dropdown css={style.viewTaskModal_input} label="Assignee" />

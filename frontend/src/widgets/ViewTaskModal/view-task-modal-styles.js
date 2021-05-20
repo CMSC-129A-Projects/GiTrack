@@ -20,7 +20,7 @@ export const viewTaskModal_body = css`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 export const viewTaskModal_bodyTitle = (theme) => css`
@@ -72,7 +72,9 @@ export const viewTaskModal_progressText = (theme) => css`
   padding: 0 0 0 8px;
 `;
 
-export const viewTaskModal_optionsCard = css`
+export const viewTaskModal_optionsCard = (theme) => css`
   width: 260px;
   padding: 20px;
+  box-shadow: none;
+  border: 1px solid ${theme.color.neutral[3]};
 `;

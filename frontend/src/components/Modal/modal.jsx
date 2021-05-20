@@ -4,6 +4,7 @@ import ReactModal from 'react-modal';
 
 // Style
 import * as style from './modal-styles';
+import './modal-styles.css';
 
 import Icon from '../Icon';
 import Button from '../Button';
@@ -53,9 +54,10 @@ export default function Modal({
             actions.length === 2 ? style.modal_actions___two : style.modal_actions___one
           }
         >
-          {actions.map(({ name, variant, onClick, disabled }) => (
+          {actions.map(({ type, name, variant, onClick, disabled }) => (
             <Button
               css={style.modal_actions_button}
+              type={type}
               variant={variant}
               disabled={disabled || isLoading}
               onClick={onClick}

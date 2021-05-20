@@ -1,20 +1,25 @@
 /** @jsxImportSource @emotion/react */
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
 
-import BoardService from 'services/BoardService';
+import BoardsService from 'services/BoardsService';
 
 // Style
 import * as style from './board-add-styles';
 
-export default function AddBoard() {
+export default function AddBoard({ refreshBoards }) {
+  const history = useHistory();
   const { register, watch, handleSubmit } = useForm();
   const watchTitle = watch('title', '');
 
   const onSubmit = (formData) => {
-    BoardService.create({ body: formData });
+    BoardsService.create({ body: formData }).then(({ data: { id: boardId } }) => {
+      refreshBoards();
+      history.push(`/board/${boardId}`);
+    });
   };
 
   return (
