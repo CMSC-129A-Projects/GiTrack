@@ -12,6 +12,9 @@ const {
   getBoardById,
   editBoard,
 } = require('../models/boards');
+
+const { getTasksInBoard } = require('../models/tasks');
+
 const { connectRepository } = require('../models/repositories');
 
 // Middlewares
@@ -443,6 +446,40 @@ router.post('/:id(\\d+)/connect', authJWT, async (req, res) => {
       board_id: null,
       error_message: err,
     });
+  }
+});
+
+router.get('/:id(\\d+)/tasks', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+
+  if (id === undefined) {
+    return res.status(400).json({
+      tasks: null,
+      error_message: boardErrorMessages.MISSING_ID,
+    });
+  }
+
+  try {
+    await getPermissions(userId, id);
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({
+      tasks: null,
+      error_message: err,
+    });
+  }
+
+  try {
+    const tasks = await getTasksInBoard(userId, id);
+
+    return res.json({
+      tasks,
+      error_message: null,
+    });
+  } catch (err) {
+    debug(err);
+    return res.status(500).json({ tasks: null, error_message: err });
   }
 });
 

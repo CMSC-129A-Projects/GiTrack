@@ -57,14 +57,11 @@ async function removeTask(id) {
   }
 }
 
-async function getBoardTasks(userId, boardId) {
+async function getTasksInBoard(userId, boardId) {
   const db = await dbHandler;
 
   try {
-    const taskList = await db.all(
-      'SELECT title FROM Tasks WHERE board_id = ?',
-      boardId
-    );
+    const taskList = await db.all('SELECT * FROM Tasks WHERE board_id = ?', boardId);
 
     return taskList;
   } catch (err) {
@@ -105,7 +102,7 @@ module.exports = {
   addTask,
   getTask,
   removeTask,
-  getBoardTasks,
+  getTasksInBoard,
   connectBranch,
   getTaskBoard,
 };

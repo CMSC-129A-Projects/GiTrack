@@ -15,7 +15,7 @@ export const boardIndex_header = css`
 `;
 
 export const boardIndex_header_boardName = (theme) => css`
-  color: ${theme.color.neutral[5]};
+  color: ${theme.color.neutral[6]};
   ${theme.text.bodyMD};
   margin: 0;
 `;

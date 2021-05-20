@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -20,9 +21,14 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    watch,
     setError,
+    clearErrors,
     formState: { errors },
   } = useForm();
+
+  const watchUsername = watch("username", false);
+  const watchPassword = watch("password", false);
 
   const onSubmit = (formData) => {
     AuthService.login({ body: formData })
@@ -47,6 +53,10 @@ export default function LoginPage() {
         });
       });
   };
+
+  useEffect(() => {
+    clearErrors();
+  }, [watchUsername, watchPassword])
 
   return (
     <div css={style.loginPage}>

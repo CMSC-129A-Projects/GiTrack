@@ -1,7 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
+import useBoard from 'hooks/useBoard';
+import useBoardTasks from 'hooks/useBoardTasks';
+
+import Spinner from 'components/Spinner';
 import Column from 'components/Column';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
@@ -14,45 +19,61 @@ import ViewTaskModal from 'widgets/ViewTaskModal';
 import * as style from './board-index-styles';
 
 export default function BoardIndex() {
+  const { boardId } = useParams();
+
   const [isAddTaskModalOpened, setIsAddTaskModalOpened] = useState(false);
-  const [isViewTaskModalOpened, setIsViewTaskModalOpened] = useState(false);
+  const [taskToView, setTaskToView] = useState(null);
+
+  const { isLoading: isBoardLoading, board } = useBoard({ boardId });
+  const {
+    isLoading: isBoardTasksLoading,
+    boardTasks,
+    refresh: refreshBoardTasks,
+  } = useBoardTasks({ boardId });
+
+  if (isBoardLoading || isBoardTasksLoading) {
+    return <Spinner />;
+  }
+
+  const notStartedTasks = boardTasks.tasks.filter((task) => task.column_id === 0);
+  const inProgressTasks = boardTasks.tasks.filter((task) => task.column_id === 1);
+  const mergedTasks = boardTasks.tasks.filter((task) => task.column_id === 2);
 
   return (
     <>
       <AddTaskModal
+        boardId={boardId}
         isOpen={isAddTaskModalOpened}
         handleClose={() => setIsAddTaskModalOpened(false)}
+        refreshBoardTasks={refreshBoardTasks}
       />
-      <ViewTaskModal
-        isOpen={isViewTaskModalOpened}
-        handleClose={() => setIsViewTaskModalOpened(false)}
-      />
+      {taskToView && (
+        <ViewTaskModal
+          task={taskToView}
+          isOpen={taskToView !== null}
+          handleClose={() => setTaskToView(null)}
+        />
+      )}
       <div css={style.boardIndex}>
         <div css={style.boardIndex_header}>
           <p css={style.boardIndex_header_boardName}>Board Name</p>
-          <h2 css={style.boardIndex_header_name}>CovCheck</h2>
+          <h2 css={style.boardIndex_header_name}>{board.title}</h2>
         </div>
         <div css={style.boardIndex_columns}>
-          <Column title="Not Started" count={2}>
-            <TaskCard
-              title="[Frontend] Add Section Component"
-              body="Add Section component"
-            />
+          <Column title="Not Started" count={notStartedTasks?.length}>
+            {notStartedTasks.map((task) => (
+              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+            ))}
           </Column>
-          <Column title="In Progress" count={2}>
-            <TaskCard
-              title="[Frontend] Add Card Component"
-              body="Create a Card component"
-              tag="feature/add-card"
-              onClick={() => setIsViewTaskModalOpened(true)}
-            />
+          <Column title="In Progress" count={inProgressTasks?.length}>
+            {inProgressTasks.map((task) => (
+              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+            ))}
           </Column>
-          <Column title="Merged" count={2}>
-            <TaskCard
-              title="[Frontend] Add Text Component"
-              body="Create a Text component"
-              tag="feature/add-text"
-            />
+          <Column title="Merged" count={mergedTasks?.length}>
+            {mergedTasks.map((task) => (
+              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+            ))}
           </Column>
         </div>
         <Button

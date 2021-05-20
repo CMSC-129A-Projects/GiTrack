@@ -1,1 +1,1 @@
-export { default } from './taskcard';
+export { default } from './task-card';

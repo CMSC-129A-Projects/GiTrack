@@ -12,8 +12,8 @@ export const dropdown = {
     padding: '8px 12px',
 
     '&:hover': {
-      borderColor: theme.color.primary[3]
-    }
+      borderColor: theme.color.primary[3],
+    },
   }),
   placeholder: (base, state) => ({
     ...base,
@@ -21,7 +21,7 @@ export const dropdown = {
       state.isFocused || state.isSelected || state.selectProps.inputValue
         ? 'none'
         : 'block',
-    margin: '0'
+    margin: '0',
   }),
   valueContainer: (base) => ({
     ...base,
@@ -30,11 +30,11 @@ export const dropdown = {
     fontSize: '0.875rem',
     lineHeight: '1.5',
     overflow: 'initial',
-    color: theme.color.neutral[7]
+    color: theme.color.neutral[7],
   }),
   indicatorSeparator: (base) => ({
     ...base,
-    display: 'none'
+    display: 'none',
   }),
   dropdownIndicator: (base) => ({
     ...base,
@@ -42,16 +42,16 @@ export const dropdown = {
     padding: '0',
     svg: {
       height: '16px',
-      width: '16px'
-    }
+      width: '16px',
+    },
   }),
   clearIndicator: (base) => ({
     ...base,
     padding: '0 8px',
     svg: {
       height: '16px',
-      width: '16px'
-    }
+      width: '16px',
+    },
   }),
   multiValue: (base) => ({
     ...base,
@@ -59,34 +59,34 @@ export const dropdown = {
     margin: '0 2px',
     padding: '0 4px',
     backgroundColor: theme.color.neutral[2],
-    fontWeight: '600'
+    fontWeight: '600',
   }),
   multiValueRemove: (base) => ({
     ...base,
     borderRadius: '0 12px 12px 0',
     '&:hover': {
       backgroundColor: 'transparent',
-      color: theme.color.red[3]
-    }
+      color: theme.color.red[3],
+    },
   }),
   noOptionsMessage: (base) => ({
     ...base,
     fontFamily: 'Roboto, sans-serif',
     fontSize: '0.875rem',
     lineHeight: '1.5',
-    color: theme.color.neutral[7]
+    color: theme.color.neutral[7],
   }),
   groupHeading: (base) => ({
     ...base,
     fontFamily: 'Roboto, sans-serif',
     fontSize: '0.75rem',
     lineHeight: '1.5',
-    color: theme.color.neutral[3]
+    color: theme.color.neutral[3],
   }),
   input: (base) => ({
     ...base,
     margin: '0',
-    padding: '0'
+    padding: '0',
   }),
   option: (base, state) => ({
     ...base,
@@ -97,8 +97,8 @@ export const dropdown = {
     fontFamily: 'Roboto, sans-serif',
     fontSize: '0.875rem',
     lineHeight: '1.5',
-    overflow: 'initial'
-  })
+    overflow: 'initial',
+  }),
 };
 
 export const dropdown_errorMessage = css`
@@ -108,7 +108,7 @@ export const dropdown_errorMessage = css`
 `;
 
 export const dropdown_label = css`
-  color: ${theme.color.neutral[5]};
-  ${theme.text.bodyMD};
+  color: ${theme.color.neutral[7]};
+  ${theme.text.titleMD};
   margin: 0 0 4px 0;
 `;
