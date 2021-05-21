@@ -6,6 +6,8 @@ const {
   user: userErrorMessages,
 } = require('../constants/error-messages');
 
+// const { findUser } = require('./users');
+
 async function getPermissions(userId, boardId, isDeveloper = 0) {
   const db = await dbHandler;
   try {
@@ -130,29 +132,33 @@ async function userInBoard(boardId, userId) {
     boardId,
     userId
   );
-
-  if (user !== undefined) {
-    throw userErrorMessages.DUPLICATE_USER;
-  } else {
-    return user;
-  }
+  return user;
 }
 
-async function addDevToBoard(boardId, devId) {
+async function addDevToBoard(boardId, devIds) {
   const db = await dbHandler;
 
   try {
-    const dev = await db.run(
-      'INSERT INTO Memberships VALUES (?, ?, 1)',
-      boardId,
-      devId
-    );
-
-    return dev;
+    await db.getDatabaseInstance().serialize(async function addDevs() {
+      const dev = await db.prepare('INSERT INTO Memberships VALUES (?, ?, 1)');
+      for (let i = 0; i < devIds.length; i += 1) {
+        dev.run(boardId, devIds[i]);
+      }
+    });
   } catch (err) {
     debug(err);
     throw boardErrorMessages.INSERT_FAILED;
   }
+}
+
+async function getBoardMembers(boardId) {
+  const db = await dbHandler;
+
+  const members = await db.all(
+    'SELECT user_id FROM Memberships WHERE board_id = ?',
+    boardId
+  );
+  return members;
 }
 
 module.exports = {
@@ -166,4 +172,5 @@ module.exports = {
   getBoardRepoId,
   addDevToBoard,
   userInBoard,
+  getBoardMembers,
 };

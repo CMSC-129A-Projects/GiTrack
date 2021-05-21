@@ -11,22 +11,24 @@ const {
   getBoardsWithUser,
   getBoardById,
   editBoard,
-  userInBoard,
+  // userInBoard,
   addDevToBoard,
+  getBoardMembers,
+  userInBoard,
 } = require('../models/boards');
 
 const { getTasksInBoard } = require('../models/tasks');
 
 const { connectRepository } = require('../models/repositories');
 
-const { findUser } = require('../models/users');
+// const { findUser } = require('../models/users');
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
 
 // Constants
 const {
   board: boardErrorMessages,
-  user: userErrorMessages,
+  // user: userErrorMessages,
 } = require('../constants/error-messages');
 
 /**
@@ -507,25 +509,26 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
     return res.status(403).json({ board_id: null, dev_id: null, error_message: err });
   }
 
-  if ((await findUser(devId)) === undefined) {
-    return res.status(400).json({
-      board_id: null,
+  const alreadyMembers = [];
+  for (let i = 0; i < devId.length; i += 1) {
+    const user = await userInBoard(id, devId[i]);
+    if (user !== undefined) {
+      alreadyMembers.push(user);
+      devId.splice(i, 1);
+    }
+  }
+
+  try {
+    await addDevToBoard(id, devId);
+
+    if (alreadyMembers.length === 0) {
+      return res.json({ board_id: id, dev_id: null, error_message: null });
+    }
+    return res.json({
+      board_id: id,
       dev_id: null,
-      error_message: userErrorMessages.USER_NOT_FOUND,
+      error_message: 'SOME REQUESTED USERS ARE ALREADY MEMBERS OF THE BOARD.',
     });
-  }
-
-  try {
-    await userInBoard(id, devId);
-  } catch (err) {
-    debug(err);
-    return res.status(400).json({ board_id: null, dev_id: null, error_message: err });
-  }
-
-  try {
-    let dev = await addDevToBoard(id, devId);
-
-    return res.json({ board_id: id, dev_id: devId, error_message: null });
   } catch (err) {
     debug(err);
     return res.status(500).json({
@@ -533,6 +536,36 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
       dev_id: null,
       error_message: err,
     });
+  }
+});
+
+router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { boardId } = req.body;
+
+  if (id === undefined) {
+    return res.status(400).json({
+      board_id: null,
+      members: null,
+      error_message: boardErrorMessages.MISSING_ID,
+    });
+  }
+
+  if ((await getBoardById(boardId)) === undefined) {
+    return res.status(400).json({
+      board_id: null,
+      members: null,
+      error_message: boardErrorMessages.NOT_FOUND,
+    });
+  }
+
+  try {
+    const mem = await getBoardMembers(boardId);
+
+    return res.json({ board_id: boardId, members: mem, error_message: null });
+  } catch (err) {
+    debug(err);
+    return res.status(400).json({ board_id: null, members: null, error_message: err });
   }
 });
 
