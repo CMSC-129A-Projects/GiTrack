@@ -14,6 +14,11 @@ import TaskCard from 'widgets/TaskCard';
 
 import AddTaskModal from 'widgets/AddTaskModal';
 import ViewTaskModal from 'widgets/ViewTaskModal';
+import AddRepoModal from 'widgets/AddRepoModal';
+import AddDeveloperModal from 'widgets/AddDeveloperModal';
+
+import placeholder from 'assets/images/user-image.svg';
+import add from 'assets/images/Add.svg';
 
 // Style
 import * as style from './board-index-styles';
@@ -22,6 +27,8 @@ export default function BoardIndex() {
   const { boardId } = useParams();
 
   const [isAddTaskModalOpened, setIsAddTaskModalOpened] = useState(false);
+  const [isAddRepoModalOpened, setIsAddRepoModalOpened] = useState(false);
+  const [isAddDeveloperModalOpened, setIsAddDeveloperModalOpened] = useState(false);
   const [taskToView, setTaskToView] = useState(null);
 
   const { isLoading: isBoardLoading, board } = useBoard({ boardId });
@@ -46,6 +53,14 @@ export default function BoardIndex() {
         isOpen={isAddTaskModalOpened}
         handleClose={() => setIsAddTaskModalOpened(false)}
         refreshBoardTasks={refreshBoardTasks}
+      />
+      <AddRepoModal
+        isOpen={isAddRepoModalOpened}
+        handleClose={() => setIsAddRepoModalOpened(false)}
+      />
+      <AddDeveloperModal
+        isOpen={isAddDeveloperModalOpened}
+        handleClose={() => setIsAddDeveloperModalOpened(false)}
       />
       {taskToView && (
         <ViewTaskModal
@@ -75,6 +90,40 @@ export default function BoardIndex() {
               <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
             ))}
           </Column>
+          <div css={style.boardIndex_panel}>
+            <p css={style.boardIndex_text}>Repositories</p>
+            <div css={style.boardIndex_iconContainer}>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user" css={style.boardIndex_image} />
+              </div>
+              <div
+                css={style.boardIndex_imageContainer__clickable}
+                onClick={() => setIsAddRepoModalOpened(true)}
+                onKeyDown={() => setIsAddRepoModalOpened(true)}
+              >
+                <img src={add} alt="add" css={style.boardIndex_image} />
+              </div>
+            </div>
+            <p css={style.boardIndex_text}>Members</p>
+            <div css={style.boardIndex_iconContainer}>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user" css={style.boardIndex_image} />
+              </div>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user" css={style.boardIndex_image} />
+              </div>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user" css={style.boardIndex_image} />
+              </div>
+              <div
+                onClick={() => setIsAddDeveloperModalOpened(true)}
+                onKeyDown={() => setIsAddDeveloperModalOpened(true)}
+                css={style.boardIndex_imageContainer__clickable}
+              >
+                <img src={add} alt="add" css={style.boardIndex_image} />
+              </div>
+            </div>
+          </div>
         </div>
         <Button
           onClick={() => setIsAddTaskModalOpened(true)}

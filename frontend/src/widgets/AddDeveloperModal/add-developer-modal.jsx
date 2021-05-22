@@ -12,7 +12,7 @@ export default function AddDeveloperModal({ isOpen, handleClose }) {
   return (
     <Modal
       size={modalSizes.SM}
-      title="Add Repository"
+      title="Add People"
       icon="person_add"
       isOpen={isOpen}
       handleClose={handleClose}
@@ -29,7 +29,7 @@ export default function AddDeveloperModal({ isOpen, handleClose }) {
         },
       ]}
     >
-      <Input css={style.addDeveloperModal_input} label="Email address" />
+      <Input css={style.addDeveloperModal_input} placeholder="Email address" />
     </Modal>
   );
 }
