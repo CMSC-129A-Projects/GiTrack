@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
+import TasksService from 'services/TasksService';
+
 import Modal from 'components/Modal';
 import buttonVariants from 'components/Button/constants';
 import modalSizes from 'components/Modal/constants';
@@ -7,7 +9,7 @@ import modalSizes from 'components/Modal/constants';
 // Style
 import * as style from './remove-task-modal-styles';
 
-export default function RemoveTaskModal({ isOpen, handleClose }) {
+export default function RemoveTaskModal({ task, isOpen, handleClose }) {
   return (
     <Modal
       size={modalSizes.SM}
@@ -18,7 +20,9 @@ export default function RemoveTaskModal({ isOpen, handleClose }) {
       actions={[
         {
           name: 'Yes',
-          onClick: () => {},
+          onClick: () => {
+            TasksService.remove({ taskId: task.id }).then(handleClose);
+          },
           variant: buttonVariants.SMALL.PRIMARY,
         },
         {
