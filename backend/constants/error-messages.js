@@ -24,6 +24,7 @@ const board = {
   MISSING_USER_ID: 'MISSING_USER_ID',
   MISSING_FULL_NAME: 'MISSING_FULL_NAME',
   MISSING_URL: 'MISSING_URL',
+  USER_ALREADY_IN_BOARD: 'USER_ALREADY_IN_BOARD',
 };
 
 const task = {
@@ -55,6 +56,7 @@ const github = {
 
 const repo = {
   CONNECTION_FAILED: 'CONNECTION_FAILED',
+  GET_FAILED: 'GET_FAILED',
 };
 
 module.exports = { user, board, logic, task, github, repo };

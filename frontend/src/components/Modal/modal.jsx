@@ -54,17 +54,21 @@ export default function Modal({
             actions.length === 2 ? style.modal_actions___two : style.modal_actions___one
           }
         >
-          {actions.map(({ type, name, variant, onClick, disabled }) => (
-            <Button
-              css={style.modal_actions_button}
-              type={type}
-              variant={variant}
-              disabled={disabled || isLoading}
-              onClick={onClick}
-            >
-              {name}
-            </Button>
-          ))}
+          {actions.map(
+            ({ type, name, variant, onClick, disabled, element, ...passedProps }) => (
+              <Button
+                css={style.modal_actions_button}
+                type={type}
+                variant={variant}
+                disabled={disabled || isLoading}
+                onClick={onClick}
+                element={element}
+                {...passedProps}
+              >
+                {name}
+              </Button>
+            )
+          )}
         </div>
       )}
     </ReactModal>

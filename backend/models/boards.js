@@ -119,6 +119,43 @@ async function getBoardRepoId(boardId) {
   }
 }
 
+async function userInBoard(boardId, userId) {
+  const db = await dbHandler;
+
+  const user = await db.get(
+    'SELECT user_id FROM Memberships WHERE board_id = ? AND user_id = ?',
+    boardId,
+    userId
+  );
+  return user;
+}
+
+async function addDevToBoard(boardId, devIds) {
+  const db = await dbHandler;
+
+  try {
+    await db.getDatabaseInstance().serialize(async function addDevs() {
+      const dev = await db.prepare('INSERT INTO Memberships VALUES (?, ?, 1)');
+      for (let i = 0; i < devIds.length; i += 1) {
+        dev.run(boardId, devIds[i]);
+      }
+    });
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.INSERT_FAILED;
+  }
+}
+
+async function getBoardMembers(boardId) {
+  const db = await dbHandler;
+
+  const members = await db.all(
+    'SELECT user_id FROM Memberships WHERE board_id = ?',
+    boardId
+  );
+  return members;
+}
+
 module.exports = {
   getPermissions,
   createBoard,
@@ -128,4 +165,7 @@ module.exports = {
   getBoardsWithUser,
   getBoardRepo,
   getBoardRepoId,
+  addDevToBoard,
+  userInBoard,
+  getBoardMembers,
 };

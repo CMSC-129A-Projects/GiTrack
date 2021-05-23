@@ -8,7 +8,7 @@ async function connectRepository(id, name, url, boardId) {
 
   try {
     await db.run(
-      'INSERT INTO Repositories (id, name, url, board_id) VALUES (?, ?, ?, ?)',
+      'INSERT INTO Repositories (id, full_name, url, board_id) VALUES (?, ?, ?, ?)',
       id,
       name,
       url,
@@ -20,6 +20,23 @@ async function connectRepository(id, name, url, boardId) {
   }
 }
 
+async function getReposInBoard(boardId) {
+  const db = await dbHandler;
+
+  try {
+    const repos = await db.all(
+      'SELECT id, full_name, url FROM Repositories WHERE board_id = ?',
+      boardId
+    );
+
+    return repos;
+  } catch (err) {
+    debug(err);
+    throw repoErrorMessages.CONNECTION_FAILED;
+  }
+}
+
 module.exports = {
   connectRepository,
+  getReposInBoard,
 };

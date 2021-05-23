@@ -98,7 +98,7 @@ router.get('/link/callback', async (req, res) => {
   }
 });
 
-router.get('/repo', authJWT, async (req, res) => {
+router.get('/repos', authJWT, async (req, res) => {
   const { id: userId } = req.user;
 
   let authToken = null;
@@ -106,7 +106,7 @@ router.get('/repo', authJWT, async (req, res) => {
   try {
     authToken = await getGithubToken(userId);
   } catch (err) {
-    return res.status(401).json({ repos: null, error_message: err });
+    return res.status(403).json({ repos: null, error_message: err });
   }
 
   try {
@@ -128,13 +128,25 @@ router.get('/repo', authJWT, async (req, res) => {
     if (err.status === 401) {
       await removeGithubToken(userId);
 
-      return res.status(401).json({
+      return res.status(403).json({
         repos: null,
         error_message: githubErrorMessages.NOT_GITHUB_AUTHENTICATED,
       });
     }
 
     return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
+  }
+});
+
+router.get('/token-status', authJWT, async (req, res) => {
+  const { id: userId } = req.user;
+
+  try {
+    await getGithubToken(userId);
+
+    return res.json({ github_authenticated: true, error_message: null });
+  } catch (err) {
+    return res.json({ github_authenticated: false, error_message: err });
   }
 });
 
@@ -157,7 +169,7 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
   try {
     authToken = await getGithubToken(userId);
   } catch (err) {
-    return res.status(401).json({ branches: null, error_message: err });
+    return res.status(403).json({ branches: null, error_message: err });
   }
 
   try {
@@ -187,7 +199,7 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
     if (err.status === 401) {
       await removeGithubToken(userId);
 
-      return res.status(401).json({
+      return res.status(403).json({
         repos: null,
         error_message: githubErrorMessages.NOT_GITHUB_AUTHENTICATED,
       });
