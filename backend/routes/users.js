@@ -12,19 +12,19 @@ const { authJWT } = require('../middlewares/auth');
 // Constants
 const { user: userErrorMessages } = require('../constants/error-messages');
 
-router.get('/', authJWT, async (req, res) => {
-  const { id: userId } = req.body;
+router.get('/:id(\\d+)', authJWT, async (req, res) => {
+  const { id } = req.params;
 
-  if (userId === undefined) {
+  if (id === undefined) {
     return res
       .status(400)
       .json({ user_id: null, error_message: userErrorMessages.MISSING_ID });
   }
 
   try {
-    await findUser(userId);
+    await findUser(id);
 
-    return res.json({ user_id: userId, error_message: null });
+    return res.json({ user_id: id, error_message: null });
   } catch (err) {
     debug(err);
     return res.status(404).json({ user_id: null, error_message: err });
