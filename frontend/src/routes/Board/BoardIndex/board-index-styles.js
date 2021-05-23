@@ -32,3 +32,48 @@ export const boardIndex_columns = css`
   grid-template-rows: 500px;
   grid-gap: 32px;
 `;
+
+export const boardIndex_sidePanel = css`
+  padding: 0 0 0 30px;
+`;
+
+export const boardIndex_text = (theme) => css`
+  color: ${theme.color.neutral[5]};
+  ${theme.text.bodyMD};
+  padding: 24px 0 0 0;
+  margin: 0;
+`;
+
+export const boardIndex_iconRow = css`
+  display: flex;
+  flex-direction: row;
+  padding: 8px 0 0 0;
+`;
+
+export const boardIndex_image = css`
+  height: 36px;
+`;
+
+export const boardIndex_imageContainer = css`
+  height: 100%;
+  margin: -3px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #fff;
+`;
+
+export const boardIndex_icon__clickable = (theme) => css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: ${theme.color.neutral[5]};
+  font-size: 2rem;
+
+  background-color: ${theme.color.neutral[2]};
+  height: 36px;
+  width: 36px;
+  margin: -3px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #fff;
+  cursor: pointer;
+`;

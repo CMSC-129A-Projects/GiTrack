@@ -56,6 +56,7 @@ const github = {
 
 const repo = {
   CONNECTION_FAILED: 'CONNECTION_FAILED',
+  GET_FAILED: 'GET_FAILED',
 };
 
 module.exports = { user, board, logic, task, github, repo };

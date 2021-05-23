@@ -19,7 +19,7 @@ const {
 
 const { getTasksInBoard } = require('../models/tasks');
 
-const { connectRepository } = require('../models/repositories');
+const { connectRepository, getReposInBoard } = require('../models/repositories');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -372,7 +372,7 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
 router.post('/:id(\\d+)/connect', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const { id: repoId, full_name: fullName, url, board_id: boardId } = req.body;
+  const { id: repoId, full_name: fullName, url } = req.body;
 
   if (id === undefined) {
     return res.status(400).json({
@@ -435,12 +435,12 @@ router.post('/:id(\\d+)/connect', authJWT, async (req, res) => {
   }
 
   try {
-    await connectRepository(repoId, fullName, url, boardId);
+    await connectRepository(repoId, fullName, url, id);
 
     return res.json({
       id: repoId,
       full_name: fullName,
-      board_id: boardId,
+      board_id: id,
       error_message: null,
     });
   } catch (err) {
@@ -475,7 +475,7 @@ router.get('/:id(\\d+)/tasks', authJWT, async (req, res) => {
   }
 
   try {
-    const tasks = await getTasksInBoard(userId, id);
+    const tasks = await getTasksInBoard(id);
 
     return res.json({
       tasks,
@@ -484,6 +484,40 @@ router.get('/:id(\\d+)/tasks', authJWT, async (req, res) => {
   } catch (err) {
     debug(err);
     return res.status(500).json({ tasks: null, error_message: err });
+  }
+});
+
+router.get('/:id(\\d+)/repos', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+
+  if (id === undefined) {
+    return res.status(400).json({
+      repos: null,
+      error_message: boardErrorMessages.MISSING_ID,
+    });
+  }
+
+  try {
+    await getPermissions(userId, id);
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({
+      repos: null,
+      error_message: err,
+    });
+  }
+
+  try {
+    const repos = await getReposInBoard(id);
+
+    return res.json({
+      repos: repos === undefined ? null : repos,
+      error_message: null,
+    });
+  } catch (err) {
+    debug(err);
+    return res.status(500).json({ repos: null, error_message: err });
   }
 });
 

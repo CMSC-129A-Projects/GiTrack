@@ -5,15 +5,23 @@ import { useParams } from 'react-router-dom';
 
 import useBoard from 'hooks/useBoard';
 import useBoardTasks from 'hooks/useBoardTasks';
+import useBoardRepos from 'hooks/useBoardRepos';
 
 import Spinner from 'components/Spinner';
 import Column from 'components/Column';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
-import TaskCard from 'widgets/TaskCard';
+import Icon from 'components/Icon';
 
+import TaskCard from 'widgets/TaskCard';
+import BoardRepositories from 'widgets/BoardRepositories';
 import AddTaskModal from 'widgets/AddTaskModal';
 import ViewTaskModal from 'widgets/ViewTaskModal';
+import AddRepoModal from 'widgets/AddRepoModal';
+import AddDeveloperModal from 'widgets/AddDeveloperModal';
+import SigninGithubModal from 'widgets/SigninGithubModal';
+
+import placeholder from 'assets/images/user-image.svg';
 
 // Style
 import * as style from './board-index-styles';
@@ -22,6 +30,10 @@ export default function BoardIndex() {
   const { boardId } = useParams();
 
   const [isAddTaskModalOpened, setIsAddTaskModalOpened] = useState(false);
+  const [isAddRepoModalOpened, setIsAddRepoModalOpened] = useState(false);
+  const [isAddDeveloperModalOpened, setIsAddDeveloperModalOpened] = useState(false);
+  const [isSigninGithubModalOpened, setIsSigninGithubModalOpened] = useState(false);
+
   const [taskToView, setTaskToView] = useState(null);
 
   const { isLoading: isBoardLoading, board } = useBoard({ boardId });
@@ -31,7 +43,13 @@ export default function BoardIndex() {
     refresh: refreshBoardTasks,
   } = useBoardTasks({ boardId });
 
-  if (isBoardLoading || isBoardTasksLoading) {
+  const {
+    isLoading: isBoardReposLoading,
+    boardRepos,
+    refresh: refreshBoardRepos,
+  } = useBoardRepos({ boardId });
+
+  if (isBoardLoading || isBoardTasksLoading || isBoardReposLoading) {
     return <Spinner />;
   }
 
@@ -46,6 +64,20 @@ export default function BoardIndex() {
         isOpen={isAddTaskModalOpened}
         handleClose={() => setIsAddTaskModalOpened(false)}
         refreshBoardTasks={refreshBoardTasks}
+      />
+      <AddRepoModal
+        boardId={boardId}
+        isOpen={isAddRepoModalOpened}
+        handleClose={() => setIsAddRepoModalOpened(false)}
+        refreshBoardRepos={refreshBoardRepos}
+      />
+      <AddDeveloperModal
+        isOpen={isAddDeveloperModalOpened}
+        handleClose={() => setIsAddDeveloperModalOpened(false)}
+      />
+      <SigninGithubModal
+        isOpen={isSigninGithubModalOpened}
+        handleClose={() => setIsSigninGithubModalOpened(false)}
       />
       {taskToView && (
         <ViewTaskModal
@@ -75,6 +107,34 @@ export default function BoardIndex() {
               <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
             ))}
           </Column>
+          <div css={style.boardIndex_sidePanel}>
+            <p css={style.boardIndex_text}>Repositories</p>
+            <div css={style.boardIndex_iconRow}>
+              <BoardRepositories
+                boardRepos={boardRepos}
+                setIsAddRepoModalOpened={setIsAddRepoModalOpened}
+                setIsSigninGithubModalOpened={setIsSigninGithubModalOpened}
+              />
+            </div>
+            <p css={style.boardIndex_text}>Members</p>
+            <div css={style.boardIndex_iconRow}>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user1" css={style.boardIndex_image} />
+              </div>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user2" css={style.boardIndex_image} />
+              </div>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user3" css={style.boardIndex_image} />
+              </div>
+              <Icon
+                icon="add"
+                onClick={() => setIsAddDeveloperModalOpened(true)}
+                onKeyDown={() => setIsAddDeveloperModalOpened(true)}
+                css={style.boardIndex_icon__clickable}
+              />
+            </div>
+          </div>
         </div>
         <Button
           onClick={() => setIsAddTaskModalOpened(true)}
