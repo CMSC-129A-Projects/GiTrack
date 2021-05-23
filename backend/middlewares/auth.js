@@ -11,6 +11,7 @@ function authJWT(req, res, next) {
 
     req.user = jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
       if (err) {
+        debug(err);
         if (err.name === 'TokenExpiredError') {
           return 'TOKEN_ERROR';
         }
