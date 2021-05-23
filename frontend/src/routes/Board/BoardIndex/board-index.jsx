@@ -10,6 +10,7 @@ import Spinner from 'components/Spinner';
 import Column from 'components/Column';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
+import Icon from 'components/Icon';
 import TaskCard from 'widgets/TaskCard';
 
 import AddTaskModal from 'widgets/AddTaskModal';
@@ -18,7 +19,6 @@ import AddRepoModal from 'widgets/AddRepoModal';
 import AddDeveloperModal from 'widgets/AddDeveloperModal';
 
 import placeholder from 'assets/images/user-image.svg';
-import add from 'assets/images/Add.svg';
 
 // Style
 import * as style from './board-index-styles';
@@ -90,38 +90,36 @@ export default function BoardIndex() {
               <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
             ))}
           </Column>
-          <div css={style.boardIndex_panel}>
+          <div css={style.boardIndex_sidePanel}>
             <p css={style.boardIndex_text}>Repositories</p>
-            <div css={style.boardIndex_iconContainer}>
+            <div css={style.boardIndex_iconRow}>
               <div css={style.boardIndex_imageContainer}>
                 <img src={placeholder} alt="user" css={style.boardIndex_image} />
               </div>
-              <div
-                css={style.boardIndex_imageContainer__clickable}
-                onClick={() => setIsAddRepoModalOpened(true)}
-                onKeyDown={() => setIsAddRepoModalOpened(true)}
-              >
-                <img src={add} alt="add" css={style.boardIndex_image} />
-              </div>
-            </div>
-            <p css={style.boardIndex_text}>Members</p>
-            <div css={style.boardIndex_iconContainer}>
-              <div css={style.boardIndex_imageContainer}>
-                <img src={placeholder} alt="user" css={style.boardIndex_image} />
-              </div>
-              <div css={style.boardIndex_imageContainer}>
-                <img src={placeholder} alt="user" css={style.boardIndex_image} />
-              </div>
-              <div css={style.boardIndex_imageContainer}>
-                <img src={placeholder} alt="user" css={style.boardIndex_image} />
-              </div>
-              <div
+              <Icon
+                icon="add"
                 onClick={() => setIsAddDeveloperModalOpened(true)}
                 onKeyDown={() => setIsAddDeveloperModalOpened(true)}
-                css={style.boardIndex_imageContainer__clickable}
-              >
-                <img src={add} alt="add" css={style.boardIndex_image} />
+                css={style.boardIndex_icon__clickable}
+              />
+            </div>
+            <p css={style.boardIndex_text}>Members</p>
+            <div css={style.boardIndex_iconRow}>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user1" css={style.boardIndex_image} />
               </div>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user2" css={style.boardIndex_image} />
+              </div>
+              <div css={style.boardIndex_imageContainer}>
+                <img src={placeholder} alt="user3" css={style.boardIndex_image} />
+              </div>
+              <Icon
+                icon="add"
+                onClick={() => setIsAddDeveloperModalOpened(true)}
+                onKeyDown={() => setIsAddDeveloperModalOpened(true)}
+                css={style.boardIndex_icon__clickable}
+              />
             </div>
           </div>
         </div>
