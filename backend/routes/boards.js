@@ -127,11 +127,11 @@ router.get('/', authJWT, async (req, res) => {
  *
  * /board:
  *   post:
- *     summary: Create a board.
+ *    summary: Create a board.
  *     tags: [Boards]
  *     security:
  *       - JWTBearerAuth: []
- *     requestBody:
+ *     requestBody:S
  *       required: true
  *       content:
  *         application/json:
@@ -538,7 +538,6 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
 
 router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
   const { id } = req.params;
-  const { boardId } = req.body;
 
   if (id === undefined) {
     return res.status(400).json({
@@ -548,7 +547,7 @@ router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
     });
   }
 
-  if ((await getBoardById(boardId)) === undefined) {
+  if ((await getBoardById(id)) === undefined) {
     return res.status(400).json({
       board_id: null,
       members: null,
@@ -557,9 +556,9 @@ router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
   }
 
   try {
-    const mem = await getBoardMembers(boardId);
+    const mem = await getBoardMembers(id);
 
-    return res.json({ board_id: boardId, members: mem, error_message: null });
+    return res.json({ board_id: id, members: mem, error_message: null });
   } catch (err) {
     debug(err);
     return res.status(400).json({ board_id: null, members: null, error_message: err });

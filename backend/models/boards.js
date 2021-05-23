@@ -3,8 +3,6 @@ const dbHandler = require('../db');
 
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
-// const { findUser } = require('./users');
-
 async function getPermissions(userId, boardId, isDeveloper = 0) {
   const db = await dbHandler;
   try {
