@@ -1,5 +1,5 @@
 module.exports = `CREATE TABLE IF NOT EXISTS "Assignees" (
-  "user_id"       INTEGER NOT NULL,
-  "task_id"       INTEGER NOT NULL,
-  "is_developer"  INTEGER NOT NULL
-)`;
+  "board_id" INTEGER NOT NULL,
+  "task_id" INTEGER NOT NULL,
+  "user_id" INTEGER NOT NULL )
+`;

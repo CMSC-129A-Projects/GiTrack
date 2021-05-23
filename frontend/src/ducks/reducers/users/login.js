@@ -26,12 +26,11 @@ const loginReducer = (state = initialState, action) => {
 };
 
 export const actions = {
-  loginUpdate: ({ user, accessToken, refreshToken }) => ({
+  loginUpdate: ({ user, accessToken }) => ({
     type: types.LOGIN_UPDATE,
     payload: {
       user,
       accessToken,
-      refreshToken,
     },
   }),
   loginRestart: () => ({

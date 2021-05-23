@@ -12,11 +12,18 @@ function authJWT(req, res, next) {
     req.user = jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
       if (err) {
         debug(err);
+        if (err.name === 'TokenExpiredError') {
+          return 'TOKEN_ERROR';
+        }
         return false;
       }
 
       return user;
     });
+
+    if (req.user === 'TOKEN_ERROR') {
+      return res.status(401).json({ error_message: req.user });
+    }
 
     if (req.user) {
       return next();
