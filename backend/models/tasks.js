@@ -57,7 +57,7 @@ async function removeTask(id) {
   }
 }
 
-async function getTasksInBoard(userId, boardId) {
+async function getTasksInBoard(boardId) {
   const db = await dbHandler;
 
   try {

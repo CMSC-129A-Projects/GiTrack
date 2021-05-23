@@ -52,17 +52,16 @@ export const configureAxios = (store) => {
           }),
         })
           .then((res) => res.json())
-          .then(({ access, refresh }) => {
+          .then(({ access_token }) => {
             // store the NEW ACCESS TOKEN and NEW REFRESH TOKEN to the reducer
             store.dispatch(
               actions.loginUpdate({
-                access_token: access,
-                refresh_token: refresh,
+                accessToken: access_token,
               })
             );
 
             // Modify the Authorization Header using the NEW ACCESS TOKEN
-            error.config.headers.authorization = access;
+            error.config.headers.authorization = access_token;
             return axios.request(error.config);
           })
           .catch(() => Promise.reject(error));

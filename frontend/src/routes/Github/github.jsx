@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import GithubService from 'services/GithubService';
 
@@ -10,6 +11,8 @@ import SigninGithubModal from 'widgets/SigninGithubModal';
 import * as style from './github-styles';
 
 export default function Github() {
+  const user = useSelector((state) => state.USERS.loginReducer.user);
+
   const [hasFailed, setHasFailed] = useState(false);
   const [isSigninGithubModalOpened, setIsSigninGithubModalOpened] = useState(false);
 
@@ -18,6 +21,10 @@ export default function Github() {
   const params = new URLSearchParams(location.search);
   const code = params.get('code');
   const state = params.get('state');
+
+  if (!user?.id) {
+    history.push('/login');
+  }
 
   useEffect(() => {
     GithubService.callback({
