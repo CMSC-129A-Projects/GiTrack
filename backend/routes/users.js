@@ -18,7 +18,7 @@ router.get('/', authJWT, async (req, res) => {
   if (userId === undefined) {
     return res
       .status(400)
-      .json({ id: null, title: null, error_message: userErrorMessages.MISSING_ID });
+      .json({ user_id:null, error_message: userErrorMessages.MISSING_ID });
   }
 
   try {
