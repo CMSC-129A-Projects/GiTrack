@@ -311,6 +311,7 @@ router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
   }
 
   for (let i = 0; i < assigneeId.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
     if ((await userInTask(boardId, id, assigneeId[i])) === undefined) {
       assigneeToAdd.push(assigneeId[i]);
     }
