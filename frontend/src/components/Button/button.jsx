@@ -12,10 +12,12 @@ export default function Button({
   onClick,
   type,
   disabled,
+  element,
   ...passedProps
 }) {
+  const T = element;
   return (
-    <button
+    <T
       type={type}
       css={style[`button___${variant}`]}
       onClick={onClick}
@@ -24,10 +26,11 @@ export default function Button({
     >
       {icon && <Icon icon={icon} css={icon && children && style.button_icon} />}
       {children}
-    </button>
+    </T>
   );
 }
 
 Button.defaultProps = {
   type: 'button',
+  element: 'button',
 };

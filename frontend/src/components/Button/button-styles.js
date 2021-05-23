@@ -10,6 +10,7 @@ const base = css`
   padding: 12px 24px;
   border-radius: 64px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+  text-decoration: none;
 
   &:disabled {
     opacity: 0.6;
