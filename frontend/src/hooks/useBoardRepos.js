@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 
 import BoardsService from 'services/BoardsService';
 
-const useBoardTasks = ({ boardId }) => {
+const useBoardRepos = ({ boardId }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [boardTasks, setBoardTasks] = useState([]);
+  const [boardRepos, setBoardRepos] = useState([]);
   const [callCount, setCallCount] = useState(0);
 
   useEffect(() => {
@@ -15,12 +15,19 @@ const useBoardTasks = ({ boardId }) => {
 
     let isMounted = true;
     setIsLoading(true);
-    BoardsService.retrieveTasks({ boardId }).then(({ data }) => {
-      if (isMounted) {
-        setBoardTasks(data);
-        setIsLoading(false);
-      }
-    });
+    BoardsService.retrieveRepos({ boardId })
+      .then(({ data }) => {
+        if (isMounted) {
+          setBoardRepos(data);
+          setIsLoading(false);
+        }
+      })
+      .catch(({ response }) => {
+        if (isMounted) {
+          setBoardRepos(response.data);
+          setIsLoading(false);
+        }
+      });
 
     return () => {
       isMounted = false;
@@ -29,11 +36,11 @@ const useBoardTasks = ({ boardId }) => {
 
   return {
     isLoading,
-    boardTasks,
+    boardRepos,
     refresh: () => {
       setCallCount(callCount + 1);
     },
   };
 };
 
-export default useBoardTasks;
+export default useBoardRepos;

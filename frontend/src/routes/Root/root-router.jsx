@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 
 // Routes
 const Board = lazy(() => import('../Board'));
+const Github = lazy(() => import('../Github'));
 const LoginSignup = lazy(() => import('../LoginSignup'));
 const Logout = lazy(() => import('../Public/Logout'));
 
@@ -14,6 +15,9 @@ export default function RootRouter() {
     <Router>
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
+          <Route path="/github">
+            <Github />
+          </Route>
           <Route path="/board">
             <Board />
           </Route>
