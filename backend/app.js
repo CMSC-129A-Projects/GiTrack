@@ -15,6 +15,7 @@ const authRouter = require('./routes/auth');
 const boardRouter = require('./routes/boards');
 const taskRouter = require('./routes/tasks');
 const githubRouter = require('./routes/github');
+const userRouter = require('./routes/users');
 
 const app = express();
 const db = require('./db');
@@ -32,6 +33,7 @@ app.use('/auth', authRouter);
 app.use('/board', boardRouter);
 app.use('/task', taskRouter);
 app.use('/github', githubRouter);
+app.use('/user', userRouter);
 
 // Cleanup Middleware
 let isShuttingDown = false;

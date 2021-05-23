@@ -150,7 +150,7 @@ async function getBoardMembers(boardId) {
   const db = await dbHandler;
 
   const members = await db.all(
-    'SELECT user_id FROM Memberships WHERE board_id = ?',
+    'SELECT id, username FROM Memberships JOIN Users ON user_id = id WHERE board_id = ?',
     boardId
   );
   return members;
