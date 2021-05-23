@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const express = require('express');
 const debug = require('debug')('backend:routes-boards');
 
@@ -11,7 +12,6 @@ const {
   getBoardsWithUser,
   getBoardById,
   editBoard,
-  // userInBoard,
   addDevToBoard,
   getBoardMembers,
   userInBoard,
@@ -21,15 +21,11 @@ const { getTasksInBoard } = require('../models/tasks');
 
 const { connectRepository } = require('../models/repositories');
 
-// const { findUser } = require('../models/users');
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
 
 // Constants
-const {
-  board: boardErrorMessages,
-  // user: userErrorMessages,
-} = require('../constants/error-messages');
+const { board: boardErrorMessages } = require('../constants/error-messages');
 
 /**
  * @swagger
@@ -495,45 +491,46 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
   const { devId } = req.body;
+  const devsToAdd = [];
 
   if (id === undefined) {
-    return res
-      .status(400)
-      .json({ id: null, title: null, error_message: boardErrorMessages.MISSING_ID });
+    return res.status(400).json({
+      board_id: null,
+      dev_id: null,
+      duplicate_devs: null,
+      error_message: boardErrorMessages.MISSING_ID,
+    });
   }
 
   try {
     await getPermissions(userId, id);
   } catch (err) {
     debug(err);
-    return res.status(403).json({ board_id: null, dev_id: null, error_message: err });
+    return res
+      .status(403)
+      .json({ board_id: null, dev_id: null, duplicate_devs: null, error_message: err });
   }
 
-  const alreadyMembers = [];
   for (let i = 0; i < devId.length; i += 1) {
-    const user = await userInBoard(id, devId[i]);
-    if (user !== undefined) {
-      alreadyMembers.push(user);
-      devId.splice(i, 1);
+    if ((await userInBoard(id, devId[i])) === undefined) {
+      devsToAdd.push(devId[i]);
     }
   }
-
   try {
-    await addDevToBoard(id, devId);
+    await addDevToBoard(id, devsToAdd);
 
-    if (alreadyMembers.length === 0) {
-      return res.json({ board_id: id, dev_id: null, error_message: null });
-    }
     return res.json({
       board_id: id,
-      dev_id: null,
-      error_message: 'SOME REQUESTED USERS ARE ALREADY MEMBERS OF THE BOARD.',
+      dev_id: devsToAdd.toString(),
+      duplicate_devs: devId.filter((el) => !devsToAdd.includes(el)).toString(),
+      error_message: null,
     });
   } catch (err) {
     debug(err);
     return res.status(500).json({
       board_id: null,
       dev_id: null,
+      duplicate_devs: null,
       error_message: err,
     });
   }

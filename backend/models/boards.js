@@ -1,10 +1,7 @@
 const debug = require('debug')('backend:models-board');
 const dbHandler = require('../db');
 
-const {
-  board: boardErrorMessages,
-  user: userErrorMessages,
-} = require('../constants/error-messages');
+const { board: boardErrorMessages } = require('../constants/error-messages');
 
 // const { findUser } = require('./users');
 
