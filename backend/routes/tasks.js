@@ -11,6 +11,8 @@ const {
   removeTask,
   getTaskBoard,
   connectBranch,
+  assignTask,
+  userInTask,
 } = require('../models/tasks');
 const { getPermissions } = require('../models/boards');
 
@@ -276,6 +278,59 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
     return res.status(403).json({
       name: null,
       repo_id: null,
+      error_message: err,
+    });
+  }
+});
+
+router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+  const { board_id: boardId, assigneeId } = req.body;
+  const assigneeToAdd = [];
+
+  if (boardId === undefined) {
+    return res.status(400).json({
+      board_id: null,
+      task_id: null,
+      assignee_id: null,
+      error_message: taskErrorMessages.MISSING_BOARD_ID,
+    });
+  }
+
+  try {
+    await getPermissions(userId, boardId);
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({
+      board_id: null,
+      task_id: null,
+      assignee_id: null,
+      error_message: err,
+    });
+  }
+
+  for (let i = 0; i < assigneeId.length; i += 1) {
+    if ((await userInTask(boardId, id, assigneeId[i])) === undefined) {
+      assigneeToAdd.push(assigneeId[i]);
+    }
+  }
+
+  try {
+    await assignTask(boardId, id, assigneeToAdd);
+
+    return res.json({
+      board_id: boardId,
+      task_id: id,
+      assignee_id: assigneeToAdd.toString(),
+      error_message: null,
+    });
+  } catch (err) {
+    debug(err);
+    return res.status(500).json({
+      board_id: null,
+      task_id: null,
+      assignee_id: null,
       error_message: err,
     });
   }

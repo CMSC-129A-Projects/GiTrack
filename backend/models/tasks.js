@@ -98,6 +98,34 @@ async function getTaskBoard(taskId) {
   }
 }
 
+async function userInTask(boardId, taskId, userId) {
+  const db = await dbHandler;
+
+  const user = await db.get(
+    'SELECT user_id FROM Assignees WHERE board_id = ? AND task_id = ? AND user_id = ?',
+    boardId,
+    taskId,
+    userId
+  );
+  return user;
+}
+
+async function assignTask(boardId, taskId, assigneeIds) {
+  const db = await dbHandler;
+
+  try {
+    await db.getDatabaseInstance().serialize(async function assignUsers() {
+      const assign = await db.prepare('INSERT INTO Assignees VALUES (?, ?, ?)');
+      for (let i = 0; i < assigneeIds.length; i += 1) {
+        assign.run(boardId, taskId, assigneeIds[i]);
+      }
+    });
+  } catch (err) {
+    debug(err);
+    throw taskErrorMessages.INSERT_FAILED;
+  }
+}
+
 module.exports = {
   addTask,
   getTask,
@@ -105,4 +133,6 @@ module.exports = {
   getTasksInBoard,
   connectBranch,
   getTaskBoard,
+  userInTask,
+  assignTask,
 };
