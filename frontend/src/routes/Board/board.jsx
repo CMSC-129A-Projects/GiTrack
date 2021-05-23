@@ -27,9 +27,9 @@ export default function Board() {
     return <div />;
   }
 
-  if (boards.length === 0) {
-    return <Redirect to={`${path}/add`} />;
-  }
+  // if (boards.length === 0) {
+  //   return <Redirect to={`${path}/add`} />;
+  // }
 
   return (
     <div css={style.board}>
@@ -42,7 +42,8 @@ export default function Board() {
           <Route exact path={`${path}/:boardId`}>
             <BoardIndex />
           </Route>
-          <Redirect to={`${path}/${boards[0].id}`} />;
+          {/* <Redirect to={`${path}/${boards[0].id}`} />; */}
+          <Redirect to={`${path}/add`} />;
         </Switch>
       </Suspense>
     </div>
