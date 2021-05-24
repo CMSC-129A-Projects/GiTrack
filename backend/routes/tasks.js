@@ -7,12 +7,12 @@ const router = express.Router();
 const {
   addTask,
   getTask,
-  getBoardTasks,
   removeTask,
   getTaskBoard,
   connectBranch,
   assignTask,
   userInTask,
+  getTasksInBoard,
 } = require('../models/tasks');
 const { getPermissions } = require('../models/boards');
 
@@ -213,10 +213,9 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
 // TODO: Move to /board/{id}/tasks
 router.get('/get-board-tasks', authJWT, async (req, res) => {
   const { id } = req.body;
-  const { id: userId } = req.user;
 
   try {
-    const tasks = await getBoardTasks(userId, id);
+    const tasks = await getTasksInBoard(id);
 
     return res.json(tasks);
   } catch (err) {
