@@ -20,6 +20,7 @@ export default function ViewTaskModal({
   task,
   members,
   refreshBoardTasks,
+  setTaskToView,
   isOpen,
   handleClose,
   githubBranches,
@@ -31,19 +32,32 @@ export default function ViewTaskModal({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    if (selectedDeveloper) {
+    if (selectedDeveloper && selectedDeveloper.value !== task.assignee_id[0]) {
       setIsAssigningDeveloper(true);
       TasksService.assign({
         taskId: task.id,
         body: {
           board_id: board.id,
-          assignee_id: selectedDeveloper.value,
+          assignee_id: [selectedDeveloper.value],
         },
       }).then(() => {
+        setTaskToView({ ...task, assignee_id: [selectedDeveloper.value] });
+        refreshBoardTasks();
         setIsAssigningDeveloper(false);
       });
     }
   }, [selectedDeveloper]);
+
+  useEffect(() => {
+    const assignedDev = members.find((member) => member.id === task.assignee_id[0]);
+
+    if (assignedDev != null) {
+      setSelectedDeveloper({
+        label: assignedDev.username,
+        value: assignedDev.id,
+      });
+    }
+  }, [members]);
 
   useEffect(() => {
     if (selectedBranch && selectedBranch.name !== task.branch_name) {
@@ -129,12 +143,16 @@ export default function ViewTaskModal({
           <Card css={style.viewTaskModal_optionsCard}>
             <Dropdown
               css={style.viewTaskModal_input}
+              value={selectedDeveloper}
               label="Assignee"
               options={members.map((member) => ({
                 label: member.username,
-                value: member.user_id,
+                value: member.id,
               }))}
-              onChange={(option) => setSelectedDeveloper(option)}
+              onChange={(option) => {
+                setSelectedDeveloper(option);
+                console.log(selectedDeveloper);
+              }}
             />
             <Dropdown
               css={style.viewTaskModal_input}

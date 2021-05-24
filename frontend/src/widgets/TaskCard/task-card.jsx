@@ -18,7 +18,7 @@ export default function TaskCard({
     <Card onClick={onClick} css={style.taskCard} {...passedProps}>
       <div css={style.taskCard_header}>
         <p css={style.taskCard_title}>{title}</p>
-        {assignee && (
+        {assignee.length > 0 && (
           <div css={style.taskCard_imageContainer}>
             <img src={placeholder} alt="user" css={style.taskCard_image} />
           </div>

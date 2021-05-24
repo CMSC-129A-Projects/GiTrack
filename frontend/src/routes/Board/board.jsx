@@ -24,7 +24,7 @@ export default function Board() {
     if (boards?.length > 0) {
       history.push(`${path}/${boards[0]?.id}`);
     }
-  }, [boards]);
+  }, []);
 
   if (!user?.id) {
     return <Redirect to="/login" />;

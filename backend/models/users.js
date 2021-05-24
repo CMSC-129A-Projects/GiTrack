@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const debug = require('debug')('backend:models-users');
@@ -160,13 +161,17 @@ async function findUser(id) {
   }
 }
 
-async function userExists(email) {
+async function usersExist(emails) {
   const db = await dbHandler;
+  const users = [];
 
   try {
-    const user = db.get('SELECT id FROM Users WHERE email = ?', email);
+    for (let i = 0; i < emails.length; i += 1) {
+      const user = await db.get('SELECT id FROM Users WHERE email = ?', emails[i]);
+      users.push(user.id);
+    }
 
-    return user;
+    return users;
   } catch (err) {
     debug(err);
     throw userErrorMessages.USER_NOT_FOUND;
@@ -180,5 +185,5 @@ module.exports = {
   getGithubToken,
   removeGithubToken,
   findUser,
-  userExists,
+  usersExist,
 };

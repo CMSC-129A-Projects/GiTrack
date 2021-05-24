@@ -111,6 +111,7 @@ export default function BoardIndex() {
           members={boardMembers}
           refreshBoardTasks={refreshBoardTasks}
           isOpen={taskToView !== null}
+          setTaskToView={setTaskToView}
           handleClose={() => {
             setTaskToView(null);
             refreshBoardTasks();
@@ -126,17 +127,29 @@ export default function BoardIndex() {
         <div css={style.boardIndex_columns}>
           <Column title="📋 Not Started" count={notStartedTasks?.length}>
             {notStartedTasks.map((task) => (
-              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+              <TaskCard
+                title={task.title}
+                assignee={task.assignee_id}
+                onClick={() => setTaskToView(task)}
+              />
             ))}
           </Column>
           <Column title="🔨 In Progress" count={inProgressTasks?.length}>
             {inProgressTasks.map((task) => (
-              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+              <TaskCard
+                title={task.title}
+                assignee={task.assignee_id}
+                onClick={() => setTaskToView(task)}
+              />
             ))}
           </Column>
           <Column title="🎉 Merged" count={mergedTasks?.length}>
             {mergedTasks.map((task) => (
-              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+              <TaskCard
+                title={task.title}
+                assignee={task.assignee_id}
+                onClick={() => setTaskToView(task)}
+              />
             ))}
           </Column>
           <div css={style.boardIndex_sidePanel}>

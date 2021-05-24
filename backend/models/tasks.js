@@ -57,15 +57,38 @@ async function removeTask(id) {
   }
 }
 
+async function getAssignees(boardId, taskId) {
+  const db = await dbHandler;
+  const assigneeArray = [];
+
+  const assignees = await db.all(
+    'SELECT user_id FROM Assignees WHERE board_id = ? AND task_id = ?',
+    boardId,
+    taskId
+  );
+
+  for (let i = 0; i < assignees.length; i += 1) {
+    assigneeArray.push(assignees[i].user_id);
+  }
+
+  return assigneeArray;
+}
+
 async function getTasksInBoard(boardId) {
   const db = await dbHandler;
+  const tasks = [];
+  let assignees;
 
   try {
     const taskList = await db.all('SELECT * FROM Tasks WHERE board_id = ?', boardId);
 
-    console.log(taskList);
+    for (let i = 0; i < taskList.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      assignees = await getAssignees(boardId, taskList[i].id);
+      tasks.push({ ...taskList[i], assignee_id: assignees });
+    }
 
-    return taskList;
+    return tasks;
   } catch (err) {
     debug(err);
     throw taskErrorMessages.TASK_NOT_FOUND;
