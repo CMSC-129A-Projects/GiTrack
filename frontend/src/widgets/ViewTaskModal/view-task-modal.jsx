@@ -18,10 +18,11 @@ export default function ViewTaskModal({ task, isOpen, handleClose }) {
 
   return (
     <>
-      {isOpen && (
+      {isRemoveTaskModalOpened && (
         <RemoveTaskModal
           isOpen={isRemoveTaskModalOpened}
-          handleClose={() => setIsRemoveTaskModalOpened(false)}
+          handleClose={(() => setIsRemoveTaskModalOpened(false), handleClose)}
+          task={task}
         />
       )}
       <Modal

@@ -160,6 +160,23 @@ async function findUser(id) {
   }
 }
 
+async function userExists(email) {
+  const db = await dbHandler;
+
+  try {
+    const user = await db.get('SELECT id FROM Users WHERE email = ?', email);
+
+    if (user === undefined) {
+      throw userErrorMessages.USER_NOT_FOUND;
+    }
+
+    return user;
+  } catch (err) {
+    debug(err);
+    throw err;
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
@@ -167,4 +184,5 @@ module.exports = {
   getGithubToken,
   removeGithubToken,
   findUser,
+  userExists,
 };

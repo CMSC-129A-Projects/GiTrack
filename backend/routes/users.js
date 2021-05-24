@@ -1,10 +1,10 @@
 const express = require('express');
-const debug = require('debug')('backend:routes-boards');
+const debug = require('debug')('backend:routes-users');
 
 const router = express.Router();
 
 // Models
-const { findUser } = require('../models/users');
+const { findUser, userExists } = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -28,6 +28,25 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
   } catch (err) {
     debug(err);
     return res.status(404).json({ user_id: null, error_message: err });
+  }
+});
+
+router.get('/exists', authJWT, async (req, res) => {
+  const { email } = req.body;
+
+  if (email === undefined) {
+    return res
+      .status(400)
+      .json({ id: null, error_message: userErrorMessages.MISSING_EMAIL });
+  }
+
+  try {
+    const id = await userExists(email);
+
+    return res.json({ id, error_message: null });
+  } catch (err) {
+    debug(err);
+    return res.status(404).json({ id: null, error_message: err });
   }
 });
 
