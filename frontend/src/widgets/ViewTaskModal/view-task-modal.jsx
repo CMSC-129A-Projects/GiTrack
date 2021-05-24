@@ -157,7 +157,6 @@ export default function ViewTaskModal({
               }))}
               onChange={(option) => {
                 setSelectedDeveloper(option);
-                console.log(selectedDeveloper);
               }}
             />
             <Dropdown

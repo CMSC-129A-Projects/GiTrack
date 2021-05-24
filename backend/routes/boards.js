@@ -156,8 +156,6 @@ router.post('/', authJWT, async (req, res) => {
   const { title } = req.body;
   const { id: userId } = req.user;
 
-  console.log(req.body);
-
   if (title === undefined) {
     return res
       .status(400)
