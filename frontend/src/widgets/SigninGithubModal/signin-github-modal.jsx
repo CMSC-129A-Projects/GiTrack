@@ -18,12 +18,14 @@ export default function SigninGithubModal({ isOpen, handleClose, hasFailed }) {
   const [signInLink, setSignInLink] = useState('');
 
   useEffect(() => {
-    GithubService.link().then(({ data }) => {
-      if (data.error_message === null) {
-        setSignInLink(data.url);
-      }
-    });
-  }, []);
+    if (isOpen) {
+      GithubService.link().then(({ data }) => {
+        if (data.error_message === null) {
+          setSignInLink(data.url);
+        }
+      });
+    }
+  }, [isOpen]);
 
   return (
     <Modal

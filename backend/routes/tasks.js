@@ -115,6 +115,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      branch_name: null,
       error_message: err,
     });
   }
@@ -126,6 +127,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      branch_name: null,
       error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS,
     });
   }
@@ -140,6 +142,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      branch_name: null,
       error_message: err,
     });
   }
@@ -226,7 +229,8 @@ router.get('/get-board-tasks', authJWT, async (req, res) => {
 router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const { repoId, branchName } = req.body;
+  const { repo_id: repoId, name: branchName } = req.body;
+
   if (id === undefined) {
     return res
       .status(400)

@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+import TasksService from 'services/TasksService';
 
 import RemoveTaskModal from 'widgets/RemoveTaskModal';
-import TasksService from 'services/TasksService';
 
 import Modal from 'components/Modal';
 import Dropdown from 'components/Dropdown';
@@ -21,9 +22,53 @@ export default function ViewTaskModal({
   refreshBoardTasks,
   isOpen,
   handleClose,
+  githubBranches,
 }) {
   const [isRemoveTaskModalOpened, setIsRemoveTaskModalOpened] = useState(false);
+  const [selectedDeveloper, setSelectedDeveloper] = useState(null);
   const [isAssigningDeveloper, setIsAssigningDeveloper] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    if (selectedDeveloper) {
+      setIsAssigningDeveloper(true);
+      TasksService.assign({
+        taskId: task.id,
+        body: {
+          board_id: board.id,
+          assignee_id: selectedDeveloper.value,
+        },
+      }).then(() => {
+        setIsAssigningDeveloper(false);
+      });
+    }
+  }, [selectedDeveloper]);
+
+  useEffect(() => {
+    if (selectedBranch && selectedBranch.name !== task.branch_name) {
+      TasksService.connect({
+        body: {
+          repo_id: selectedBranch.repo_id,
+          name: selectedBranch.name,
+        },
+        taskId: task.id,
+      });
+    }
+  }, [selectedBranch]);
+
+  useEffect(() => {
+    const tempOptions =
+      githubBranches?.[0]?.branches.map((branch) => ({
+        ...branch,
+        label: branch.name,
+      })) ?? [];
+    const currentBranch =
+      tempOptions.map((option) => option.name).indexOf(task.branch_name) ?? 0;
+
+    setOptions(tempOptions);
+    setSelectedBranch(tempOptions[currentBranch]);
+  }, [githubBranches]);
 
   return (
     <>
@@ -89,20 +134,15 @@ export default function ViewTaskModal({
                 label: member.username,
                 value: member.user_id,
               }))}
-              onChange={(option) => {
-                setIsAssigningDeveloper(true);
-                TasksService.assign({
-                  taskId: task.id,
-                  body: {
-                    board_id: board.id,
-                    assignee_id: option.value,
-                  },
-                }).then(() => {
-                  setIsAssigningDeveloper(false);
-                });
-              }}
+              onChange={(option) => setSelectedDeveloper(option)}
             />
-            <Dropdown css={style.viewTaskModal_input} label="Branch" />
+            <Dropdown
+              css={style.viewTaskModal_input}
+              label="Branch"
+              value={selectedBranch}
+              options={options}
+              onChange={(option) => setSelectedBranch(option)}
+            />
           </Card>
         </div>
       </Modal>

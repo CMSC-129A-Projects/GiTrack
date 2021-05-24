@@ -7,6 +7,7 @@ const TasksService = {
   retrieve: ({ taskId }) => axios.get(`${BASE_URL}/${taskId}`),
   remove: ({ taskId }) => axios.delete(`${BASE_URL}/${taskId}`),
   assign: ({ taskId, body }) => axios.post(`${BASE_URL}/${taskId}/assign-task`, body),
+  connect: ({ body, taskId }) => axios.patch(`${BASE_URL}/${taskId}/connect`, body),
 };
 
 export default TasksService;

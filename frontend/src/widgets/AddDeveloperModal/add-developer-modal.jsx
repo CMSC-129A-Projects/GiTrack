@@ -25,29 +25,31 @@ export default function AddDeveloperModal({
     formState: { errors },
   } = useForm();
 
-  const onSubmit = ({ email }) => {
+  const onSubmit = ({ emails }) => {
     UserService.exists({
       params: {
-        email,
+        emails,
       },
-    }).then(({ data: { id } }) => {
-      if (id != null) {
-        BoardsService.addDevelopers({
-          boardId,
-          body: {
-            developer_ids: [id.id],
-          },
-        }).then(() => {
-          refreshBoardMembers();
-          handleClose();
-        });
-      } else {
+    })
+      .then(({ data: { ids } }) => {
+        if (ids != null) {
+          BoardsService.addDevelopers({
+            boardId,
+            body: {
+              developer_ids: ids,
+            },
+          }).then(() => {
+            refreshBoardMembers();
+            handleClose();
+          });
+        }
+      })
+      .catch(() => {
         setError('email_address', {
           type: 'manual',
-          message: 'The user does not exist',
+          message: 'One or more users do not exist',
         });
-      }
-    });
+      });
   };
 
   return (
@@ -76,12 +78,12 @@ export default function AddDeveloperModal({
         css={style.addDeveloperModal_input}
         error={errors.email_address ? errors.email_address.message : null}
         placeholder="Email address"
-        {...register('email', { required: 'Please input an email address' })}
+        {...register('emails', { required: 'Please input an email address' })}
       />
-      {/* <p css={style.addDeveloperModal_note}>
+      <p css={style.addDeveloperModal_note}>
         <strong>Note:</strong> To invite multiple people, enter multiple email addresses
         separated by commas (,)
-      </p> */}
+      </p>
     </Modal>
   );
 }

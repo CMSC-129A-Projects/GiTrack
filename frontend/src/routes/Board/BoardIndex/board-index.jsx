@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import useBoard from 'hooks/useBoard';
 import useBoardTasks from 'hooks/useBoardTasks';
 import useBoardRepos from 'hooks/useBoardRepos';
 import useBoardMembers from 'hooks/useBoardMembers';
+import useGithubBranches from 'hooks/useGithubBranches';
 
 import Spinner from 'components/Spinner';
 import Column from 'components/Column';
@@ -34,6 +35,7 @@ export default function BoardIndex() {
   const [isAddRepoModalOpened, setIsAddRepoModalOpened] = useState(false);
   const [isAddDeveloperModalOpened, setIsAddDeveloperModalOpened] = useState(false);
   const [isSigninGithubModalOpened, setIsSigninGithubModalOpened] = useState(false);
+  const [repoIds, setRepoIds] = useState([]);
 
   const [taskToView, setTaskToView] = useState(null);
 
@@ -56,6 +58,14 @@ export default function BoardIndex() {
     boardMembers,
     refresh: refreshBoardMembers,
   } = useBoardMembers({ boardId });
+
+  const { githubBranches } = useGithubBranches({
+    repoIds,
+  });
+
+  useEffect(() => {
+    setRepoIds(boardRepos?.repos?.map((repo) => repo.id));
+  }, [boardRepos]);
 
   if (
     isBoardLoading ||
@@ -101,7 +111,11 @@ export default function BoardIndex() {
           members={boardMembers}
           refreshBoardTasks={refreshBoardTasks}
           isOpen={taskToView !== null}
-          handleClose={() => setTaskToView(null)}
+          handleClose={() => {
+            setTaskToView(null);
+            refreshBoardTasks();
+          }}
+          githubBranches={githubBranches}
         />
       )}
       <div css={style.boardIndex}>
