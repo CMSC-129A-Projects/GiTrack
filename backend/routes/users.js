@@ -32,7 +32,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
 });
 
 router.get('/exists', authJWT, async (req, res) => {
-  const { email } = req.body;
+  const { email } = req.query;
 
   if (email === undefined) {
     return res

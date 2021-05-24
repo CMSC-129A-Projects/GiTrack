@@ -6,9 +6,9 @@ export const repo_repo = (theme) => css`
   align-items: center;
 
   ${theme.text.headingXS};
-  color: ${theme.color.neutral[6]};
+  color: ${theme.color.primary[3]};
 
-  background-color: ${theme.color.neutral[2]};
+  background-color: rgba(32, 87, 227, 0.1);
   height: 36px;
   width: 36px;
   margin: -3px;

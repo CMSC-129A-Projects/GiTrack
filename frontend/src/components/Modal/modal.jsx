@@ -20,7 +20,32 @@ export default function Modal({
   actions,
   size,
   isLoading,
+  onSubmit,
 }) {
+  const buttons = (
+    <div
+      css={
+        actions?.length === 2 ? style.modal_actions___two : style.modal_actions___one
+      }
+    >
+      {actions?.map(
+        ({ type, name, variant, onClick, disabled, element, ...passedProps }) => (
+          <Button
+            css={style.modal_actions_button}
+            type={type}
+            variant={variant}
+            disabled={disabled || isLoading}
+            onClick={onClick}
+            element={element}
+            {...passedProps}
+          >
+            {name}
+          </Button>
+        )
+      )}
+    </div>
+  );
+
   return (
     <ReactModal
       isOpen={isOpen}
@@ -47,29 +72,16 @@ export default function Modal({
         </div>
         <h2 css={style.modal_title}>{title}</h2>
       </div>
-      {children}
-      {actions && (
-        <div
-          css={
-            actions.length === 2 ? style.modal_actions___two : style.modal_actions___one
-          }
-        >
-          {actions.map(
-            ({ type, name, variant, onClick, disabled, element, ...passedProps }) => (
-              <Button
-                css={style.modal_actions_button}
-                type={type}
-                variant={variant}
-                disabled={disabled || isLoading}
-                onClick={onClick}
-                element={element}
-                {...passedProps}
-              >
-                {name}
-              </Button>
-            )
-          )}
-        </div>
+      {onSubmit ? (
+        <form onSubmit={onSubmit}>
+          {children}
+          {buttons}
+        </form>
+      ) : (
+        <>
+          {children}
+          {buttons}
+        </>
       )}
     </ReactModal>
   );

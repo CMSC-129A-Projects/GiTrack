@@ -286,7 +286,7 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
 router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const { board_id: boardId, assigneeId } = req.body;
+  const { board_id: boardId, assignee_id: assigneeId } = req.body;
   const assigneeToAdd = [];
 
   if (boardId === undefined) {
@@ -310,11 +310,8 @@ router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
     });
   }
 
-  for (let i = 0; i < assigneeId.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    if ((await userInTask(boardId, id, assigneeId[i])) === undefined) {
-      assigneeToAdd.push(assigneeId[i]);
-    }
+  if ((await userInTask(boardId, id, assigneeId)) === undefined) {
+    assigneeToAdd.push(assigneeId);
   }
 
   try {
@@ -322,7 +319,7 @@ router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
 
     return res.json({
       board_id: boardId,
-      task_id: id,
+      task_id: parseInt(id, 10),
       assignee_id: assigneeToAdd.toString(),
       error_message: null,
     });

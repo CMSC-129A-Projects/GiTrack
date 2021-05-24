@@ -156,6 +156,8 @@ router.post('/', authJWT, async (req, res) => {
   const { title } = req.body;
   const { id: userId } = req.user;
 
+  console.log(req.body);
+
   if (title === undefined) {
     return res
       .status(400)
@@ -524,7 +526,7 @@ router.get('/:id(\\d+)/repos', authJWT, async (req, res) => {
 router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const { devId } = req.body;
+  const { developer_ids: devIds } = req.body;
   const devsToAdd = [];
 
   if (id === undefined) {
@@ -545,9 +547,9 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
       .json({ board_id: null, dev_id: null, duplicate_devs: null, error_message: err });
   }
 
-  for (let i = 0; i < devId.length; i += 1) {
-    if ((await userInBoard(id, devId[i])) === undefined) {
-      devsToAdd.push(devId[i]);
+  for (let i = 0; i < devIds.length; i += 1) {
+    if ((await userInBoard(id, devIds[i])) === undefined) {
+      devsToAdd.push(devIds[i]);
     }
   }
   try {
@@ -556,7 +558,7 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
     return res.json({
       board_id: id,
       dev_id: devsToAdd.toString(),
-      duplicate_devs: devId.filter((el) => !devsToAdd.includes(el)).toString(),
+      duplicate_devs: devIds.filter((el) => !devsToAdd.includes(el)).toString(),
       error_message: null,
     });
   } catch (err) {

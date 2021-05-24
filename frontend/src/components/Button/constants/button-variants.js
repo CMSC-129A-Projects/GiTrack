@@ -9,6 +9,6 @@ export const buttonVariants = {
     PRIMARY: 'small___primary',
     SECONDARY: 'small___secondary',
   },
-}
+};
 
-export default buttonVariants
+export default buttonVariants;

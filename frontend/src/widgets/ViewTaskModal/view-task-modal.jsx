@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import RemoveTaskModal from 'widgets/RemoveTaskModal';
+import TasksService from 'services/TasksService';
 
 import Modal from 'components/Modal';
 import Dropdown from 'components/Dropdown';
@@ -13,15 +14,28 @@ import Card from 'components/Card';
 // Style
 import * as style from './view-task-modal-styles';
 
-export default function ViewTaskModal({ task, isOpen, handleClose }) {
+export default function ViewTaskModal({
+  board,
+  task,
+  members,
+  refreshBoardTasks,
+  isOpen,
+  handleClose,
+}) {
   const [isRemoveTaskModalOpened, setIsRemoveTaskModalOpened] = useState(false);
+  const [isAssigningDeveloper, setIsAssigningDeveloper] = useState(false);
 
   return (
     <>
       {isRemoveTaskModalOpened && (
         <RemoveTaskModal
           isOpen={isRemoveTaskModalOpened}
-          handleClose={(() => setIsRemoveTaskModalOpened(false), handleClose)}
+          handleSuccess={() => {
+            refreshBoardTasks();
+            setIsRemoveTaskModalOpened(false);
+            handleClose();
+          }}
+          handleClose={() => setIsRemoveTaskModalOpened(false)}
           task={task}
         />
       )}
@@ -30,6 +44,7 @@ export default function ViewTaskModal({ task, isOpen, handleClose }) {
         title="View Task"
         icon="create"
         isOpen={isOpen}
+        isLoading={isAssigningDeveloper}
         handleClose={handleClose}
         actions={[
           {
@@ -67,7 +82,26 @@ export default function ViewTaskModal({ task, isOpen, handleClose }) {
             </div> */}
           </div>
           <Card css={style.viewTaskModal_optionsCard}>
-            <Dropdown css={style.viewTaskModal_input} label="Assignee" />
+            <Dropdown
+              css={style.viewTaskModal_input}
+              label="Assignee"
+              options={members.map((member) => ({
+                label: member.username,
+                value: member.user_id,
+              }))}
+              onChange={(option) => {
+                setIsAssigningDeveloper(true);
+                TasksService.assign({
+                  taskId: task.id,
+                  body: {
+                    board_id: board.id,
+                    assignee_id: option.value,
+                  },
+                }).then(() => {
+                  setIsAssigningDeveloper(false);
+                });
+              }}
+            />
             <Dropdown css={style.viewTaskModal_input} label="Branch" />
           </Card>
         </div>

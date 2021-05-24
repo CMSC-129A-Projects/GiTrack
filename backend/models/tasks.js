@@ -63,6 +63,8 @@ async function getTasksInBoard(boardId) {
   try {
     const taskList = await db.all('SELECT * FROM Tasks WHERE board_id = ?', boardId);
 
+    console.log(taskList);
+
     return taskList;
   } catch (err) {
     debug(err);

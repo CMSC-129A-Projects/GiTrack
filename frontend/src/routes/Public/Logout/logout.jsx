@@ -9,10 +9,10 @@ import AuthService from 'services/AuthService';
 
 export default function Logout() {
   const dispatch = useDispatch();
-  const refreshToken = useSelector((state) => state.USERS.loginReducer.refreshToken);
+  const accessToken = useSelector((state) => state.USERS.loginReducer.accessToken);
 
   useEffect(() => {
-    AuthService.logout({ body: { refresh_token: refreshToken } }).then(() => {
+    AuthService.logout({ body: { refresh_token: accessToken } }).then(() => {
       dispatch(usersActions.loginActions.loginRestart());
     });
   });

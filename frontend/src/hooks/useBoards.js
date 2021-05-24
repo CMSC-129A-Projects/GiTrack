@@ -10,12 +10,14 @@ const useBoards = () => {
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
-    BoardsService.list().then(({ data: { boards: retrievedBoards } }) => {
-      if (isMounted) {
-        setBoards(retrievedBoards);
-        setIsLoading(false);
-      }
-    });
+    BoardsService.list()
+      .then(({ data: { boards: retrievedBoards } }) => {
+        if (isMounted) {
+          setBoards(retrievedBoards);
+          setIsLoading(false);
+        }
+      })
+      .catch((e) => console.log(e));
 
     return () => {
       isMounted = false;
