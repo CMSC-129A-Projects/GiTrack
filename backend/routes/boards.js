@@ -126,7 +126,7 @@ router.get('/', authJWT, async (req, res) => {
  * @swagger
  *
  * /board:
- *   post:: Create a board.
+ *   post: Create a board.
  *    summary: Create a board.
  *     tags: [Boards]
  *     security:
