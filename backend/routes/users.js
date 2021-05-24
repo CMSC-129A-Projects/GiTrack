@@ -37,16 +37,16 @@ router.get('/exists', authJWT, async (req, res) => {
   if (email === undefined) {
     return res
       .status(400)
-      .json({ user_exists: null, error_message: userErrorMessages.MISSING_EMAIL });
+      .json({ id: null, error_message: userErrorMessages.MISSING_EMAIL });
   }
 
   try {
-    await userExists(email);
+    const id = await userExists(email);
 
-    return res.json({ user_exists: true, error_message: null });
+    return res.json({ id, error_message: null });
   } catch (err) {
     debug(err);
-    return res.status(404).json({ user_exists: null, error_message: err });
+    return res.status(404).json({ id: null, error_message: err });
   }
 });
 
