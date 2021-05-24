@@ -369,6 +369,113 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  /board/{id}/connect:
+ *   post:
+ *     summary: Connect a repository to a board.
+ *     tags: [Boards]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the board to edit
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               repoId:
+ *                 type: integer
+ *                 description: ID of the repository to be connected to the board
+ *                 example: 344388797
+ *               full_name:
+ *                 type: string
+ *                 description: Full name of the repository to be connected to the board
+ *                 example: CMSC-129A-Projects/GiTrack
+ *               url:
+ *                 type: string
+ *                 description: URL of the repository to be connected to the board
+ *                 example: https://api.github.com/repos/CMSC-129A-Projects/GiTrack
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID of the repository to be connected to the board
+ *                   example: 344388797
+ *                 full_name:
+ *                   type: string
+ *                   description: Full name of the repository to be connected to the board
+ *                   example: CMSC-129A-Projects/GiTrack
+ *                 board_id:
+ *                   type: integer
+ *                   description: ID of the board to which the repository has been connected
+ *                   example: 1
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID of the repository to be connected to the board
+ *                   example: 344388797
+ *                 full_name:
+ *                   type: string
+ *                   description: Full name of the repository to be connected to the board
+ *                   example: CMSC-129A-Projects/GiTrack
+ *                 board_id:
+ *                   type: integer
+ *                   description: ID of the board to which the repository has been connected
+ *                   example: 1
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       403:
+ *         description: User lacking permissions to perform current action
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID of the repository to be connected to the board
+ *                   example: 344388797
+ *                 full_name:
+ *                   type: string
+ *                   description: Full name of the repository to be connected to the board
+ *                   example: CMSC-129A-Projects/GiTrack
+ *                 board_id:
+ *                   type: integer
+ *                   description: ID of the board to which the repository has been connected
+ *                   example: 1
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
+
 router.post('/:id(\\d+)/connect', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
@@ -521,6 +628,106 @@ router.get('/:id(\\d+)/repos', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  /board/{id}/add-developer:
+ *   post:
+ *     summary: Add developers to a board.
+ *     tags: [Boards]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the board to edit
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               devId:
+ *                 type: array
+ *                 description: IDs of the users to be added to the board
+ *                 items:
+ *                   type: integer
+ *                   example: [1, 2, 3, 4, 5]
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 dev_id:
+ *                   type: string
+ *                   description: IDs of the developers added to the board, separated by commas
+ *                   example: 2, 3, 4
+ *                 duplicate_devs:
+ *                   type: string
+ *                   description: IDs of the developers not added to the board, separated by commas
+ *                   example: 1, 5, 8
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 dev_id:
+ *                   type: string
+ *                   description: IDs of the developers added to the board, separated by commas
+ *                   example: 2, 3, 4
+ *                 duplicate_devs:
+ *                   type: string
+ *                   description: IDs of the developers not added to the board, separated by commas
+ *                   example: 1, 5, 8
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       403:
+ *         description: User lacking permissions to perform current action
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 dev_id:
+ *                   type: string
+ *                   description: IDs of the developers added to the board, separated by commas
+ *                   example: 2, 3, 4
+ *                 duplicate_devs:
+ *                   type: string
+ *                   description: IDs of the developers not added to the board, separated by commas
+ *                   example: 1, 5, 8
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
@@ -570,6 +777,82 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  /board/{id}/members:
+ *   get:
+ *     summary: List the members of a board.
+ *     tags: [Boards]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the board to edit
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 members:
+ *                   type: array
+ *                   description: IDs of the developers added to the board, separated by commas
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID of the user who is a member of the board
+ *                         example: 1
+ *                       username:
+ *                         type: string
+ *                         description: Username of the user who is a member of the board
+ *                         example: peepeepoopoo
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 members:
+ *                   type: array
+ *                   description: IDs of the developers added to the board, separated by commas
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID of the user who is a member of the board
+ *                         example: 1
+ *                       username:
+ *                         type: string
+ *                         description: Username of the user who is a member of the board
+ *                         example: peepeepoopoo
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
   const { id } = req.params;
 
