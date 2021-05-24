@@ -112,10 +112,7 @@ export default function BoardIndex() {
           refreshBoardTasks={refreshBoardTasks}
           isOpen={taskToView !== null}
           setTaskToView={setTaskToView}
-          handleClose={() => {
-            setTaskToView(null);
-            refreshBoardTasks();
-          }}
+          handleClose={() => setTaskToView(null)}
           githubBranches={githubBranches}
         />
       )}

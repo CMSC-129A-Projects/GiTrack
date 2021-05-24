@@ -28,6 +28,7 @@ export default function ViewTaskModal({
   const [isRemoveTaskModalOpened, setIsRemoveTaskModalOpened] = useState(false);
   const [selectedDeveloper, setSelectedDeveloper] = useState(null);
   const [isAssigningDeveloper, setIsAssigningDeveloper] = useState(false);
+  const [isConnectingBranch, setIsConnectingBranch] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [options, setOptions] = useState([]);
 
@@ -61,12 +62,17 @@ export default function ViewTaskModal({
 
   useEffect(() => {
     if (selectedBranch && selectedBranch.name !== task.branch_name) {
+      setIsConnectingBranch(true);
       TasksService.connect({
         body: {
           repo_id: selectedBranch.repo_id,
           name: selectedBranch.name,
         },
         taskId: task.id,
+      }).then(() => {
+        setTaskToView({ ...task, branch_name: selectedBranch.name });
+        refreshBoardTasks();
+        setIsConnectingBranch(false);
       });
     }
   }, [selectedBranch]);
@@ -103,7 +109,7 @@ export default function ViewTaskModal({
         title="View Task"
         icon="create"
         isOpen={isOpen}
-        isLoading={isAssigningDeveloper}
+        isLoading={isAssigningDeveloper || isConnectingBranch}
         handleClose={handleClose}
         actions={[
           {

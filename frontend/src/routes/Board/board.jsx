@@ -21,10 +21,14 @@ export default function Board() {
   const { isLoading, boards, refresh: refreshBoards } = useBoards();
 
   useEffect(() => {
-    if (boards?.length > 0) {
-      history.push(`${path}/${boards[0]?.id}`);
+    if (!isLoading) {
+      if (boards?.length === 0) {
+        history.push(`${path}/add`);
+      } else {
+        history.push(`${path}/${boards[0]?.id}`);
+      }
     }
-  }, []);
+  }, [isLoading]);
 
   if (!user?.id) {
     return <Redirect to="/login" />;
