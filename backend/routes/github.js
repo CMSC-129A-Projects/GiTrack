@@ -208,4 +208,65 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
     return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
   }
 });
+
+router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+
+  let authToken = null;
+  let fullName = null;
+  let rep = null;
+
+  if (id === undefined) {
+    return res.status(400).json({
+      id: null,
+      title: null,
+      error_message: githubErrorMessages.MISSING_REPO_ID,
+    });
+  }
+
+  try {
+    authToken = await getGithubToken(userId);
+  } catch (err) {
+    return res.status(403).json({ branches: null, error_message: err });
+  }
+
+  try {
+    fullName = await getBoardRepo(id);
+  } catch (err) {
+    return res.status(400).json({ branches: null, error_message: err });
+  }
+
+  rep = fullName.split('/');
+
+  try {
+    const { data } = await request('GET /repos/{owner}/{repo}/commits', {
+      headers: {
+        authorization: `token ${authToken}`,
+      },
+      owner: rep[0],
+      repo: rep[1],
+    });
+
+    const commits = data.map((curr) => ({
+      hash: curr.sha,
+      url: curr.url,
+      message: curr.commit.message,
+    }));
+
+    return res.json({ commits, error_message: null });
+  } catch (err) {
+    if (err.status === 401) {
+      await removeGithubToken(userId);
+
+      return res.status(403).json({
+        repos: null,
+        error_message: githubErrorMessages.NOT_GITHUB_AUTHENTICATED,
+      });
+    }
+
+    return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
+  }
+});
+
 module.exports = router;
