@@ -162,11 +162,19 @@ async function findUser(id) {
 
 async function userExists(email) {
   const db = await dbHandler;
-  const user = await db.get('SELECT id FROM Users WHERE email = ?', email);
-  if (user === undefined) {
-    throw userErrorMessages.USER_NOT_FOUND;
+
+  try {
+    const user = await db.get('SELECT id FROM Users WHERE email = ?', email);
+
+    if (user === undefined) {
+      throw userErrorMessages.USER_NOT_FOUND;
+    }
+
+    return user;
+  } catch (err) {
+    debug(err);
+    throw err;
   }
-  return true;
 }
 
 module.exports = {
