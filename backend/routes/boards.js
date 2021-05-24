@@ -127,11 +127,11 @@ router.get('/', authJWT, async (req, res) => {
  *
  * /board:
  *   post:
- *     summary: Create a board.
+ *     summary: Create a board
  *     tags: [Boards]
  *     security:
  *       - JWTBearerAuth: []
- *     requestBody:S
+ *     requestBody:
  *       required: true
  *       content:
  *         application/json:
