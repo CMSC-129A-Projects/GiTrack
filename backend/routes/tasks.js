@@ -210,7 +210,6 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
 // TODO: Move to /board/{id}/tasks
 router.get('/get-board-tasks', authJWT, async (req, res) => {
   const { id } = req.body;
-  const { id: userId } = req.user;
 
   try {
     const tasks = await getTasksInBoard(id);
