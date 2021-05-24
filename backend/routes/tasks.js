@@ -289,7 +289,7 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
 router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const { board_id: boardId, assigneeId } = req.body;
+  const { board_id: boardId, assignee_id: assigneeId } = req.body;
   const assigneeToAdd = [];
 
   if (boardId === undefined) {

@@ -1,10 +1,11 @@
+/* eslint-disable no-await-in-loop */
 const express = require('express');
 const debug = require('debug')('backend:routes-users');
 
 const router = express.Router();
 
 // Models
-const { findUser, userExists } = require('../models/users');
+const { findUser, usersExist } = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -32,21 +33,21 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
 });
 
 router.get('/exists', authJWT, async (req, res) => {
-  const { email } = req.body;
+  const { emails } = req.query;
 
-  if (email === undefined) {
+  if (emails === undefined) {
     return res
       .status(400)
-      .json({ id: null, error_message: userErrorMessages.MISSING_EMAIL });
+      .json({ ids: null, error_message: userErrorMessages.MISSING_EMAIL });
   }
 
   try {
-    const id = await userExists(email);
+    const ids = await usersExist(emails.split(','));
 
-    return res.json({ id, error_message: null });
+    return res.json({ ids, error_message: null });
   } catch (err) {
     debug(err);
-    return res.status(404).json({ id: null, error_message: err });
+    return res.status(404).json({ ids: null, error_message: err });
   }
 });
 

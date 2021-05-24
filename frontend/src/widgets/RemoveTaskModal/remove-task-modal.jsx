@@ -9,7 +9,7 @@ import modalSizes from 'components/Modal/constants';
 // Style
 import * as style from './remove-task-modal-styles';
 
-export default function RemoveTaskModal({ task, isOpen, handleClose }) {
+export default function RemoveTaskModal({ task, isOpen, handleClose, handleSuccess }) {
   return (
     <Modal
       size={modalSizes.SM}
@@ -21,7 +21,7 @@ export default function RemoveTaskModal({ task, isOpen, handleClose }) {
         {
           name: 'Yes',
           onClick: () => {
-            TasksService.remove({ taskId: task.id }).then(handleClose);
+            TasksService.remove({ taskId: task.id }).then(handleSuccess);
           },
           variant: buttonVariants.SMALL.PRIMARY,
         },

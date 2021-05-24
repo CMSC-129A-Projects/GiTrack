@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import useBoard from 'hooks/useBoard';
 import useBoardTasks from 'hooks/useBoardTasks';
 import useBoardRepos from 'hooks/useBoardRepos';
+import useBoardMembers from 'hooks/useBoardMembers';
 import useGithubBranches from 'hooks/useGithubBranches';
 
 import Spinner from 'components/Spinner';
@@ -39,6 +40,7 @@ export default function BoardIndex() {
   const [taskToView, setTaskToView] = useState(null);
 
   const { isLoading: isBoardLoading, board } = useBoard({ boardId });
+
   const {
     isLoading: isBoardTasksLoading,
     boardTasks,
@@ -51,6 +53,12 @@ export default function BoardIndex() {
     refresh: refreshBoardRepos,
   } = useBoardRepos({ boardId });
 
+  const {
+    isLoading: isBoardMembersLoading,
+    boardMembers,
+    refresh: refreshBoardMembers,
+  } = useBoardMembers({ boardId });
+
   const { githubBranches } = useGithubBranches({
     repoIds,
   });
@@ -59,7 +67,12 @@ export default function BoardIndex() {
     setRepoIds(boardRepos?.repos?.map((repo) => repo.id));
   }, [boardRepos]);
 
-  if (isBoardLoading || isBoardTasksLoading || isBoardReposLoading) {
+  if (
+    isBoardLoading ||
+    isBoardTasksLoading ||
+    isBoardReposLoading ||
+    isBoardMembersLoading
+  ) {
     return <Spinner />;
   }
 
@@ -82,6 +95,8 @@ export default function BoardIndex() {
         refreshBoardRepos={refreshBoardRepos}
       />
       <AddDeveloperModal
+        boardId={boardId}
+        refreshBoardMembers={refreshBoardMembers}
         isOpen={isAddDeveloperModalOpened}
         handleClose={() => setIsAddDeveloperModalOpened(false)}
       />
@@ -91,12 +106,13 @@ export default function BoardIndex() {
       />
       {taskToView && (
         <ViewTaskModal
+          board={board}
           task={taskToView}
+          members={boardMembers}
+          refreshBoardTasks={refreshBoardTasks}
           isOpen={taskToView !== null}
-          handleClose={() => {
-            setTaskToView(null);
-            refreshBoardTasks();
-          }}
+          setTaskToView={setTaskToView}
+          handleClose={() => setTaskToView(null)}
           githubBranches={githubBranches}
         />
       )}
@@ -106,19 +122,31 @@ export default function BoardIndex() {
           <h2 css={style.boardIndex_header_name}>{board.title}</h2>
         </div>
         <div css={style.boardIndex_columns}>
-          <Column title="Not Started" count={notStartedTasks?.length}>
+          <Column title="📋 Not Started" count={notStartedTasks?.length}>
             {notStartedTasks.map((task) => (
-              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+              <TaskCard
+                title={task.title}
+                assignee={task.assignee_id}
+                onClick={() => setTaskToView(task)}
+              />
             ))}
           </Column>
-          <Column title="In Progress" count={inProgressTasks?.length}>
+          <Column title="🔨 In Progress" count={inProgressTasks?.length}>
             {inProgressTasks.map((task) => (
-              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+              <TaskCard
+                title={task.title}
+                assignee={task.assignee_id}
+                onClick={() => setTaskToView(task)}
+              />
             ))}
           </Column>
-          <Column title="Merged" count={mergedTasks?.length}>
+          <Column title="🎉 Merged" count={mergedTasks?.length}>
             {mergedTasks.map((task) => (
-              <TaskCard title={task.title} onClick={() => setTaskToView(task)} />
+              <TaskCard
+                title={task.title}
+                assignee={task.assignee_id}
+                onClick={() => setTaskToView(task)}
+              />
             ))}
           </Column>
           <div css={style.boardIndex_sidePanel}>
@@ -132,15 +160,16 @@ export default function BoardIndex() {
             </div>
             <p css={style.boardIndex_text}>Members</p>
             <div css={style.boardIndex_iconRow}>
-              <div css={style.boardIndex_imageContainer}>
-                <img src={placeholder} alt="user1" css={style.boardIndex_image} />
-              </div>
-              <div css={style.boardIndex_imageContainer}>
-                <img src={placeholder} alt="user2" css={style.boardIndex_image} />
-              </div>
-              <div css={style.boardIndex_imageContainer}>
-                <img src={placeholder} alt="user3" css={style.boardIndex_image} />
-              </div>
+              {boardMembers.map((member) => (
+                <div css={style.boardIndex_imageContainer}>
+                  <img
+                    src={placeholder}
+                    key={`user-${member.user_id}`}
+                    alt={`user-${member.user_id}`}
+                    css={style.boardIndex_image}
+                  />
+                </div>
+              ))}
               <Icon
                 icon="add"
                 onClick={() => setIsAddDeveloperModalOpened(true)}

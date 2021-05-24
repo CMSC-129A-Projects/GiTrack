@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
-import { lazy, Suspense } from 'react';
-import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Switch, Route, Redirect, useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import useBoards from 'hooks/useBoards';
@@ -17,7 +17,18 @@ const Add = lazy(() => import('./Add'));
 export default function Board() {
   const user = useSelector((state) => state.USERS.loginReducer.user);
   const { path } = useRouteMatch();
+  const history = useHistory();
   const { isLoading, boards, refresh: refreshBoards } = useBoards();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (boards?.length === 0) {
+        history.push(`${path}/add`);
+      } else {
+        history.push(`${path}/${boards[0]?.id}`);
+      }
+    }
+  }, [isLoading]);
 
   if (!user?.id) {
     return <Redirect to="/login" />;
@@ -26,10 +37,6 @@ export default function Board() {
   if (isLoading) {
     return <div />;
   }
-
-  // if (boards.length === 0) {
-  //   return <Redirect to={`${path}/add`} />;
-  // }
 
   return (
     <div css={style.board}>
@@ -42,7 +49,6 @@ export default function Board() {
           <Route exact path={`${path}/:boardId`}>
             <BoardIndex />
           </Route>
-          {/* <Redirect to={`${path}/${boards[0].id}`} />; */}
           <Redirect to={`${path}/add`} />;
         </Switch>
       </Suspense>

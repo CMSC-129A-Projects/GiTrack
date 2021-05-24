@@ -1,4 +1,8 @@
 /** @jsxImportSource @emotion/react */
+import { useForm } from 'react-hook-form';
+
+import BoardsService from 'services/BoardsService';
+import UserService from 'services/UserService';
 
 import Modal from 'components/Modal';
 import Input from 'components/Input';
@@ -8,7 +12,46 @@ import modalSizes from 'components/Modal/constants';
 // Style
 import * as style from './add-developer-modal-styles';
 
-export default function AddDeveloperModal({ isOpen, handleClose }) {
+export default function AddDeveloperModal({
+  boardId,
+  refreshBoardMembers,
+  isOpen,
+  handleClose,
+}) {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = ({ emails }) => {
+    UserService.exists({
+      params: {
+        emails,
+      },
+    })
+      .then(({ data: { ids } }) => {
+        if (ids != null) {
+          BoardsService.addDevelopers({
+            boardId,
+            body: {
+              developer_ids: ids,
+            },
+          }).then(() => {
+            refreshBoardMembers();
+            handleClose();
+          });
+        }
+      })
+      .catch(() => {
+        setError('email_address', {
+          type: 'manual',
+          message: 'One or more users do not exist',
+        });
+      });
+  };
+
   return (
     <Modal
       size={modalSizes.SM}
@@ -16,10 +59,12 @@ export default function AddDeveloperModal({ isOpen, handleClose }) {
       icon="person_add"
       isOpen={isOpen}
       handleClose={handleClose}
+      onSubmit={handleSubmit(onSubmit)}
       actions={[
         {
           name: 'Add',
           onClick: () => {},
+          type: 'submit',
           variant: buttonVariants.SMALL.PRIMARY,
         },
         {
@@ -29,7 +74,16 @@ export default function AddDeveloperModal({ isOpen, handleClose }) {
         },
       ]}
     >
-      <Input css={style.addDeveloperModal_input} placeholder="Email address" />
+      <Input
+        css={style.addDeveloperModal_input}
+        error={errors.email_address ? errors.email_address.message : null}
+        placeholder="Email address"
+        {...register('emails', { required: 'Please input an email address' })}
+      />
+      <p css={style.addDeveloperModal_note}>
+        <strong>Note:</strong> To invite multiple people, enter multiple email addresses
+        separated by commas (,)
+      </p>
     </Modal>
   );
 }

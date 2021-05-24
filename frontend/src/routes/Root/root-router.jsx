@@ -15,14 +15,14 @@ export default function RootRouter() {
     <Router>
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
+          <Route path="/logout">
+            <Logout />
+          </Route>
           <Route path="/github">
             <Github />
           </Route>
           <Route path="/board">
             <Board />
-          </Route>
-          <Route path="/logout">
-            <Logout />
           </Route>
           <Route path="/login">
             <LoginSignup />

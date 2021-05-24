@@ -38,7 +38,7 @@ export const boardIndex_sidePanel = css`
 `;
 
 export const boardIndex_text = (theme) => css`
-  color: ${theme.color.neutral[5]};
+  color: ${theme.color.neutral[6]};
   ${theme.text.bodyMD};
   padding: 24px 0 0 0;
   margin: 0;
