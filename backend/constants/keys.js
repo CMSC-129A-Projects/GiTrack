@@ -7,7 +7,7 @@ const keys = {
   GH_API_SECRET: process.env[`${env}GH_API_SECRET`],
   GH_SHA_SECRET: process.env[`${env}GH_SHA_SECRET`],
   AES_SECRET: process.env[`${env}AES_SECRET`],
-  NGROK_AUTH_TOKEN: process.env[`${env}AES_SECRET`],
+  NGROK_AUTH_TOKEN: process.env[`${env}NGROK_AUTH_TOKEN`],
 };
 
 module.exports = keys;

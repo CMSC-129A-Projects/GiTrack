@@ -86,6 +86,7 @@ async function loginUser(username, password) {
 }
 
 function encrypt(token) {
+  debug(token);
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv('aes-192-ctr', AES_KEY, iv);
   const encrypted = Buffer.concat([cipher.update(token), cipher.final()]);

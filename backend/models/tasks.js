@@ -100,9 +100,10 @@ async function connectBranch(taskId, branch, repoId) {
 
   try {
     await db.run(
-      'UPDATE Tasks SET branch_name = ?, repo_id = ? WHERE id = ?',
+      'UPDATE Tasks SET branch_name = ?, repo_id = ?, column_id = ? WHERE id = ?',
       branch,
       repoId,
+      1,
       taskId
     );
   } catch (err) {
@@ -139,15 +140,42 @@ async function assignTask(boardId, taskId, assigneeIds) {
   const db = await dbHandler;
 
   try {
-    await db.getDatabaseInstance().serialize(async function assignUsers() {
-      const assign = await db.prepare('INSERT INTO Assignees VALUES (?, ?, ?)');
-      for (let i = 0; i < assigneeIds.length; i += 1) {
-        assign.run(boardId, taskId, assigneeIds[i]);
-      }
-    });
+    const assign = await db.prepare('INSERT INTO Assignees VALUES (?, ?, ?)');
+    const assignments = [];
+    for (let i = 0; i < assigneeIds.length; i += 1) {
+      assignments.push(assign.run(boardId, taskId, assigneeIds[i]));
+    }
+
+    Promise.all(assignments)
+      .catch((err) => {
+        debug(err);
+        throw err;
+      })
+      .finally(async () => {
+        debug('Inserted all assignees');
+        await assign.finalize();
+      });
   } catch (err) {
     debug(err);
     throw taskErrorMessages.INSERT_FAILED;
+  }
+}
+
+async function moveTaskByBranchAndRepo(branchName, repoId, columnId) {
+  const db = await dbHandler;
+
+  try {
+    const res = await db.run(
+      'UPDATE Tasks SET column_id = ? WHERE branch_name = ? AND repo_id = ?',
+      columnId,
+      branchName,
+      repoId
+    );
+
+    return res;
+  } catch (err) {
+    debug(err);
+    throw taskErrorMessages.MOVE_FAILED;
   }
 }
 
@@ -160,4 +188,5 @@ module.exports = {
   getTaskBoard,
   userInTask,
   assignTask,
+  moveTaskByBranchAndRepo,
 };

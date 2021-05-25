@@ -13,6 +13,8 @@ const {
   removeGithubToken,
 } = require('../models/users');
 
+const { moveTaskByBranchAndRepo } = require('../models/tasks');
+
 const { getBoardRepo } = require('../models/boards');
 
 // Middlewares
@@ -62,6 +64,9 @@ router.get('/link/callback', async (req, res) => {
     return res.status(403).json({ error_message: githubErrorMessages.STATE_MISMATCH });
   }
 
+  debug(GH_API_CLIENT_ID);
+  debug(GH_API_SECRET);
+
   try {
     const { status, data } = await axios.post(
       'https://github.com/login/oauth/access_token',
@@ -78,7 +83,7 @@ router.get('/link/callback', async (req, res) => {
       }
     );
 
-    if (status !== 200) {
+    if (status !== 200 || (data && data.error)) {
       throw data;
     }
 
@@ -272,23 +277,44 @@ router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
   }
 });
 
-router.post('/payload', verifyPostData, (req, res) => {
+router.post('/payload', verifyPostData, async (req, res) => {
   const type = req.header('X-GitHub-Event');
 
-  let action = '';
-  let head = '';
-  let base = '';
-  let repository = '';
-
-  switch (type) {
-    case 'pull_request':
-      ({ action, head, base, repository } = req.body);
-      break;
-    default:
-      break;
+  if (type !== 'pull_request') {
+    return res.sendStatus(406);
   }
 
-  return res.status(200).json({ type, action, head, base, repository });
+  const {
+    action,
+    pull_request: {
+      head: { ref: branchName },
+      merged,
+    },
+    repository: { id: repoId },
+  } = req.body;
+
+  if (action === 'closed' && merged) {
+    const ret = await moveTaskByBranchAndRepo(branchName, repoId, 2);
+    debug(branchName);
+    debug(repoId);
+    res.json(ret);
+  } else {
+    res.json({
+      error_message: 'NOT_NEEDED',
+    });
+  }
+});
+
+router.post('/test', async (req, res) => {
+  const { branchName, repoId, columnId } = req.body;
+
+  try {
+    const ret = await moveTaskByBranchAndRepo(branchName, repoId, columnId);
+    res.json(ret);
+  } catch (err) {
+    debug(err);
+    res.json(err);
+  }
 });
 
 module.exports = router;
