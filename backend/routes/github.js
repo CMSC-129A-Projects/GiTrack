@@ -64,9 +64,6 @@ router.get('/link/callback', async (req, res) => {
     return res.status(403).json({ error_message: githubErrorMessages.STATE_MISMATCH });
   }
 
-  debug(GH_API_CLIENT_ID);
-  debug(GH_API_SECRET);
-
   try {
     const { status, data } = await axios.post(
       'https://github.com/login/oauth/access_token',
@@ -199,7 +196,6 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
     const branches = data.map((curr) => ({
       repo_id: id,
       name: curr.name,
-      commit: curr.commit.sha,
     }));
 
     return res.json({ branches, error_message: null });
