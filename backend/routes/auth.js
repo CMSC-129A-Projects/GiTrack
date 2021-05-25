@@ -179,7 +179,6 @@ router.post('/register', async (req, res) => {
  *
  */
 router.post('/login', async (req, res) => {
-  debug(ACCESS_TOKEN_SECRET);
   const { username, password } = req.body;
   if (!password) {
     return res.status(400).json({

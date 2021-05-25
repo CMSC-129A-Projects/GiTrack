@@ -12,6 +12,7 @@ const {
   getGithubToken,
   removeGithubToken,
 } = require('../models/users');
+
 const { getBoardRepo } = require('../models/boards');
 
 // Middlewares
