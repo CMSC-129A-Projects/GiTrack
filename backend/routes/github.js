@@ -21,7 +21,7 @@ const { authJWT } = require('../middlewares/auth');
 const { github: githubErrorMessages } = require('../constants/error-messages');
 
 // Secrets
-const { GH_API_CLIENT_ID, GH_API_SECRET } = process.env;
+const { GH_API_CLIENT_ID, GH_API_SECRET } = require('../constants/keys');
 
 let states = [];
 

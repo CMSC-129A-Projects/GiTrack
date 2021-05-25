@@ -3,8 +3,6 @@ const { open } = require('sqlite');
 const debug = require('debug')('backend:db');
 const schema = require('./schema');
 
-sqlite3.verbose();
-
 let filename;
 
 switch (process.env.NODE_ENV) {
@@ -13,10 +11,12 @@ switch (process.env.NODE_ENV) {
     break;
   case 'TEST':
     filename = './gitrack-test.db';
+    sqlite3.verbose();
     break;
   default:
   case 'DEV':
     filename = './gitrack-dev.db';
+    sqlite3.verbose();
     break;
 }
 
@@ -24,7 +24,7 @@ async function initDB() {
   try {
     const db = await open({
       filename,
-      driver: sqlite3.Database,
+      driver: sqlite3.cached.Database,
     });
 
     debug('Connected to the tables database');
