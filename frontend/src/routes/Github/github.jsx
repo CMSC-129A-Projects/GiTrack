@@ -37,7 +37,6 @@ export default function Github() {
         if (data.error_message === null) {
           history.push('/boards');
         } else {
-          setHasFailed(true);
           setIsSigninGithubModalOpened(true);
         }
       })
