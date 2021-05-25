@@ -17,6 +17,7 @@ const { getBoardRepo } = require('../models/boards');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
+const { verifyPostData } = require('../middlewares/github');
 
 // Constants
 const { github: githubErrorMessages } = require('../constants/error-messages');
@@ -193,6 +194,7 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
     const branches = data.map((curr) => ({
       repo_id: id,
       name: curr.name,
+      commit: curr.commit.sha,
     }));
 
     return res.json({ branches, error_message: null });
@@ -268,6 +270,25 @@ router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
 
     return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
   }
+});
+
+router.post('/payload', verifyPostData, (req, res) => {
+  const type = req.header('X-GitHub-Event');
+
+  let action = '';
+  let head = '';
+  let base = '';
+  let repository = '';
+
+  switch (type) {
+    case 'pull_request':
+      ({ action, head, base, repository } = req.body);
+      break;
+    default:
+      break;
+  }
+
+  return res.status(200).json({ type, action, head, base, repository });
 });
 
 module.exports = router;

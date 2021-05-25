@@ -21,7 +21,15 @@ const app = express();
 const db = require('./db');
 
 app.use(logger('dev', { skip: () => process.env.NODE_ENV === 'TEST' }));
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, res, buf, encoding) => {
+      if (buf && buf.length) {
+        req.rawBody = buf.toString(encoding || 'utf8');
+      }
+    },
+  })
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
