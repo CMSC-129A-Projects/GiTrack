@@ -281,7 +281,9 @@ router.post('/payload', verifyPostData, async (req, res) => {
   const type = req.header('X-GitHub-Event');
 
   if (type !== 'pull_request') {
-    return res.sendStatus(406);
+    return res.json({
+      error_message: 'NOT_NEEDED',
+    });
   }
 
   const {
@@ -295,26 +297,12 @@ router.post('/payload', verifyPostData, async (req, res) => {
 
   if (action === 'closed' && merged) {
     const ret = await moveTaskByBranchAndRepo(branchName, repoId, 2);
-    debug(branchName);
-    debug(repoId);
-    res.json(ret);
-  } else {
-    res.json({
-      error_message: 'NOT_NEEDED',
-    });
+    return res.json(ret);
   }
-});
 
-router.post('/test', async (req, res) => {
-  const { branchName, repoId, columnId } = req.body;
-
-  try {
-    const ret = await moveTaskByBranchAndRepo(branchName, repoId, columnId);
-    res.json(ret);
-  } catch (err) {
-    debug(err);
-    res.json(err);
-  }
+  return res.json({
+    error_message: 'NOT_NEEDED',
+  });
 });
 
 module.exports = router;
