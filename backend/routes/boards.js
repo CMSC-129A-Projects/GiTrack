@@ -15,6 +15,7 @@ const {
   addDevToBoard,
   getBoardMembers,
   userInBoard,
+  removeMembers,
 } = require('../models/boards');
 
 const { getTasksInBoard } = require('../models/tasks');
@@ -768,7 +769,7 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
     });
   } catch (err) {
     debug(err);
-    return res.status(500).json({
+    return res.status(400).json({
       board_id: null,
       dev_id: null,
       duplicate_devs: null,
@@ -882,4 +883,40 @@ router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
   }
 });
 
+router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+  const { member_ids: memberId } = req.body;
+
+  if (id === undefined || memberId === undefined) {
+    return res.status(400).json({
+      board_id: null,
+      members_removed: null,
+      error_message: boardErrorMessages.MISSING_ID,
+    });
+  }
+
+  try {
+    await getPermissions(userId, id);
+  } catch (err) {
+    debug(err);
+    return res
+      .status(403)
+      .json({ board_id: null, members_removed: null, error_message: err });
+  }
+
+  try {
+    await removeMembers(id, memberId);
+    return res.json({
+      board_id: id,
+      members_removed: memberId.toString(),
+      error_message: null,
+    });
+  } catch (err) {
+    debug(err);
+    return res
+      .status(400)
+      .json({ board_id: null, members_removed: null, error_message: err });
+  }
+});
 module.exports = router;

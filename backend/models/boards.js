@@ -1,7 +1,10 @@
 const debug = require('debug')('backend:models-board');
 const dbHandler = require('../db');
 
-const { board: boardErrorMessages } = require('../constants/error-messages');
+const {
+  board: boardErrorMessages,
+  user: userErrorMessages,
+} = require('../constants/error-messages');
 
 async function getPermissions(userId, boardId, isDeveloper = 0) {
   const db = await dbHandler;
@@ -133,6 +136,14 @@ async function userInBoard(boardId, userId) {
 async function addDevToBoard(boardId, devIds) {
   const db = await dbHandler;
 
+  const userCheck = await db.all('SELECT id FROM Users');
+
+  for (let i = 0; i < devIds.length; i += 1) {
+    if (!userCheck.some((member) => member.id === devIds[i])) {
+      throw userErrorMessages.USER_NOT_FOUND;
+    }
+  }
+
   try {
     await db.getDatabaseInstance().serialize(async function addDevs() {
       const dev = await db.prepare('INSERT INTO Memberships VALUES (?, ?, 1)');
@@ -156,6 +167,53 @@ async function getBoardMembers(boardId) {
   return members;
 }
 
+async function removeMembers(boardId, memberIds) {
+  const db = await dbHandler;
+
+  const boardPM = await db.get(
+    'SELECT user_id FROM Memberships WHERE board_id = ? AND is_developer = 0',
+    boardId
+  );
+
+  if (memberIds.includes(boardPM.user_id)) {
+    throw boardErrorMessages.CANNOT_REMOVE_PM;
+  }
+
+  const memberCheck = await db.all(
+    'SELECT user_id FROM Memberships WHERE board_id = ?',
+    boardId
+  );
+
+  for (let i = 0; i < memberIds.length; i += 1) {
+    if (!memberCheck.some((member) => member.user_id === memberIds[i])) {
+      throw boardErrorMessages.MEMBER_NOT_FOUND;
+    }
+  }
+
+  try {
+    const remove = await db.prepare(
+      'DELETE FROM Memberships WHERE board_id = ? AND user_id = ?'
+    );
+    const removal = [];
+    for (let i = 0; i < memberIds.length; i += 1) {
+      removal.push(remove.run(boardId, memberIds[i]));
+    }
+
+    Promise.all(removal)
+      .catch((err) => {
+        debug(err);
+        throw err;
+      })
+      .finally(async () => {
+        debug('Removed all members');
+        await remove.finalize();
+      });
+  } catch (err) {
+    debug(err);
+    throw boardErrorMessages.REMOVE_FAILED;
+  }
+}
+
 module.exports = {
   getPermissions,
   createBoard,
@@ -168,4 +226,5 @@ module.exports = {
   addDevToBoard,
   userInBoard,
   getBoardMembers,
+  removeMembers,
 };
