@@ -14,7 +14,7 @@ const { authJWT } = require('../middlewares/auth');
 const { user: userErrorMessages } = require('../constants/error-messages');
 
 // Secrets
-const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
+const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = require('../constants/keys');
 
 let refreshTokens = [];
 

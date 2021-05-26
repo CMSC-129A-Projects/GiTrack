@@ -10,7 +10,7 @@ const {
   github: githubErrorMessages,
 } = require('../constants/error-messages');
 
-const { AES_SECRET } = process.env;
+const { AES_SECRET } = require('../constants/keys');
 
 const AES_KEY = Buffer.from(AES_SECRET.split('.').map(Number));
 
@@ -86,6 +86,7 @@ async function loginUser(username, password) {
 }
 
 function encrypt(token) {
+  debug(token);
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv('aes-192-ctr', AES_KEY, iv);
   const encrypted = Buffer.concat([cipher.update(token), cipher.final()]);

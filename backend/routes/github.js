@@ -12,16 +12,20 @@ const {
   getGithubToken,
   removeGithubToken,
 } = require('../models/users');
+
+const { moveTaskByBranchAndRepo } = require('../models/tasks');
+
 const { getBoardRepo } = require('../models/boards');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
+const { verifyPostData } = require('../middlewares/github');
 
 // Constants
 const { github: githubErrorMessages } = require('../constants/error-messages');
 
 // Secrets
-const { GH_API_CLIENT_ID, GH_API_SECRET } = process.env;
+const { GH_API_CLIENT_ID, GH_API_SECRET } = require('../constants/keys');
 
 let states = [];
 
@@ -76,7 +80,7 @@ router.get('/link/callback', async (req, res) => {
       }
     );
 
-    if (status !== 200) {
+    if (status !== 200 || (data && data.error)) {
       throw data;
     }
 
@@ -267,6 +271,34 @@ router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
 
     return res.status(500).json({ repos: null, error_message: JSON.stringify(err) });
   }
+});
+
+router.post('/payload', verifyPostData, async (req, res) => {
+  const type = req.header('X-GitHub-Event');
+
+  if (type !== 'pull_request') {
+    return res.json({
+      error_message: 'NOT_NEEDED',
+    });
+  }
+
+  const {
+    action,
+    pull_request: {
+      head: { ref: branchName },
+      merged,
+    },
+    repository: { id: repoId },
+  } = req.body;
+
+  if (action === 'closed' && merged) {
+    const ret = await moveTaskByBranchAndRepo(branchName, repoId, 2);
+    return res.json(ret);
+  }
+
+  return res.json({
+    error_message: 'NOT_NEEDED',
+  });
 });
 
 module.exports = router;

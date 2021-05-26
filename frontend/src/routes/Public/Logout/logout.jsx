@@ -17,5 +17,5 @@ export default function Logout() {
     });
   });
 
-  return <Redirect path="/login" />;
+  return <Redirect to="/login" />;
 }

@@ -24,11 +24,13 @@ jobs:
     - name: Create env file
       run: |
         touch .env
-        echo ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }} >> .env
-        echo REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }} >> .env
-        echo GH_API_CLIENT_ID=${{ secrets.GH_API_CLIENT_ID }} >> .env
-        echo GH_API_SECRET=${{ secrets.GH_API_SECRET }} >> .env
-        echo AES_SECRET=${{ secrets.AES_SECRET }} >> .env
+        echo DEV_ACCESS_TOKEN_SECRET=${{ secrets.DEV_ACCESS_TOKEN_SECRET }} >> .env
+        echo DEV_REFRESH_TOKEN_SECRET=${{ secrets.DEV_REFRESH_TOKEN_SECRET }} >> .env
+        echo DEV_GH_API_CLIENT_ID=${{ secrets.DEV_GH_API_CLIENT_ID }} >> .env
+        echo DEV_GH_API_SECRET=${{ secrets.DEV_GH_API_SECRET }} >> .env
+        echo DEV_GH_SHA_SECRET=${{ secrets.DEV_GH_SHA_SECRET }} >> .env
+        echo DEV_AES_SECRET=${{ secrets.DEV_AES_SECRET }} >> .env
+        echo DEV_NGROK_AUTH_TOKEN=${{ secrets.DEV_NGROK_AUTH_TOKEN }} >> .env
 
     - name: Run test and lint
       uses: actions/setup-node@v2

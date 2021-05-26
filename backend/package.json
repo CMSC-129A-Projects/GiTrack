@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "env NODE_ENV=PROD node ./app.js",
-    "dev": "env NODE_ENV=DEV DEBUG=backend:* nodemon ./app.js",
+    "dev": "env NODE_ENV=DEV DEBUG=backend:* node ./dev.js",
+    "old": "env NODE_ENV=DEV DEBUG=backend:* nodemon ./app.js",
     "lint": "eslint '**/*.js'",
     "test": "rm -f gitrack-test.db && env NODE_ENV=TEST mocha"
   },
@@ -19,6 +20,7 @@
     "express": "~4.16.1",
     "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.1",
+    "ngrok": "^4.0.1",
     "sqlite": "^4.0.19",
     "sqlite3": "^5.0.2",
     "swagger-jsdoc": "^6.1.0",
