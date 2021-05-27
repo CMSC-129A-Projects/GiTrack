@@ -652,7 +652,7 @@ router.get('/:id(\\d+)/repos', authJWT, async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               devId:
+ *               developer_ids:
  *                 type: array
  *                 description: IDs of the users to be added to the board
  *                 items:
@@ -883,6 +883,94 @@ router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  /board/{id}/remove-developers:
+ *   delete:
+ *     summary: Remove developers from a board.
+ *     tags: [Boards]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the board to edit
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               member_ids:
+ *                 type: array
+ *                 description: IDs of the users to be removed from the board
+ *                 items:
+ *                   type: integer
+ *                   example: [1, 2, 3, 4, 5]
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 members_removed:
+ *                   type: string
+ *                   description: IDs of the developers removed from the board, separated by commas
+ *                   example: 2, 3, 4
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 members_removed:
+ *                   type: string
+ *                   description: IDs of the developers removed from the board, separated by commas
+ *                   example: 2, 3, 4
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       403:
+ *         description: User lacking permissions to perform current action
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: string
+ *                   description: ID of the board where the developers have been added
+ *                   example: 1
+ *                 members_removed:
+ *                   type: string
+ *                   description: IDs of the developers removed from the board, separated by commas
+ *                   example: 2, 3, 4
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
