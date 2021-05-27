@@ -179,15 +179,25 @@ async function removeMembers(boardId, memberIds) {
     throw boardErrorMessages.CANNOT_REMOVE_PM;
   }
 
-  const memberCheck = await db.all(
-    'SELECT user_id FROM Memberships WHERE board_id = ?',
-    boardId
+  const memberCheck = await db.prepare(
+    'SELECT user_id FROM Memberships WHERE board_id = ? AND user_id = ?'
   );
-
+  const members = [];
   for (let i = 0; i < memberIds.length; i += 1) {
-    if (!memberCheck.some((member) => member.user_id === memberIds[i])) {
-      throw boardErrorMessages.MEMBER_NOT_FOUND;
-    }
+    members.push(memberCheck.get(boardId, memberIds[i]));
+  }
+  const check = await Promise.all(members)
+    .catch((err) => {
+      debug(err);
+      throw err;
+    })
+    .finally(async () => {
+      debug('Checked all members');
+      await memberCheck.finalize();
+    });
+
+  if (check.some((member) => member === undefined)) {
+    throw boardErrorMessages.MEMBER_NOT_FOUND;
   }
 
   try {

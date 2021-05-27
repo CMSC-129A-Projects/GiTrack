@@ -769,7 +769,7 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
     });
   } catch (err) {
     debug(err);
-    return res.status(400).json({
+    return res.status(500).json({
       board_id: null,
       dev_id: null,
       duplicate_devs: null,
