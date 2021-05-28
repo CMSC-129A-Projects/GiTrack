@@ -36,7 +36,7 @@ const theme = {
   color: {
     primary: [
       '#fff', // Do not use
-      '#fff', // 1
+      '#e8eefc', // 1
       '#fff', // 2
       '#2057E3', // 3
     ],

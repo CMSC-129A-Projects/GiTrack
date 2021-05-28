@@ -40,7 +40,7 @@ export default function Board() {
 
   return (
     <div css={style.board}>
-      <Navbar boards={boards} />
+      <Navbar user={user} boards={boards} />
       <Suspense fallback={<div>loading</div>}>
         <Switch>
           <Route exact path={`${path}/add`}>

@@ -14,6 +14,7 @@ import Column from 'components/Column';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
 import Icon from 'components/Icon';
+import UserImage from 'components/UserImage';
 
 import TaskCard from 'widgets/TaskCard';
 import BoardRepositories from 'widgets/BoardRepositories';
@@ -22,8 +23,6 @@ import ViewTaskModal from 'widgets/ViewTaskModal';
 import AddRepoModal from 'widgets/AddRepoModal';
 import AddDeveloperModal from 'widgets/AddDeveloperModal';
 import SigninGithubModal from 'widgets/SigninGithubModal';
-
-import placeholder from 'assets/images/user-image.svg';
 
 // Style
 import * as style from './board-index-styles';
@@ -67,18 +66,13 @@ export default function BoardIndex() {
     setRepoIds(boardRepos?.repos?.map((repo) => repo.id));
   }, [boardRepos]);
 
-  if (
-    isBoardLoading ||
-    isBoardTasksLoading ||
-    isBoardReposLoading ||
-    isBoardMembersLoading
-  ) {
+  if (isBoardLoading || isBoardReposLoading || isBoardMembersLoading) {
     return <Spinner />;
   }
 
-  const notStartedTasks = boardTasks.tasks.filter((task) => task.column_id === 0);
-  const inProgressTasks = boardTasks.tasks.filter((task) => task.column_id === 1);
-  const mergedTasks = boardTasks.tasks.filter((task) => task.column_id === 2);
+  const notStartedTasks = boardTasks?.tasks.filter((task) => task.column_id === 0);
+  const inProgressTasks = boardTasks?.tasks.filter((task) => task.column_id === 1);
+  const mergedTasks = boardTasks?.tasks.filter((task) => task.column_id === 2);
 
   return (
     <>
@@ -122,29 +116,44 @@ export default function BoardIndex() {
           <h2 css={style.boardIndex_header_name}>{board.title}</h2>
         </div>
         <div css={style.boardIndex_columns}>
-          <Column title="📋 Not Started" count={notStartedTasks?.length}>
+          <Column
+            isLoading={isBoardTasksLoading}
+            title="📋 Not Started"
+            count={notStartedTasks?.length}
+          >
             {notStartedTasks.map((task) => (
               <TaskCard
+                members={boardMembers}
                 title={task.title}
-                assignee={task.assignee_id}
+                assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
               />
             ))}
           </Column>
-          <Column title="🔨 In Progress" count={inProgressTasks?.length}>
+          <Column
+            isLoading={isBoardTasksLoading}
+            title="🔨 In Progress"
+            count={inProgressTasks?.length}
+          >
             {inProgressTasks.map((task) => (
               <TaskCard
+                members={boardMembers}
                 title={task.title}
-                assignee={task.assignee_id}
+                assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
               />
             ))}
           </Column>
-          <Column title="🎉 Merged" count={mergedTasks?.length}>
+          <Column
+            isLoading={isBoardTasksLoading}
+            title="🎉 Merged"
+            count={mergedTasks?.length}
+          >
             {mergedTasks.map((task) => (
               <TaskCard
+                members={boardMembers}
                 title={task.title}
-                assignee={task.assignee_id}
+                assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
               />
             ))}
@@ -161,14 +170,7 @@ export default function BoardIndex() {
             <p css={style.boardIndex_text}>Members</p>
             <div css={style.boardIndex_iconRow}>
               {boardMembers.map((member) => (
-                <div css={style.boardIndex_imageContainer}>
-                  <img
-                    src={placeholder}
-                    key={`user-${member.user_id}`}
-                    alt={`user-${member.user_id}`}
-                    css={style.boardIndex_image}
-                  />
-                </div>
+                <UserImage id={member.id} name={member.username} />
               ))}
               <Icon
                 icon="add"

@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
-import Select from 'react-select'
+import Select from 'react-select';
 
 // Style
-import * as style from './dropdown-styles'
+import * as style from './dropdown-styles';
 
 export default function Dropdown({
   options,
@@ -14,6 +14,8 @@ export default function Dropdown({
   placeholder,
   label,
   disabled,
+  isMulti,
+  isClearable,
   ...passedProps
 }) {
   return (
@@ -27,8 +29,10 @@ export default function Dropdown({
         placeholder={placeholder}
         styles={style.dropdown}
         isDisabled={disabled}
+        isMulti={isMulti}
+        isClearable={isClearable}
       />
       {error && <p css={style.dropdown_errorMessage}>{error}</p>}
     </div>
-  )
+  );
 }

@@ -55,19 +55,8 @@ export const dropdown = {
   }),
   multiValue: (base) => ({
     ...base,
-    borderRadius: '16px',
-    margin: '0 2px',
-    padding: '0 4px',
-    backgroundColor: theme.color.neutral[2],
-    fontWeight: '600',
-  }),
-  multiValueRemove: (base) => ({
-    ...base,
-    borderRadius: '0 12px 12px 0',
-    '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.color.red[3],
-    },
+    margin: '0 2px 0 0',
+    backgroundColor: theme.color.neutral[3],
   }),
   noOptionsMessage: (base) => ({
     ...base,

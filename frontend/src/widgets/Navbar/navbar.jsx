@@ -10,12 +10,10 @@ import UserImage from 'components/UserImage';
 
 import useOnClickOutside from 'hooks/useOnClickOutside';
 
-import placeholder from 'assets/images/user-image.svg';
-
 // Style
 import * as style from './navbar-styles';
 
-export default function Navbar({ boards, ...passedProps }) {
+export default function Navbar({ user, boards, ...passedProps }) {
   const boardRef = useRef();
   const userRef = useRef();
 
@@ -74,7 +72,7 @@ export default function Navbar({ boards, ...passedProps }) {
           css={style.navbar_userButton}
           onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
         >
-          <UserImage image={placeholder} />
+          <UserImage id={user.id} name={user.username} />
         </button>
         {isUserDropdownOpen && (
           <Card css={style.navbar_actionsDropdown}>

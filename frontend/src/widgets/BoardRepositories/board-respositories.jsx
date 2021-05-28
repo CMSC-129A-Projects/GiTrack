@@ -33,7 +33,11 @@ export default function BoardRepositiories({
   ) : (
     <>
       {boardRepos.repos.map((repo) => (
-        <p css={style.repo_repo}>{repo.full_name.split('/')[1][0]}</p>
+        <div css={style.repo_repo}>
+          <p css={style.repo_repo_text}>
+            {repo.full_name.split('/')[1][0].toUpperCase()}
+          </p>
+        </div>
       ))}
       <Icon icon="add" onClick={openModal} onKeyDown={openModal} css={style.repo_add} />
     </>

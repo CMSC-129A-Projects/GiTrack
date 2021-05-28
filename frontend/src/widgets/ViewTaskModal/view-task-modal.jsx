@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 
 import TasksService from 'services/TasksService';
+import useCommits from 'hooks/useCommits';
 
 import RemoveTaskModal from 'widgets/RemoveTaskModal';
 
@@ -20,59 +21,42 @@ export default function ViewTaskModal({
   task,
   members,
   refreshBoardTasks,
-  setTaskToView,
   isOpen,
   handleClose,
   githubBranches,
 }) {
   const [isRemoveTaskModalOpened, setIsRemoveTaskModalOpened] = useState(false);
-  const [selectedDeveloper, setSelectedDeveloper] = useState(null);
-  const [isAssigningDeveloper, setIsAssigningDeveloper] = useState(false);
-  const [isConnectingBranch, setIsConnectingBranch] = useState(false);
+  const [selectedDevelopers, setSelectedDevelopers] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
   const [options, setOptions] = useState([]);
 
-  useEffect(() => {
-    if (selectedDeveloper && selectedDeveloper.value !== task.assignee_id[0]) {
-      setIsAssigningDeveloper(true);
-      TasksService.assign({
-        taskId: task.id,
-        body: {
-          board_id: board.id,
-          assignee_id: [selectedDeveloper.value],
-        },
-      }).then(() => {
-        setTaskToView({ ...task, assignee_id: [selectedDeveloper.value] });
-        refreshBoardTasks();
-        setIsAssigningDeveloper(false);
-      });
-    }
-  }, [selectedDeveloper]);
+  const { isLoading: isCommitsLoading, commits } = useCommits({ repoId: task.repo_id });
 
   useEffect(() => {
-    const assignedDev = members.find((member) => member.id === task.assignee_id[0]);
+    task.assignee_ids.forEach((id) => {
+      const assignedDev = members.find((member) => member.id === id);
 
-    if (assignedDev != null) {
-      setSelectedDeveloper({
-        label: assignedDev.username,
-        value: assignedDev.id,
-      });
-    }
-  }, [members]);
+      if (assignedDev != null) {
+        setSelectedDevelopers((assignees) => [
+          ...assignees,
+          {
+            label: assignedDev.username,
+            value: assignedDev.id,
+          },
+        ]);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (selectedBranch && selectedBranch.name !== task.branch_name) {
-      setIsConnectingBranch(true);
       TasksService.connect({
         body: {
           repo_id: selectedBranch.repo_id,
           name: selectedBranch.name,
         },
         taskId: task.id,
-      }).then(() => {
-        setTaskToView({ ...task, branch_name: selectedBranch.name });
-        refreshBoardTasks();
-        setIsConnectingBranch(false);
       });
     }
   }, [selectedBranch]);
@@ -90,16 +74,40 @@ export default function ViewTaskModal({
     setSelectedBranch(tempOptions[currentBranch]);
   }, [githubBranches]);
 
+  const handleSuccess = () => {
+    refreshBoardTasks();
+    setIsRemoveTaskModalOpened(false);
+    handleClose();
+  };
+
+  const handleCloseFn = () => {
+    const data = {
+      taskId: task.id,
+      body: {
+        board_id: board.id,
+        assignee_ids: selectedDevelopers.map((dev) => dev.value),
+      },
+    };
+
+    if (selectedDevelopers.length > 0 && task.assignee_ids.length === 0) {
+      TasksService.assign(data).then(() => {
+        handleSuccess();
+      });
+    } else if (hasChanges) {
+      TasksService.updateAssignees(data).then(() => {
+        handleSuccess();
+      });
+    } else {
+      handleSuccess();
+    }
+  };
+
   return (
     <>
       {isRemoveTaskModalOpened && (
         <RemoveTaskModal
           isOpen={isRemoveTaskModalOpened}
-          handleSuccess={() => {
-            refreshBoardTasks();
-            setIsRemoveTaskModalOpened(false);
-            handleClose();
-          }}
+          handleSuccess={handleSuccess}
           handleClose={() => setIsRemoveTaskModalOpened(false)}
           task={task}
         />
@@ -109,8 +117,8 @@ export default function ViewTaskModal({
         title="View Task"
         icon="create"
         isOpen={isOpen}
-        isLoading={isAssigningDeveloper || isConnectingBranch}
-        handleClose={handleClose}
+        isLoading={isCommitsLoading}
+        handleClose={handleCloseFn}
         actions={[
           {
             name: 'Remove',
@@ -118,8 +126,8 @@ export default function ViewTaskModal({
             variant: buttonVariants.SMALL.PRIMARY,
           },
           {
-            name: 'Cancel',
-            onClick: handleClose,
+            name: 'Close',
+            onClick: handleCloseFn,
             variant: buttonVariants.SMALL.SECONDARY,
           },
         ]}
@@ -132,39 +140,43 @@ export default function ViewTaskModal({
               <span dangerouslySetInnerHTML={{ __html: task.description }} />
             </p>
             <p css={style.viewTaskModal_bodyTitle}>Progress</p>
-            <p css={style.viewTaskModal_bodyText}>No branch added yet</p>
-            {/* <div css={style.viewTaskModal_progress}>
-              <p css={style.viewTaskModal_progressTime}>2 hours ago</p>
-              <p css={style.viewTaskModal_progressText}>added tests</p>
-            </div>
-            <div css={style.viewTaskModal_progress}>
-              <p css={style.viewTaskModal_progressTime}>15 hours ago</p>
-              <p css={style.viewTaskModal_progressText}>added working component</p>
-            </div>
-            <div css={style.viewTaskModal_progress}>
-              <p css={style.viewTaskModal_progressTime}>3 days ago</p>
-              <p css={style.viewTaskModal_progressText}>added initial setup</p>
-            </div> */}
+            {commits.length > 0 ? (
+              <>
+                {commits.map(({ hash, message }) => (
+                  <div css={style.viewTaskModal_progress}>
+                    <p css={style.viewTaskModal_progressTime}>{hash.slice(0, 8)}...</p>
+                    <p css={style.viewTaskModal_progressText}>{message}</p>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <p css={style.viewTaskModal_bodyText}>No branch added yet</p>
+            )}
           </div>
           <Card css={style.viewTaskModal_optionsCard}>
             <Dropdown
               css={style.viewTaskModal_input}
-              value={selectedDeveloper}
-              label="Assignee"
+              value={selectedDevelopers}
+              label="Assignees"
               options={members.map((member) => ({
                 label: member.username,
                 value: member.id,
               }))}
               onChange={(option) => {
-                setSelectedDeveloper(option);
+                setSelectedDevelopers(option);
+                setHasChanges(true);
               }}
+              isMulti
+              isClearable={false}
             />
             <Dropdown
               css={style.viewTaskModal_input}
               label="Branch"
               value={selectedBranch}
               options={options}
-              onChange={(option) => setSelectedBranch(option)}
+              onChange={(option) => {
+                setSelectedBranch(option);
+              }}
             />
           </Card>
         </div>

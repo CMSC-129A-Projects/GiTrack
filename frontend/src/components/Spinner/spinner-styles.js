@@ -1,4 +1,4 @@
-import { css } from '@emotion/react'
+import { css } from '@emotion/react';
 
 export const spinner_container = css`
   @keyframes rotate {
@@ -13,13 +13,13 @@ export const spinner_container = css`
   justify-content: center;
   padding: 24px 12px;
   box-sizing: border-box;
-`
+`;
 
 export const spinner = css`
   width: 3.75rem;
   transform-origin: center;
   animation: rotate 2s linear infinite;
-`
+`;
 
 export const spinner_circle = (theme) => css`
   @keyframes dash {
@@ -37,10 +37,10 @@ export const spinner_circle = (theme) => css`
   }
 
   fill: none;
-  stroke: ${theme.color.primary[4]};
+  stroke: ${theme.color.primary[3]};
   stroke-width: 4;
   stroke-dasharray: 1, 200;
   stroke-dashoffset: 0;
   stroke-linecap: round;
   animation: dash 1.5s ease-in-out infinite;
-`
+`;

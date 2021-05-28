@@ -8,12 +8,16 @@ export const repo_repo = (theme) => css`
   ${theme.text.headingXS};
   color: ${theme.color.primary[3]};
 
-  background-color: rgba(32, 87, 227, 0.1);
+  background-color: ${theme.color.primary[1]};
   height: 36px;
   width: 36px;
   margin: -3px;
   border-radius: 50%;
   box-shadow: 0 0 0 4px #fff;
+`;
+
+export const repo_repo_text = css`
+  margin: 0;
 `;
 
 export const repo_add = (theme) => css`

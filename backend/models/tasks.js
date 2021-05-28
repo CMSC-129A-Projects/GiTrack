@@ -92,7 +92,7 @@ async function getTasksInBoard(boardId) {
     const assignees = await Promise.all(assigneePromise);
 
     assignees.forEach((assignee, index) => {
-      tasks.push({ ...taskList[index], assignee_ids: assignees });
+      tasks.push({ ...taskList[index], assignee_ids: assignee });
     });
 
     return tasks;
