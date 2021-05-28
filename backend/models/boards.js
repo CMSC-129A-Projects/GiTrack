@@ -186,18 +186,18 @@ async function removeMembers(boardId, memberIds) {
   for (let i = 0; i < memberIds.length; i += 1) {
     members.push(memberCheck.get(boardId, memberIds[i]));
   }
-  const check = await Promise.all(members)
-    .catch((err) => {
-      debug(err);
-      throw err;
-    })
-    .finally(async () => {
-      debug('Checked all members');
-      await memberCheck.finalize();
-    });
 
-  if (check.some((member) => member === undefined)) {
-    throw boardErrorMessages.MEMBER_NOT_FOUND;
+  try {
+    const check = await Promise.all(members);
+    if (check.some((member) => member === undefined)) {
+      throw boardErrorMessages.MEMBER_NOT_FOUND;
+    }
+  } catch (err) {
+    debug(err);
+    throw err;
+  } finally {
+    debug('Checked all members');
+    await memberCheck.finalize();
   }
 
   try {

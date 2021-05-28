@@ -39,10 +39,12 @@ const task = {
   MISSING_BRANCH_NAME: 'MISSING_BRANCH_NAME',
   MISSING_REPO_ID: 'MISSING_REPO_ID',
   MISSING_DESCRIPTION: 'MISSING_DESCRIPTION',
+  MISSING_ASSIGNEE_IDS: 'MISSING_ASSIGNEE_IDS',
   TASK_NOT_FOUND: 'TASK_NOT_FOUND',
   GET_FAILED: 'GET_FAILED',
   CONNECTION_FAILED: 'CONNECTION_FAILED',
   MOVE_FAILED: 'MOVE_FAILED',
+  NOT_ENOUGH_PERMISSIONS: 'NOT_ENOUGH_PERMISSIONS',
 };
 
 const logic = {
@@ -63,4 +65,10 @@ const repo = {
   GET_FAILED: 'GET_FAILED',
 };
 
-module.exports = { user, board, logic, task, github, repo };
+const assignee = {
+  INSERT_FAILED: 'INSERT_FAILED',
+  GET_FAILED: 'GET_FAILED',
+  REPLACE_FAILED: 'REPLACE_FAILED',
+};
+
+module.exports = { user, board, logic, task, github, repo, assignee };

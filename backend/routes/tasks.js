@@ -10,10 +10,11 @@ const {
   removeTask,
   getTaskBoard,
   connectBranch,
-  assignTask,
-  userInTask,
   getTasksInBoard,
 } = require('../models/tasks');
+
+const { setAssignees, replaceAssignees } = require('../models/assignees');
+
 const { getPermissions } = require('../models/boards');
 
 // Middlewares
@@ -727,11 +728,11 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               boardId:
+ *               board_id:
  *                 type: integer
  *                 description: ID of the board where the task is
  *                 example: 1
- *               assigneeId:
+ *               assignee_ids:
  *                 type: array
  *                 description: ID/s of the developer/s to be assigned to the task
  *                 items:
@@ -753,7 +754,7 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
  *                   type: integer
  *                   description: ID of the task to which developers have been assigned
  *                   example: 1
- *                 assignee_id:
+ *                 assignee_ids:
  *                   type: string
  *                   description: IDs of the developers assigned to the task, separated by commas
  *                   example: 2, 3, 5
@@ -776,7 +777,157 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
  *                   type: integer
  *                   description: ID of the task to which developers have been assigned
  *                   example: 1
- *                 assignee_id:
+ *                 assignee_ids:
+ *                   type: string
+ *                   description: IDs of the developers assigned to the task, separated by commas
+ *                   example: 2, 3, 5
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       403:
+ *         description: User lacking permissions to perform current action
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: integer
+ *                   description: Id of the board where the task is
+ *                   example: 1
+ *                 task_id:
+ *                   type: integer
+ *                   description: ID of the task to which developers have been assigned
+ *                   example: 1
+ *                 assignee_ids:
+ *                   type: string
+ *                   description: IDs of the developers assigned to the task, separated by commas
+ *                   example: 2, 3, 5
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
+router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+  const { board_id: boardId, assignee_ids: assigneeIds } = req.body;
+
+  if (assigneeIds === undefined || assigneeIds.length === 0) {
+    return res.status(400).json({
+      board_id: null,
+      task_id: null,
+      assignee_ids: null,
+      error_message: taskErrorMessages.MISSING_ASSIGNEE_IDS,
+    });
+  }
+
+  try {
+    await getPermissions(userId, boardId);
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({
+      board_id: null,
+      task_id: null,
+      assignee_ids: null,
+      error_message: err,
+    });
+  }
+
+  try {
+    await setAssignees(id, assigneeIds);
+
+    return res.json({
+      board_id: boardId,
+      task_id: id,
+      assignee_ids: assigneeIds,
+      error_message: null,
+    });
+  } catch (err) {
+    debug(err);
+    return res.status(500).json({
+      board_id: null,
+      task_id: null,
+      assignee_ids: null,
+      error_message: err,
+    });
+  }
+});
+
+/**
+ * @swagger
+ *  /task/{id}/assign-task:
+ *   put:
+ *     summary: Assign a task to developer/s.
+ *     tags: [Tasks]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the task to delete
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               board_id:
+ *                 type: integer
+ *                 description: ID of the board where the task is
+ *                 example: 1
+ *               assignee_ids:
+ *                 type: array
+ *                 description: ID/s of the developer/s to be assigned to the task
+ *                 items:
+ *                   type: integer
+ *                   example: [2, 3, 5]
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: integer
+ *                   description: Id of the board where the task is
+ *                   example: 1
+ *                 task_id:
+ *                   type: integer
+ *                   description: ID of the task to which developers have been assigned
+ *                   example: 1
+ *                 assignee_ids:
+ *                   type: string
+ *                   description: IDs of the developers assigned to the task, separated by commas
+ *                   example: 2, 3, 5
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 board_id:
+ *                   type: integer
+ *                   description: Id of the board where the task is
+ *                   example: 1
+ *                 task_id:
+ *                   type: integer
+ *                   description: ID of the task to which developers have been assigned
+ *                   example: 1
+ *                 assignee_ids:
  *                   type: string
  *                   description: IDs of the developers assigned to the task, separated by commas
  *                   example: 2, 3, 5
@@ -808,18 +959,26 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
  *                   description: Specific error message causing the error
  *                   example: MISSING_TITLE
  */
-router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
+router.put('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const { board_id: boardId, assignee_id: assigneeId } = req.body;
-  const assigneeToAdd = [];
+  const { board_id: boardId, assignee_ids: assigneeIds } = req.body;
 
   if (boardId === undefined) {
     return res.status(400).json({
       board_id: null,
       task_id: null,
-      assignee_id: null,
+      assignee_ids: null,
       error_message: taskErrorMessages.MISSING_BOARD_ID,
+    });
+  }
+
+  if (assigneeIds === undefined || assigneeIds.length === 0) {
+    return res.status(400).json({
+      board_id: null,
+      task_id: null,
+      assignee_ids: null,
+      error_message: taskErrorMessages.MISSING_ASSIGNEE_IDS,
     });
   }
 
@@ -830,25 +989,18 @@ router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
     return res.status(403).json({
       board_id: null,
       task_id: null,
-      assignee_id: null,
+      assignee_ids: null,
       error_message: err,
     });
   }
 
-  for (let i = 0; i < assigneeId.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    if ((await userInTask(boardId, id, assigneeId[i])) === undefined) {
-      assigneeToAdd.push(assigneeId[i]);
-    }
-  }
-
   try {
-    await assignTask(boardId, id, assigneeToAdd);
+    await replaceAssignees(id, assigneeIds);
 
     return res.json({
       board_id: boardId,
-      task_id: id,
-      assignee_id: assigneeToAdd.toString(),
+      task_id: parseInt(id, 10),
+      assignee_ids: assigneeIds.sort((a, b) => a - b),
       error_message: null,
     });
   } catch (err) {
@@ -856,7 +1008,7 @@ router.post('/:id(\\d+)/assign-task', authJWT, async (req, res) => {
     return res.status(500).json({
       board_id: null,
       task_id: null,
-      assignee_id: null,
+      assignee_ids: null,
       error_message: err,
     });
   }

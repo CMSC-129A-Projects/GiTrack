@@ -3,6 +3,27 @@ const dbHandler = require('../db');
 
 const { task: taskErrorMessages } = require('../constants/error-messages');
 
+const { getAssignees } = require('./assignees');
+
+// NOT TESTED
+async function getTaskPermissions(userId, taskId, isDeveloper = 0) {
+  const db = await dbHandler;
+  try {
+    const userPermission = await db.get(
+      'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (SELECT board_id FROM Tasks where task_id = ?)',
+      userId,
+      taskId
+    );
+
+    if (userPermission === undefined || userPermission > isDeveloper) {
+      throw taskErrorMessages.NOT_ENOUGH_PERMISSIONS;
+    }
+  } catch (err) {
+    debug(err);
+    throw taskErrorMessages.NOT_ENOUGH_PERMISSIONS;
+  }
+}
+
 async function addTask(title, description, boardId) {
   const db = await dbHandler;
 
@@ -26,12 +47,14 @@ async function getTask(id) {
   const db = await dbHandler;
 
   try {
-    const task = await db.get(
-      'SELECT title, description, id, board_id, column_id FROM Tasks where id = ?',
-      id
-    );
+    const task = await db.get('SELECT * FROM Tasks where id = ?', id);
 
-    return task;
+    const assigneeIds = await getAssignees(id);
+
+    return {
+      ...task,
+      assignee_ids: assigneeIds,
+    };
   } catch (err) {
     debug(err);
 
@@ -57,36 +80,20 @@ async function removeTask(id) {
   }
 }
 
-async function getAssignees(boardId, taskId) {
-  const db = await dbHandler;
-  const assigneeArray = [];
-
-  const assignees = await db.all(
-    'SELECT user_id FROM Assignees WHERE board_id = ? AND task_id = ?',
-    boardId,
-    taskId
-  );
-
-  for (let i = 0; i < assignees.length; i += 1) {
-    assigneeArray.push(assignees[i].user_id);
-  }
-
-  return assigneeArray;
-}
-
 async function getTasksInBoard(boardId) {
   const db = await dbHandler;
   const tasks = [];
-  let assignees;
 
   try {
     const taskList = await db.all('SELECT * FROM Tasks WHERE board_id = ?', boardId);
 
-    for (let i = 0; i < taskList.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      assignees = await getAssignees(boardId, taskList[i].id);
-      tasks.push({ ...taskList[i], assignee_id: assignees });
-    }
+    const assigneePromise = taskList.map((task) => getAssignees(task.id));
+
+    const assignees = await Promise.all(assigneePromise);
+
+    assignees.forEach((assignee, index) => {
+      tasks.push({ ...taskList[index], assignee_ids: assignees });
+    });
 
     return tasks;
   } catch (err) {
@@ -124,43 +131,6 @@ async function getTaskBoard(taskId) {
   }
 }
 
-async function userInTask(boardId, taskId, userId) {
-  const db = await dbHandler;
-
-  const user = await db.get(
-    'SELECT user_id FROM Assignees WHERE board_id = ? AND task_id = ? AND user_id = ?',
-    boardId,
-    taskId,
-    userId
-  );
-  return user;
-}
-
-async function assignTask(boardId, taskId, assigneeIds) {
-  const db = await dbHandler;
-
-  try {
-    const assign = await db.prepare('INSERT INTO Assignees VALUES (?, ?, ?)');
-    const assignments = [];
-    for (let i = 0; i < assigneeIds.length; i += 1) {
-      assignments.push(assign.run(boardId, taskId, assigneeIds[i]));
-    }
-
-    Promise.all(assignments)
-      .catch((err) => {
-        debug(err);
-        throw err;
-      })
-      .finally(async () => {
-        debug('Inserted all assignees');
-        await assign.finalize();
-      });
-  } catch (err) {
-    debug(err);
-    throw taskErrorMessages.INSERT_FAILED;
-  }
-}
-
 async function moveTaskByBranchAndRepo(branchName, repoId, columnId) {
   const db = await dbHandler;
 
@@ -180,13 +150,12 @@ async function moveTaskByBranchAndRepo(branchName, repoId, columnId) {
 }
 
 module.exports = {
+  getTaskPermissions,
   addTask,
   getTask,
   removeTask,
   getTasksInBoard,
   connectBranch,
   getTaskBoard,
-  userInTask,
-  assignTask,
   moveTaskByBranchAndRepo,
 };
