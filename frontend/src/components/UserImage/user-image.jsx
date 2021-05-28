@@ -1,12 +1,17 @@
 /** @jsxImportSource @emotion/react */
 
-import placeholder from 'assets/images/user-image.svg';
-
 // Style
 import * as style from './user-image-styles';
 
-export default function UserImage({ image, ...passedProps }) {
+const COLORS = ['red', 'blue', 'purple', 'green', 'orange'];
+
+export default function UserImage({ id, name, ...passedProps }) {
   return (
-    <img css={style.userImage} alt="user" src={image || placeholder} {...passedProps} />
+    <div
+      css={[style.userImage, style[`userImage___${COLORS[id % COLORS.length]}`]]}
+      {...passedProps}
+    >
+      <p css={style.userImage_text}>{name[0].toUpperCase()}</p>
+    </div>
   );
 }

@@ -40,18 +40,13 @@ export const boardIndex_sidePanel = css`
 export const boardIndex_text = (theme) => css`
   color: ${theme.color.neutral[6]};
   ${theme.text.bodyMD};
-  padding: 24px 0 0 0;
-  margin: 0;
+  margin: 24px 0 0 0;
 `;
 
 export const boardIndex_iconRow = css`
   display: flex;
   flex-direction: row;
-  padding: 8px 0 0 0;
-`;
-
-export const boardIndex_image = css`
-  height: 36px;
+  margin: 8px 0 0 0;
 `;
 
 export const boardIndex_imageContainer = css`

@@ -18,14 +18,6 @@ export const taskCard_title = (theme) => css`
   margin: 0;
 `;
 
-export const taskCard_image = css`
-  height: 25px;
-`;
-
-export const taskCard_imageContainer = css`
-  height: 100%;
-`;
-
 export const taskCard_tag = (theme) => css`
   ${theme.text.bodyXS};
   color: ${theme.color.primary[3]};
@@ -35,4 +27,8 @@ export const taskCard_tag = (theme) => css`
   border-radius: 8px;
   width: max-content;
   text-align: center;
+`;
+
+export const taskCard_assignees = css`
+  display: flex;
 `;
