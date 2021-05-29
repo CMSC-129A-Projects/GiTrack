@@ -1015,6 +1015,7 @@ router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
 router.delete('/:id(\\d+)/removeRepository', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
+  const { id: repoId } = req.body;
 
   if (id === undefined) {
     return res
@@ -1044,7 +1045,7 @@ router.delete('/:id(\\d+)/removeRepository', authJWT, async (req, res) => {
   }
 
   try {
-    await removeRepositoryfromBoard(id);
+    await removeRepositoryfromBoard(id, repoId);
 
     return res.json({ id: board.id, title: board.title, error_message: null });
   } catch (err) {

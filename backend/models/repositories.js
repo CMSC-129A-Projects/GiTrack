@@ -36,11 +36,15 @@ async function getReposInBoard(boardId) {
   }
 }
 
-async function removeRepositoryfromBoard(boardId) {
+async function removeRepositoryfromBoard(boardId, repoId) {
   const db = await dbHandler;
 
   try {
-    await db.run('DELETE FROM Repositories WHERE board_id = ?', boardId);
+    await db.run(
+      'DELETE FROM Repositories WHERE id = ? AND board_id = ?',
+      repoId,
+      boardId
+    );
   } catch (err) {
     debug(err);
     throw repoErrorMessages.CONNECTION_FAILED;
