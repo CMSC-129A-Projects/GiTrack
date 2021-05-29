@@ -62,7 +62,7 @@ export default function AddRepoModal({
 
   return (
     <Modal
-      size={modalSizes.SM}
+      size={modalSizes.MD}
       title="Add Repository"
       icon="person_add"
       isOpen={isOpen}

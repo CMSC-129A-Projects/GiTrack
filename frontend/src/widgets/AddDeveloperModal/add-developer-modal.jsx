@@ -54,7 +54,7 @@ export default function AddDeveloperModal({
 
   return (
     <Modal
-      size={modalSizes.SM}
+      size={modalSizes.MD}
       title="Add People"
       icon="person_add"
       isOpen={isOpen}

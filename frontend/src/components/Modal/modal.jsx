@@ -66,12 +66,14 @@ export default function Modal({
           <div css={style.modal___loading_background} />
         </>
       )}
-      <div css={style.modal_head}>
-        <div css={style.modal_iconContainer}>
-          <Icon icon={icon} css={style.modal_icon} />
+      {title && (
+        <div css={style.modal_head}>
+          <div css={style.modal_iconContainer}>
+            <Icon icon={icon} css={style.modal_icon} />
+          </div>
+          <h2 css={style.modal_title}>{title}</h2>
         </div>
-        <h2 css={style.modal_title}>{title}</h2>
-      </div>
+      )}
       {onSubmit ? (
         <form onSubmit={onSubmit}>
           {children}

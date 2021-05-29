@@ -10,7 +10,7 @@ export const userImage = (theme) => css`
   width: 36px;
   margin: -3px;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #fff;
+  border: solid white;
 `;
 
 export const userImage___red = css`

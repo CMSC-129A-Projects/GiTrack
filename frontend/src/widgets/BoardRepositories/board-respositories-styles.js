@@ -26,13 +26,11 @@ export const repo_add = (theme) => css`
   align-items: center;
 
   color: ${theme.color.neutral[5]};
-  font-size: 2rem;
+  font-size: 1.5rem;
 
   background-color: ${theme.color.neutral[2]};
   height: 36px;
   width: 36px;
-  margin: -3px;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #fff;
-  cursor: pointer;
+  border: solid white;
 `;
