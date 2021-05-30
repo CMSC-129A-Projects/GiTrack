@@ -980,8 +980,6 @@ router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
   const { id: userId } = req.user;
   const { member_ids: memberId } = req.body;
 
-  console.log(memberId);
-
   if (id === undefined || memberId === undefined) {
     return res.status(400).json({
       board_id: null,
