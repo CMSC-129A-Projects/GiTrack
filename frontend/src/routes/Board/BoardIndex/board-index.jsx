@@ -179,20 +179,18 @@ export default function BoardIndex() {
             <p css={style.boardIndex_text}>Members</p>
             <div css={style.boardIndex_iconRow}>
               {boardMembers.map((member) => (
-                <button css={style.boardIndex_panelButton}>
-                  <UserImage
-                    id={member.id}
-                    name={member.username}
-                    onClick={() => setIsViewMemberModalOpened(true)}
-                  />
+                <button
+                  css={style.boardIndex_panelButton}
+                  onClick={() => setIsViewMemberModalOpened(true)}
+                >
+                  <UserImage id={member.id} name={member.username} />
                 </button>
               ))}
-              <button css={style.boardIndex_panelButton}>
-                <Icon
-                  icon="add"
-                  onClick={() => setIsAddDeveloperModalOpened(true)}
-                  css={style.boardIndex_icon__clickable}
-                />
+              <button
+                css={style.boardIndex_panelButton}
+                onClick={() => setIsAddDeveloperModalOpened(true)}
+              >
+                <Icon icon="add" css={style.boardIndex_icon__clickable} />
               </button>
             </div>
           </div>
