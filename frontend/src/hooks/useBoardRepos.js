@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import BoardsService from 'services/BoardsService';
+import BoardService from 'services/BoardService';
 
 const useBoardRepos = ({ boardId }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +15,7 @@ const useBoardRepos = ({ boardId }) => {
 
     let isMounted = true;
     setIsLoading(true);
-    BoardsService.retrieveRepos({ boardId })
+    BoardService.retrieveRepos({ boardId })
       .then(({ data }) => {
         if (isMounted) {
           setBoardRepos(data);

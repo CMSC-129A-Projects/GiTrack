@@ -14,7 +14,7 @@ export default function Column({ isLoading, children, title, count, ...passedPro
           <p css={style.column_title}>
             {title} {count}
           </p>
-          {children}
+          <div css={style.column_body}>{children}</div>
         </>
       )}
     </div>

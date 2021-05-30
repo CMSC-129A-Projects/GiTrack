@@ -1,27 +1,47 @@
 /** @jsxImportSource @emotion/react */
 
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import RemoveMemberModal from 'widgets/RemoveMemberModal';
+import RemoveConfirmationModal from 'widgets/RemoveConfirmationModal';
 
+import UserImage from 'components/UserImage';
 import Modal from 'components/Modal';
 import buttonVariants from 'components/Button/constants';
 import modalSizes from 'components/Modal/constants';
 
-import placeholder from 'assets/images/user-image.svg';
+import BoardService from 'services/BoardService';
 
 // Style
 import * as style from './view-member-modal-styles';
 
-export default function ViewMemberModal({ isOpen, handleClose }) {
+export default function ViewMemberModal({
+  isOpen,
+  handleClose,
+  boardId,
+  member,
+  refreshBoardMembers,
+}) {
+  const user = useSelector((state) => state.USERS.loginReducer.user);
   const [isRemoveMemberModalOpened, setIsRemoveMemberModalOpened] = useState(false);
 
   return (
     <>
       {isRemoveMemberModalOpened && (
-        <RemoveMemberModal
+        <RemoveConfirmationModal
           isOpen={isRemoveMemberModalOpened}
           handleClose={() => setIsRemoveMemberModalOpened(false)}
+          handleSuccess={() =>
+            BoardService.removeMembers({
+              boardId,
+              memberId: member.id,
+            }).then(() => {
+              refreshBoardMembers();
+              setIsRemoveMemberModalOpened(false);
+              handleClose();
+            })
+          }
+          message="Are you sure you want to remove this member?"
         />
       )}
       <Modal
@@ -29,23 +49,27 @@ export default function ViewMemberModal({ isOpen, handleClose }) {
         isOpen={isOpen}
         handleClose={handleClose}
         actions={[
-          {
-            name: 'Remove',
-            onClick: () => setIsRemoveMemberModalOpened(true),
-            variant: buttonVariants.SMALL.PRIMARY,
-          },
+          user.id !== member.id
+            ? {
+                name: 'Remove',
+                onClick: () => setIsRemoveMemberModalOpened(true),
+                variant: buttonVariants.SMALL.PRIMARY,
+              }
+            : null,
           {
             name: 'Close',
             onClick: handleClose,
             variant: buttonVariants.SMALL.SECONDARY,
           },
-        ]}
+        ].filter((action) => action != null)}
       >
         <div css={style.viewMemberModal}>
-          <p css={style.viewMemberModal_heading}>Oaties</p>
-          <div css={style.viewMemberModal_imageContainer}>
-            <img src={placeholder} alt="user" css={style.viewMemberModal_image} />
-          </div>
+          <p css={style.viewMemberModal_heading}>{member.username}</p>
+          <UserImage
+            css={style.viewMemberModal_image}
+            id={member.id}
+            name={member.username}
+          />
         </div>
       </Modal>
     </>
