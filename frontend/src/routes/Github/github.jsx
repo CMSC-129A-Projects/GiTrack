@@ -33,7 +33,7 @@ export default function Github() {
         state,
       },
     })
-      .then((data) => {
+      .then(({ data }) => {
         if (data.error_message === null) {
           history.push('/boards');
         } else {
