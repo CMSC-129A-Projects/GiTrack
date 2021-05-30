@@ -368,6 +368,7 @@ router.post('/logout', authJWT, (req, res) => {
 
 router.post('/change-password', async (req, res) => {
   const { email, password } = req.body;
+  //temporary parameters
 
   if (!email) {
     return res.status(400).json({ error_message: userErrorMessages.MISSING_EMAIL });
