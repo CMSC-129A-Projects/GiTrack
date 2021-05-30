@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import BoardsService from 'services/BoardsService';
+import BoardService from 'services/BoardService';
 
 const useBoardMembers = ({ boardId }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +15,7 @@ const useBoardMembers = ({ boardId }) => {
 
     let isMounted = true;
     setIsLoading(true);
-    BoardsService.retrieveMembers({ boardId }).then(({ data: { members } }) => {
+    BoardService.retrieveMembers({ boardId }).then(({ data: { members } }) => {
       if (isMounted) {
         setBoardMembers(members);
         setIsLoading(false);

@@ -9,7 +9,6 @@ const base = css`
   outline: none;
   padding: 12px 24px;
   border-radius: 64px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
   text-decoration: none;
 
   &:disabled {
@@ -34,6 +33,7 @@ export const button___xlarge___primary = (theme) => css`
   background-color: ${theme.color.primary[3]};
   color: ${theme.color.neutral[0]};
   transition: ${theme.transition.default(['background-color'])};
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
 
   @media (max-width: 767px) {
     padding: 12px 16px;
@@ -73,6 +73,7 @@ export const button___small___secondary = (theme) => css`
   background-color: ${theme.color.neutral[0]};
   color: ${theme.color.primary[3]};
   transition: ${theme.transition.default(['background-color'])};
+  border: 1px solid ${theme.color.primary[3]};
 
   @media (max-width: 767px) {
     padding: 12px 16px;

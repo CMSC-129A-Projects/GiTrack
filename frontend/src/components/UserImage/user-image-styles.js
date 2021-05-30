@@ -6,11 +6,11 @@ export const userImage = (theme) => css`
   align-items: center;
 
   ${theme.text.headingXS};
-  height: 36px;
-  width: 36px;
+  height: 40px;
+  width: 40px;
   margin: -3px;
   border-radius: 50%;
-  border: solid white;
+  border: 2px solid white;
 `;
 
 export const userImage___red = css`
@@ -40,4 +40,5 @@ export const userImage___orange = css`
 
 export const userImage_text = css`
   margin: 0;
+  font-size: 1.25rem;
 `;

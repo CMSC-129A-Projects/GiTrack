@@ -889,7 +889,7 @@ router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
 
 /**
  * @swagger
- *  /board/{id}/remove-developers:
+ *  /board/{id}/remove-members:
  *   delete:
  *     summary: Remove developers from a board.
  *     tags: [Boards]
@@ -980,6 +980,8 @@ router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
   const { id: userId } = req.user;
   const { member_ids: memberId } = req.body;
 
+  console.log(memberId);
+
   if (id === undefined || memberId === undefined) {
     return res.status(400).json({
       board_id: null,
@@ -1012,10 +1014,10 @@ router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
   }
 });
 
-router.delete('/:id(\\d+)/removeRepository', authJWT, async (req, res) => {
+router.delete('/:id(\\d+)/remove-repository', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  const { id: repoId } = req.body;
+  const { repo_id: repoId } = req.body;
 
   if (id === undefined) {
     return res.status(400).json({ error_message: boardErrorMessages.MISSING_ID });

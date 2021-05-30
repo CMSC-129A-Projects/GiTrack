@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 
-import TasksService from 'services/TasksService';
+import TaskService from 'services/TaskService';
 import useCommits from 'hooks/useCommits';
 
-import RemoveTaskModal from 'widgets/RemoveTaskModal';
+import RemoveConfirmationModal from 'widgets/RemoveConfirmationModal';
 
 import Modal from 'components/Modal';
 import Dropdown from 'components/Dropdown';
@@ -51,7 +51,7 @@ export default function ViewTaskModal({
 
   useEffect(() => {
     if (selectedBranch && selectedBranch.name !== task.branch_name) {
-      TasksService.connect({
+      TaskService.connect({
         body: {
           repo_id: selectedBranch.repo_id,
           name: selectedBranch.name,
@@ -90,11 +90,11 @@ export default function ViewTaskModal({
     };
 
     if (selectedDevelopers.length > 0 && task.assignee_ids.length === 0) {
-      TasksService.assign(data).then(() => {
+      TaskService.assign(data).then(() => {
         handleSuccess();
       });
     } else if (hasChanges) {
-      TasksService.updateAssignees(data).then(() => {
+      TaskService.updateAssignees(data).then(() => {
         handleSuccess();
       });
     } else {
@@ -105,11 +105,13 @@ export default function ViewTaskModal({
   return (
     <>
       {isRemoveTaskModalOpened && (
-        <RemoveTaskModal
+        <RemoveConfirmationModal
           isOpen={isRemoveTaskModalOpened}
-          handleSuccess={handleSuccess}
+          handleSuccess={() =>
+            TaskService.remove({ taskId: task.id }).then(handleSuccess)
+          }
           handleClose={() => setIsRemoveTaskModalOpened(false)}
-          task={task}
+          message="Are you sure you want to remove this task?"
         />
       )}
       <Modal

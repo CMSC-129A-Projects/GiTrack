@@ -100,6 +100,7 @@ export const navbar_userButton = css`
   background: none;
   border: none;
   cursor: pointer;
+  padding: 0;
 `;
 
 export const navbar_actionsDropdown = (theme) => css`
@@ -129,6 +130,6 @@ export const navbar_actionsDropdown_button = (theme) => css`
 `;
 
 export const navbar_actionsDropdown_button_icon = (theme) => css`
-  color: ${theme.color.neutral[4]};
+  color: ${theme.color.primary[3]};
   margin: 0 12px 0 0;
 `;

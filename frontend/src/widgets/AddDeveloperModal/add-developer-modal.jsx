@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useForm } from 'react-hook-form';
 
-import BoardsService from 'services/BoardsService';
+import BoardService from 'services/BoardService';
 import UserService from 'services/UserService';
 
 import Modal from 'components/Modal';
@@ -33,7 +33,7 @@ export default function AddDeveloperModal({
     })
       .then(({ data: { ids } }) => {
         if (ids != null) {
-          BoardsService.addDevelopers({
+          BoardService.addDevelopers({
             boardId,
             body: {
               developer_ids: ids,

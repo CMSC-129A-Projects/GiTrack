@@ -5,9 +5,14 @@ import buttonVariants from 'components/Button/constants';
 import modalSizes from 'components/Modal/constants';
 
 // Style
-import * as style from './remove-member-modal-styles';
+import * as style from './remove-confirmation-modal-styles';
 
-export default function RemoveMemberModal({ isOpen, handleClose }) {
+export default function RemoveConfirmationModal({
+  isOpen,
+  handleClose,
+  handleSuccess,
+  message,
+}) {
   return (
     <Modal
       size={modalSizes.MD}
@@ -18,7 +23,7 @@ export default function RemoveMemberModal({ isOpen, handleClose }) {
       actions={[
         {
           name: 'Yes',
-          onClick: () => {},
+          onClick: handleSuccess,
           variant: buttonVariants.SMALL.PRIMARY,
         },
         {
@@ -28,9 +33,7 @@ export default function RemoveMemberModal({ isOpen, handleClose }) {
         },
       ]}
     >
-      <p css={style.removeMemberModal_body}>
-        Are you sure you want to remove this member?
-      </p>
+      <p css={style.removeConfirmationModal_body}>{message}</p>
     </Modal>
   );
 }

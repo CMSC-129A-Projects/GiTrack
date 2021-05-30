@@ -1,1 +1,1 @@
-export { default } from './board-respositories';
+export { default } from './board-repositories';

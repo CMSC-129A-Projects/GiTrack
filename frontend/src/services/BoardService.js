@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const BASE_URL = '/board';
 
-const BoardsService = {
+const BoardService = {
   create: ({ body }) => axios.post(BASE_URL, body),
   list: () => axios.get(BASE_URL),
   retrieve: ({ boardId }) => axios.get(`${BASE_URL}/${boardId}`),
@@ -13,6 +13,18 @@ const BoardsService = {
     axios.post(`${BASE_URL}/${boardId}/connect`, body),
   addDevelopers: ({ boardId, body }) =>
     axios.post(`${BASE_URL}/${boardId}/add-developer`, body),
+  removeMembers: ({ boardId, memberId }) =>
+    axios.delete(`${BASE_URL}/${boardId}/remove-members`, {
+      data: {
+        member_ids: [memberId],
+      },
+    }),
+  removeRepository: ({ boardId, repoId }) =>
+    axios.delete(`${BASE_URL}/${boardId}/remove-repository`, {
+      data: {
+        repo_id: repoId,
+      },
+    }),
 };
 
-export default BoardsService;
+export default BoardService;
