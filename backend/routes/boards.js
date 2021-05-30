@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const express = require('express');
 const debug = require('debug')('backend:routes-boards');
+const { request } = require('@octokit/request');
 
 const router = express.Router();
 
@@ -18,6 +19,8 @@ const {
   removeMembers,
 } = require('../models/boards');
 
+const { getGithubToken } = require('../models/users');
+
 const { getTasksInBoard } = require('../models/tasks');
 
 const {
@@ -31,6 +34,9 @@ const { authJWT } = require('../middlewares/auth');
 
 // Constants
 const { board: boardErrorMessages } = require('../constants/error-messages');
+
+// KEYS
+const { GH_SHA_SECRET } = require('../constants/keys');
 
 /**
  * @swagger
@@ -546,8 +552,45 @@ router.post('/:id(\\d+)/connect', authJWT, async (req, res) => {
     });
   }
 
+  let authToken = '';
+  try {
+    authToken = await getGithubToken(userId);
+  } catch (err) {
+    return res.status(403).json({
+      id: null,
+      full_name: null,
+      board_id: null,
+      error_message: err,
+    });
+  }
+
   try {
     await connectRepository(repoId, fullName, url, id);
+
+    const rep = fullName.split('/');
+
+    debug(authToken);
+
+    const { data, status } = await request('POST /repos/{owner}/{repo}/hooks', {
+      headers: {
+        authorization: `token ${authToken}`,
+      },
+      owner: rep[0],
+      repo: rep[1],
+      config: {
+        content_type: 'json',
+        url:
+          process.env.NODE_ENV === 'PROD'
+            ? 'https://api.gitrack.codes/github/payload'
+            : `${process.env.NGROK_URL}/github/payload`,
+        secret: GH_SHA_SECRET,
+      },
+      events: ['pull_request'],
+    });
+
+    if (status !== 201 || (data && data.error)) {
+      throw data;
+    }
 
     return res.json({
       id: repoId,
@@ -979,8 +1022,6 @@ router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
   const { member_ids: memberId } = req.body;
-
-  console.log(memberId);
 
   if (id === undefined || memberId === undefined) {
     return res.status(400).json({
