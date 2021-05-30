@@ -44,7 +44,7 @@ export const boardIndex_text = (theme) => css`
 `;
 
 export const boardIndex_settingsButton = css`
-  padding: 24px 0 0 0;
+  padding: 0;
   border: none;
   outline: none;
   text-decoration: none;
@@ -54,7 +54,8 @@ export const boardIndex_settingsButton = css`
 
 export const boardIndex_settings = (theme) => css`
   color: ${theme.color.primary[3]};
-  font-size: 1.5rem;
+  font-size: 2.5rem;
+  margin: 8px 0 0 -10px;
 `;
 
 export const boardIndex_settingsDropdown = (theme) => css`

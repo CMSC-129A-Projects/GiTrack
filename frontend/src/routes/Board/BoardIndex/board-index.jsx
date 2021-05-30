@@ -213,6 +213,7 @@ export default function BoardIndex() {
               css={style.boardIndex_settingsButton}
               onClick={() => setIsSettingsDropdownOpen(!isSettingsDropdownOpen)}
             >
+              <p css={style.boardIndex_text}>Settings</p>
               <Icon icon="settings" css={style.boardIndex_settings} />
             </button>
             {isSettingsDropdownOpen && (
