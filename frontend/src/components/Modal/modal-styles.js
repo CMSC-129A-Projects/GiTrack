@@ -18,6 +18,13 @@ export const modal___small = (theme) => css`
   ${base}
   border: 1px solid ${theme.color.neutral[2]};
   background-color: ${theme.color.neutral[0]};
+  max-width: 340px;
+`;
+
+export const modal___medium = (theme) => css`
+  ${base}
+  border: 1px solid ${theme.color.neutral[2]};
+  background-color: ${theme.color.neutral[0]};
   max-width: 560px;
 `;
 

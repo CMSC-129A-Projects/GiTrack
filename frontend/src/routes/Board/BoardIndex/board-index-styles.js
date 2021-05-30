@@ -46,7 +46,7 @@ export const boardIndex_text = (theme) => css`
 export const boardIndex_iconRow = css`
   display: flex;
   flex-direction: row;
-  margin: 8px 0 0 0;
+  margin: 12px 0 0 0;
 `;
 
 export const boardIndex_imageContainer = css`
@@ -56,19 +56,26 @@ export const boardIndex_imageContainer = css`
   box-shadow: 0 0 0 4px #fff;
 `;
 
+export const boardIndex_panelButton = css`
+  border: none;
+  outline: none;
+  text-decoration: none;
+  cursor: pointer;
+  margin: -10px;
+  background-color: rgba(0, 0, 0, 0.00005);
+`;
+
 export const boardIndex_icon__clickable = (theme) => css`
   display: flex;
   justify-content: center;
   align-items: center;
 
   color: ${theme.color.neutral[5]};
-  font-size: 2rem;
+  font-size: 1.5rem;
 
   background-color: ${theme.color.neutral[2]};
   height: 36px;
   width: 36px;
-  margin: -3px;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #fff;
-  cursor: pointer;
+  border: solid white;
 `;

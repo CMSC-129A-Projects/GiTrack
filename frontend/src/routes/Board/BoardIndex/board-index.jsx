@@ -23,6 +23,7 @@ import ViewTaskModal from 'widgets/ViewTaskModal';
 import AddRepoModal from 'widgets/AddRepoModal';
 import AddDeveloperModal from 'widgets/AddDeveloperModal';
 import SigninGithubModal from 'widgets/SigninGithubModal';
+import ViewMemberModal from 'widgets/ViewMemberModal';
 
 // Style
 import * as style from './board-index-styles';
@@ -34,6 +35,7 @@ export default function BoardIndex() {
   const [isAddRepoModalOpened, setIsAddRepoModalOpened] = useState(false);
   const [isAddDeveloperModalOpened, setIsAddDeveloperModalOpened] = useState(false);
   const [isSigninGithubModalOpened, setIsSigninGithubModalOpened] = useState(false);
+  const [isViewMemberModalOpened, setIsViewMemberModalOpened] = useState(false);
   const [repoIds, setRepoIds] = useState([]);
 
   const [taskToView, setTaskToView] = useState(null);
@@ -98,6 +100,10 @@ export default function BoardIndex() {
         isOpen={isSigninGithubModalOpened}
         handleClose={() => setIsSigninGithubModalOpened(false)}
       />
+      <ViewMemberModal
+        isOpen={isViewMemberModalOpened}
+        handleClose={() => setIsViewMemberModalOpened(false)}
+      />
       {taskToView && (
         <ViewTaskModal
           board={board}
@@ -161,23 +167,31 @@ export default function BoardIndex() {
           <div css={style.boardIndex_sidePanel}>
             <p css={style.boardIndex_text}>Repositories</p>
             <div css={style.boardIndex_iconRow}>
-              <BoardRepositories
-                boardRepos={boardRepos}
-                setIsAddRepoModalOpened={setIsAddRepoModalOpened}
-                setIsSigninGithubModalOpened={setIsSigninGithubModalOpened}
-              />
+              <button css={style.boardIndex_panelButton}>
+                <BoardRepositories
+                  boardRepos={boardRepos}
+                  setIsAddRepoModalOpened={setIsAddRepoModalOpened}
+                  setIsSigninGithubModalOpened={setIsSigninGithubModalOpened}
+                  css={style.boardIndex_icon__clickable}
+                />
+              </button>
             </div>
             <p css={style.boardIndex_text}>Members</p>
             <div css={style.boardIndex_iconRow}>
               {boardMembers.map((member) => (
-                <UserImage id={member.id} name={member.username} />
+                <button
+                  css={style.boardIndex_panelButton}
+                  onClick={() => setIsViewMemberModalOpened(true)}
+                >
+                  <UserImage id={member.id} name={member.username} />
+                </button>
               ))}
-              <Icon
-                icon="add"
+              <button
+                css={style.boardIndex_panelButton}
                 onClick={() => setIsAddDeveloperModalOpened(true)}
-                onKeyDown={() => setIsAddDeveloperModalOpened(true)}
-                css={style.boardIndex_icon__clickable}
-              />
+              >
+                <Icon icon="add" css={style.boardIndex_icon__clickable} />
+              </button>
             </div>
           </div>
         </div>
