@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useForm, Controller } from 'react-hook-form';
 
-import TasksService from 'services/TasksService';
+import TaskService from 'services/TaskService';
 
 import Modal from 'components/Modal';
 import Input from 'components/Input';
@@ -26,7 +26,7 @@ export default function AddTaskModal({
   } = useForm();
 
   const onSubmit = ({ title, description }) => {
-    TasksService.create({
+    TaskService.create({
       body: {
         board_id: boardId,
         title,

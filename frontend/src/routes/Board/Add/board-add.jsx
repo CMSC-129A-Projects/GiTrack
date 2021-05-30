@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
 
-import BoardsService from 'services/BoardsService';
+import BoardService from 'services/BoardService';
 
 // Style
 import * as style from './board-add-styles';
@@ -16,7 +16,7 @@ export default function AddBoard({ refreshBoards }) {
   const watchTitle = watch('title', '');
 
   const onSubmit = (formData) => {
-    BoardsService.create({ body: formData }).then(({ data: { id: boardId } }) => {
+    BoardService.create({ body: formData }).then(({ data: { id: boardId } }) => {
       refreshBoards();
       history.push(`/board/${boardId}`);
     });

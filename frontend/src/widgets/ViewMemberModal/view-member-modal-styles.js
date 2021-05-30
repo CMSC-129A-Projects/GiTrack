@@ -14,9 +14,11 @@ export const viewMemberModal_heading = (theme) => css`
 `;
 
 export const viewMemberModal_image = css`
-  height: 130px;
-`;
+  height: 120px;
+  width: 120px;
 
-export const viewMemberModal_imageContainer = css`
-  height: 100%;
+  p {
+    font-size: 4.5rem;
+    line-height: 1;
+  }
 `;

@@ -13,17 +13,17 @@ import Spinner from 'components/Spinner';
 import Column from 'components/Column';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
-import Icon from 'components/Icon';
-import UserImage from 'components/UserImage';
 
 import TaskCard from 'widgets/TaskCard';
 import BoardRepositories from 'widgets/BoardRepositories';
+import BoardMembers from 'widgets/BoardMembers';
 import AddTaskModal from 'widgets/AddTaskModal';
 import ViewTaskModal from 'widgets/ViewTaskModal';
 import AddRepoModal from 'widgets/AddRepoModal';
 import AddDeveloperModal from 'widgets/AddDeveloperModal';
 import SigninGithubModal from 'widgets/SigninGithubModal';
 import ViewMemberModal from 'widgets/ViewMemberModal';
+import ViewRepoModal from 'widgets/ViewRepoModal';
 
 // Style
 import * as style from './board-index-styles';
@@ -35,10 +35,11 @@ export default function BoardIndex() {
   const [isAddRepoModalOpened, setIsAddRepoModalOpened] = useState(false);
   const [isAddDeveloperModalOpened, setIsAddDeveloperModalOpened] = useState(false);
   const [isSigninGithubModalOpened, setIsSigninGithubModalOpened] = useState(false);
-  const [isViewMemberModalOpened, setIsViewMemberModalOpened] = useState(false);
   const [repoIds, setRepoIds] = useState([]);
 
   const [taskToView, setTaskToView] = useState(null);
+  const [memberToView, setMemberToView] = useState(null);
+  const [repoToView, setRepoToView] = useState(null);
 
   const { isLoading: isBoardLoading, board } = useBoard({ boardId });
 
@@ -100,10 +101,24 @@ export default function BoardIndex() {
         isOpen={isSigninGithubModalOpened}
         handleClose={() => setIsSigninGithubModalOpened(false)}
       />
-      <ViewMemberModal
-        isOpen={isViewMemberModalOpened}
-        handleClose={() => setIsViewMemberModalOpened(false)}
-      />
+      {memberToView && (
+        <ViewMemberModal
+          isOpen={memberToView !== null}
+          handleClose={() => setMemberToView(null)}
+          member={memberToView}
+          boardId={boardId}
+          refreshBoardMembers={refreshBoardMembers}
+        />
+      )}
+      {repoToView && (
+        <ViewRepoModal
+          isOpen={repoToView !== null}
+          handleClose={() => setRepoToView(null)}
+          repo={repoToView}
+          boardId={boardId}
+          refreshBoardRepos={refreshBoardRepos}
+        />
+      )}
       {taskToView && (
         <ViewTaskModal
           board={board}
@@ -166,33 +181,18 @@ export default function BoardIndex() {
           </Column>
           <div css={style.boardIndex_sidePanel}>
             <p css={style.boardIndex_text}>Repositories</p>
-            <div css={style.boardIndex_iconRow}>
-              <button css={style.boardIndex_panelButton}>
-                <BoardRepositories
-                  boardRepos={boardRepos}
-                  setIsAddRepoModalOpened={setIsAddRepoModalOpened}
-                  setIsSigninGithubModalOpened={setIsSigninGithubModalOpened}
-                  css={style.boardIndex_icon__clickable}
-                />
-              </button>
-            </div>
+            <BoardRepositories
+              repos={boardRepos}
+              setIsAddRepoModalOpened={setIsAddRepoModalOpened}
+              setIsSigninGithubModalOpened={setIsSigninGithubModalOpened}
+              setRepoToView={setRepoToView}
+            />
             <p css={style.boardIndex_text}>Members</p>
-            <div css={style.boardIndex_iconRow}>
-              {boardMembers.map((member) => (
-                <button
-                  css={style.boardIndex_panelButton}
-                  onClick={() => setIsViewMemberModalOpened(true)}
-                >
-                  <UserImage id={member.id} name={member.username} />
-                </button>
-              ))}
-              <button
-                css={style.boardIndex_panelButton}
-                onClick={() => setIsAddDeveloperModalOpened(true)}
-              >
-                <Icon icon="add" css={style.boardIndex_icon__clickable} />
-              </button>
-            </div>
+            <BoardMembers
+              members={boardMembers}
+              setIsAddDeveloperModalOpened={setIsAddDeveloperModalOpened}
+              setMemberToView={setMemberToView}
+            />
           </div>
         </div>
         <Button

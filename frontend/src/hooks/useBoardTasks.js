@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import BoardsService from 'services/BoardsService';
+import BoardService from 'services/BoardService';
 
 const useBoardTasks = ({ boardId }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +15,7 @@ const useBoardTasks = ({ boardId }) => {
 
     let isMounted = true;
     setIsLoading(true);
-    BoardsService.retrieveTasks({ boardId }).then(({ data }) => {
+    BoardService.retrieveTasks({ boardId }).then(({ data }) => {
       if (isMounted) {
         setBoardTasks(data);
         setIsLoading(false);

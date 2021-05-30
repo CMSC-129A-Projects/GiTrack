@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 
 import GithubService from 'services/GithubService';
 
-import Icon from 'components/Icon';
+import Add from 'components/Add';
 
-import * as style from './board-respositories-styles';
+import * as style from './board-repositories-styles';
 
 export default function BoardRepositiories({
-  boardRepos,
+  repos,
+  setRepoToView,
   setIsSigninGithubModalOpened,
   setIsAddRepoModalOpened,
 }) {
@@ -28,18 +29,16 @@ export default function BoardRepositiories({
     }
   };
 
-  return boardRepos.repos === null ? (
-    <Icon icon="add" onClick={openModal} onKeyDown={openModal} css={style.repo_add} />
-  ) : (
-    <>
-      {boardRepos.repos.map((repo) => (
-        <div css={style.repo_repo}>
-          <p css={style.repo_repo_text}>
+  return (
+    <div css={style.boardRepositories}>
+      <Add onClick={openModal} />
+      {repos?.repos.map((repo) => (
+        <button css={style.boardRepositories_repo} onClick={() => setRepoToView(repo)}>
+          <p css={style.boardRepositories_repo_text}>
             {repo.full_name.split('/')[1][0].toUpperCase()}
           </p>
-        </div>
+        </button>
       ))}
-      <Icon icon="add" onClick={openModal} onKeyDown={openModal} css={style.repo_add} />
-    </>
+    </div>
   );
 }

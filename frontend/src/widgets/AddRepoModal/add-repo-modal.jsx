@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 import GithubService from 'services/GithubService';
-import BoardsService from 'services/BoardsService';
+import BoardService from 'services/BoardService';
 
 import Modal from 'components/Modal';
 import Dropdown from 'components/Dropdown';
@@ -43,7 +43,7 @@ export default function AddRepoModal({
       return;
     }
 
-    BoardsService.connectRepo({
+    BoardService.connectRepo({
       boardId,
       body: {
         id: selectedRepo.id,
