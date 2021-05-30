@@ -179,6 +179,26 @@ async function usersExist(emails) {
   }
 }
 
+async function changePassword(email, password) {
+  let hash = null;
+  try {
+    hash = await bcrypt.hash(password, 10);
+  } catch (error) {
+    debug(error);
+    throw userErrorMessages.HASH;
+  }
+
+  const db = await dbHandler;
+
+  try {
+    await db.run('UPDATE Users SET password = ? WHERE email = ?', hash, email);
+  } catch (err) {
+    debug(err);
+
+    throw userErrorMessages.PASSWORD_CHANGE_FAILED;
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
@@ -187,4 +207,5 @@ module.exports = {
   removeGithubToken,
   findUser,
   usersExist,
+  changePassword,
 };

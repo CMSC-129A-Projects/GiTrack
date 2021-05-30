@@ -5,7 +5,7 @@ const debug = require('debug')('backend:routes-auth');
 const router = express.Router();
 
 // Models
-const { registerUser, loginUser } = require('../models/users');
+const { registerUser, loginUser, changePassword } = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -364,6 +364,26 @@ router.post('/logout', authJWT, (req, res) => {
   refreshTokens = refreshTokens.filter((currToken) => currToken !== refreshToken);
 
   return res.json({ error_message: null });
+});
+
+router.post('/change-password', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error_message: userErrorMessages.MISSING_EMAIL });
+  }
+
+  if (!password) {
+    return res.status(400).json({ error_message: userErrorMessages.MISSING_PASSWORD });
+  }
+
+  try {
+    await changePassword(email, password);
+    return res.status(201).json({ error_message: null });
+  } catch (error) {
+    debug(error);
+    return res.status(500).json({ error_message: error });
+  }
 });
 
 module.exports = router;
