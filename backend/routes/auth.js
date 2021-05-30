@@ -367,11 +367,11 @@ router.post('/logout', authJWT, (req, res) => {
 });
 
 router.post('/change-password', async (req, res) => {
-  const { email, password } = req.body;
-  //temporary parameters
+  const { password } = req.body;
+  const { id: userId } = req.user;
 
-  if (!email) {
-    return res.status(400).json({ error_message: userErrorMessages.MISSING_EMAIL });
+  if (!userId) {
+    return res.status(400).json({ error_message: userErrorMessages.MISSING_ID });
   }
 
   if (!password) {
@@ -379,8 +379,8 @@ router.post('/change-password', async (req, res) => {
   }
 
   try {
-    await changePassword(email, password);
-    return res.status(201).json({ error_message: null });
+    await changePassword(userId, password);
+    return res.status(200).json({ error_message: null });
   } catch (error) {
     debug(error);
     return res.status(500).json({ error_message: error });

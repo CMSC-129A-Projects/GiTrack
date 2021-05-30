@@ -179,7 +179,7 @@ async function usersExist(emails) {
   }
 }
 
-async function changePassword(email, password) {
+async function changePassword(id, password) {
   let hash = null;
   try {
     hash = await bcrypt.hash(password, 10);
@@ -191,7 +191,7 @@ async function changePassword(email, password) {
   const db = await dbHandler;
 
   try {
-    await db.run('UPDATE Users SET password = ? WHERE email = ?', hash, email);
+    await db.run('UPDATE Users SET password = ? WHERE id = ?', hash, id);
   } catch (err) {
     debug(err);
 
