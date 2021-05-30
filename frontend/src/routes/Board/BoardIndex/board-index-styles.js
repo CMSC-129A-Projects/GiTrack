@@ -43,9 +43,46 @@ export const boardIndex_text = (theme) => css`
   margin: 24px 0 0 0;
 `;
 
-export const boardIndex_imageContainer = css`
-  height: 100%;
-  margin: -3px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px #fff;
+export const boardIndex_settingsButton = css`
+  padding: 24px 0 0 0;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+`;
+
+export const boardIndex_settings = (theme) => css`
+  color: ${theme.color.primary[3]};
+  font-size: 1.5rem;
+`;
+
+export const boardIndex_settingsDropdown = (theme) => css`
+  position: absolute;
+  border: 1px solid ${theme.color.neutral[3]};
+  height: max-content;
+  width: max-content;
+  border-radius: 12px;
+  overflow: hidden;
+`;
+
+export const boardIndex_settingsDropdown_button = (theme) => css`
+  ${theme.text.titleMD};
+  background: ${theme.color.neutral[0]};
+  border: none;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  color: red;
+  text-decoration: none;
+
+  &:hover {
+    background: #fff4f4;
+  }
+`;
+
+export const boardIndex_settingsDropdown_button_icon = css`
+  color: red;
+  margin: 0 12px 0 0;
 `;

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import useBoard from 'hooks/useBoard';
@@ -10,9 +10,13 @@ import useBoardMembers from 'hooks/useBoardMembers';
 import useGithubBranches from 'hooks/useGithubBranches';
 
 import Spinner from 'components/Spinner';
+import Card from 'components/Card';
 import Column from 'components/Column';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
+import Icon from 'components/Icon';
+
+import useOnClickOutside from 'hooks/useOnClickOutside';
 
 import TaskCard from 'widgets/TaskCard';
 import BoardRepositories from 'widgets/BoardRepositories';
@@ -24,18 +28,25 @@ import AddDeveloperModal from 'widgets/AddDeveloperModal';
 import SigninGithubModal from 'widgets/SigninGithubModal';
 import ViewMemberModal from 'widgets/ViewMemberModal';
 import ViewRepoModal from 'widgets/ViewRepoModal';
+import RemoveBoardModal from 'widgets/RemoveConfirmationModal';
 
 // Style
 import * as style from './board-index-styles';
 
 export default function BoardIndex() {
   const { boardId } = useParams();
+  const settingsRef = useRef();
 
   const [isAddTaskModalOpened, setIsAddTaskModalOpened] = useState(false);
   const [isAddRepoModalOpened, setIsAddRepoModalOpened] = useState(false);
   const [isAddDeveloperModalOpened, setIsAddDeveloperModalOpened] = useState(false);
   const [isSigninGithubModalOpened, setIsSigninGithubModalOpened] = useState(false);
+  const [isRemoveBoardModalOpened, setIsRemoveBoardModalOpened] = useState(false);
   const [repoIds, setRepoIds] = useState([]);
+
+  const [isSettingsDropdownOpen, setIsSettingsDropdownOpen] = useState(false);
+
+  useOnClickOutside(settingsRef, () => setIsSettingsDropdownOpen(false));
 
   const [taskToView, setTaskToView] = useState(null);
   const [memberToView, setMemberToView] = useState(null);
@@ -100,6 +111,11 @@ export default function BoardIndex() {
       <SigninGithubModal
         isOpen={isSigninGithubModalOpened}
         handleClose={() => setIsSigninGithubModalOpened(false)}
+      />
+      <RemoveBoardModal
+        isOpen={isRemoveBoardModalOpened}
+        handleClose={() => setIsRemoveBoardModalOpened(false)}
+        message="Are you sure you want to remove this board?"
       />
       {memberToView && (
         <ViewMemberModal
@@ -193,6 +209,26 @@ export default function BoardIndex() {
               setIsAddDeveloperModalOpened={setIsAddDeveloperModalOpened}
               setMemberToView={setMemberToView}
             />
+            <button
+              css={style.boardIndex_settingsButton}
+              onClick={() => setIsSettingsDropdownOpen(!isSettingsDropdownOpen)}
+            >
+              <Icon icon="settings" css={style.boardIndex_settings} />
+            </button>
+            {isSettingsDropdownOpen && (
+              <Card css={style.boardIndex_settingsDropdown}>
+                <button
+                  css={style.boardIndex_settingsDropdown_button}
+                  onClick={() => setIsRemoveBoardModalOpened(true)}
+                >
+                  <Icon
+                    icon="delete"
+                    css={style.boardIndex_settingsDropdown_button_icon}
+                  />
+                  Delete Board
+                </button>
+              </Card>
+            )}
           </div>
         </div>
         <Button
