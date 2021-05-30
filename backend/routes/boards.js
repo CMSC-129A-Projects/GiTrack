@@ -1018,39 +1018,23 @@ router.delete('/:id(\\d+)/removeRepository', authJWT, async (req, res) => {
   const { id: repoId } = req.body;
 
   if (id === undefined) {
-    return res
-      .status(400)
-      .json({ id: null, title: null, error_message: boardErrorMessages.MISSING_ID });
+    return res.status(400).json({ error_message: boardErrorMessages.MISSING_ID });
   }
 
   try {
     await getPermissions(userId, id);
   } catch (err) {
     debug(err);
-    return res.status(403).json({ id: null, title: null, error_message: err });
-  }
-
-  let board = null;
-
-  try {
-    board = await getBoardById(id);
-  } catch (err) {
-    debug(err);
-
-    return res.json({
-      id: null,
-      title: null,
-      error_message: err,
-    });
+    return res.status(403).json({ error_message: err });
   }
 
   try {
     await removeRepositoryfromBoard(id, repoId);
 
-    return res.json({ id: board.id, title: board.title, error_message: null });
+    return res.json({ error_message: null });
   } catch (err) {
     debug(err);
-    return res.status(500).json({ id: null, title: null, error_message: err });
+    return res.status(500).json({ error_message: err });
   }
 });
 
