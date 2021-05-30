@@ -20,7 +20,11 @@ const {
 
 const { getTasksInBoard } = require('../models/tasks');
 
-const { connectRepository, getReposInBoard } = require('../models/repositories');
+const {
+  connectRepository,
+  getReposInBoard,
+  removeRepositoryfromBoard,
+} = require('../models/repositories');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -1007,4 +1011,31 @@ router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
       .json({ board_id: null, members_removed: null, error_message: err });
   }
 });
+
+router.delete('/:id(\\d+)/removeRepository', authJWT, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user;
+  const { id: repoId } = req.body;
+
+  if (id === undefined) {
+    return res.status(400).json({ error_message: boardErrorMessages.MISSING_ID });
+  }
+
+  try {
+    await getPermissions(userId, id);
+  } catch (err) {
+    debug(err);
+    return res.status(403).json({ error_message: err });
+  }
+
+  try {
+    await removeRepositoryfromBoard(id, repoId);
+
+    return res.json({ error_message: null });
+  } catch (err) {
+    debug(err);
+    return res.status(500).json({ error_message: err });
+  }
+});
+
 module.exports = router;
