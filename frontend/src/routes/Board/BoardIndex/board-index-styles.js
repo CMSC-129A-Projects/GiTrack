@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 export const boardIndex = css`
-  padding: 64px;
+  padding: 40px 64px 32px;
 `;
 
 export const boardIndex_button = css`
@@ -29,7 +29,7 @@ export const boardIndex_header_name = (theme) => css`
 export const boardIndex_columns = css`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 640px;
+  grid-template-rows: 680px;
   grid-gap: 32px;
 `;
 
@@ -86,4 +86,30 @@ export const boardIndex_settingsDropdown_button = (theme) => css`
 export const boardIndex_settingsDropdown_button_icon = css`
   color: red;
   margin: 0 12px 0 0;
+`;
+
+export const boardIndex_filterOptions = css`
+  display: flex;
+  align-items: center;
+  margin: 0 0 24px 0;
+`;
+
+export const boardIndex_search = css`
+  width: 280px;
+`;
+
+export const boardIndex_filter = css`
+  display: flex;
+  align-items: center;
+  margin: 0 0 0 24px;
+`;
+
+export const boardIndex_filter_label = (theme) => css`
+  ${theme.text.bodyMD};
+  color: ${theme.color.neutral[4]};
+  margin: 0 12px 0 0;
+`;
+
+export const boardIndex_filter_dropdown = css`
+  width: 200px;
 `;

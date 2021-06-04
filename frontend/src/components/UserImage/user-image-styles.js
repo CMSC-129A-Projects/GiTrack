@@ -8,7 +8,6 @@ export const userImage = (theme) => css`
   ${theme.text.headingXS};
   height: 40px;
   width: 40px;
-  margin: -3px;
   border-radius: 50%;
   border: 2px solid white;
 `;

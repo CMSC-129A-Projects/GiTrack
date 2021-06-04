@@ -146,7 +146,7 @@ export default function ViewTaskModal({
               <>
                 {commits.map(({ hash, message }) => (
                   <div css={style.viewTaskModal_progress}>
-                    <p css={style.viewTaskModal_progressTime}>{hash.slice(0, 8)}...</p>
+                    <p css={style.viewTaskModal_progressTime}>{hash.slice(0, 8)}</p>
                     <p css={style.viewTaskModal_progressText}>{message}</p>
                   </div>
                 ))}
@@ -172,8 +172,13 @@ export default function ViewTaskModal({
               isClearable={false}
             />
             <Dropdown
-              css={style.viewTaskModal_input}
+              css={style.viewTaskModal_input___repository}
               label="Branch"
+              options={options}
+              placeholder="Repository"
+            />
+            <Dropdown
+              css={style.viewTaskModal_input}
               value={selectedBranch}
               options={options}
               onChange={(option) => {

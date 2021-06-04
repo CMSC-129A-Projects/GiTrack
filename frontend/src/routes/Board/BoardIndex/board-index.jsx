@@ -15,6 +15,8 @@ import Column from 'components/Column';
 import Button from 'components/Button';
 import buttonVariants from 'components/Button/constants';
 import Icon from 'components/Icon';
+import Search from 'components/Search';
+import Dropdown from 'components/Dropdown';
 
 import useOnClickOutside from 'hooks/useOnClickOutside';
 
@@ -36,6 +38,12 @@ import * as style from './board-index-styles';
 export default function BoardIndex() {
   const { boardId } = useParams();
   const settingsRef = useRef();
+
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [searchString, setSearchString] = useState('');
+  const [filters, setFilters] = useState({
+    assignee: null,
+  });
 
   const [isAddTaskModalOpened, setIsAddTaskModalOpened] = useState(false);
   const [isAddRepoModalOpened, setIsAddRepoModalOpened] = useState(false);
@@ -80,13 +88,37 @@ export default function BoardIndex() {
     setRepoIds(boardRepos?.repos?.map((repo) => repo.id));
   }, [boardRepos]);
 
-  if (isBoardLoading || isBoardReposLoading || isBoardMembersLoading) {
+  const isLoading = isBoardLoading || isBoardReposLoading || isBoardMembersLoading;
+
+  useEffect(() => {
+    if (!isLoading) {
+      setFilteredTasks(boardTasks?.tasks);
+    }
+  }, [boardTasks, isLoading]);
+
+  useEffect(() => {
+    if (boardTasks?.tasks?.length > 0) {
+      let filtered = boardTasks?.tasks.filter((t) =>
+        t.title.toLowerCase().match(searchString.toLowerCase())
+      );
+
+      if (filters.assignee != null) {
+        filtered = filtered.filter((t) =>
+          t.assignee_ids.includes(filters.assignee?.value)
+        );
+      }
+
+      setFilteredTasks(filtered);
+    }
+  }, [boardTasks, searchString, filters]);
+
+  if (isLoading) {
     return <Spinner />;
   }
 
-  const notStartedTasks = boardTasks?.tasks.filter((task) => task.column_id === 0);
-  const inProgressTasks = boardTasks?.tasks.filter((task) => task.column_id === 1);
-  const mergedTasks = boardTasks?.tasks.filter((task) => task.column_id === 2);
+  const notStartedTasks = filteredTasks?.filter((task) => task.column_id === 0);
+  const inProgressTasks = filteredTasks?.filter((task) => task.column_id === 1);
+  const mergedTasks = filteredTasks?.filter((task) => task.column_id === 2);
 
   return (
     <>
@@ -152,13 +184,32 @@ export default function BoardIndex() {
           <p css={style.boardIndex_header_boardName}>Board Name</p>
           <h2 css={style.boardIndex_header_name}>{board.title}</h2>
         </div>
+        <div css={style.boardIndex_filterOptions}>
+          <Search
+            css={style.boardIndex_search}
+            onChange={(e) => setSearchString(e.target.value)}
+          />
+          <div css={style.boardIndex_filter}>
+            <p css={style.boardIndex_filter_label}>Filter by:</p>
+            <Dropdown
+              css={style.boardIndex_filter_dropdown}
+              placeholder="Member"
+              options={boardMembers.map((member) => ({
+                label: member.username,
+                value: member.id,
+              }))}
+              onChange={(option) => setFilters({ assignee: option })}
+              isClearable
+            />
+          </div>
+        </div>
         <div css={style.boardIndex_columns}>
           <Column
             isLoading={isBoardTasksLoading}
             title="📋 Not Started"
             count={notStartedTasks?.length}
           >
-            {notStartedTasks.map((task) => (
+            {notStartedTasks?.map((task) => (
               <TaskCard
                 members={boardMembers}
                 title={task.title}
@@ -172,12 +223,13 @@ export default function BoardIndex() {
             title="🔨 In Progress"
             count={inProgressTasks?.length}
           >
-            {inProgressTasks.map((task) => (
+            {inProgressTasks?.map((task) => (
               <TaskCard
                 members={boardMembers}
                 title={task.title}
                 assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
+                tag={task.branch_name}
               />
             ))}
           </Column>
@@ -186,12 +238,13 @@ export default function BoardIndex() {
             title="🎉 Merged"
             count={mergedTasks?.length}
           >
-            {mergedTasks.map((task) => (
+            {mergedTasks?.map((task) => (
               <TaskCard
                 members={boardMembers}
                 title={task.title}
                 assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
+                tag={task.branch_name}
               />
             ))}
           </Column>
@@ -217,7 +270,7 @@ export default function BoardIndex() {
               <Icon icon="settings" css={style.boardIndex_settings} />
             </button>
             {isSettingsDropdownOpen && (
-              <Card css={style.boardIndex_settingsDropdown}>
+              <Card css={style.boardIndex_settingsDropdown} ref={settingsRef}>
                 <button
                   css={style.boardIndex_settingsDropdown_button}
                   onClick={() => setIsRemoveBoardModalOpened(true)}

@@ -18,5 +18,6 @@ export const boardMembers_member = (theme) => css`
   background-color: ${theme.color.neutral[2]};
   border-radius: 50%;
   padding: 0;
-  margin: 0 -4px 0 0;
+  margin: 0 -8px 0 0;
+  border: none;
 `;
