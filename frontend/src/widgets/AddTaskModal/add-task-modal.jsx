@@ -1,5 +1,8 @@
 /** @jsxImportSource @emotion/react */
+import { forwardRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import TaskService from 'services/TaskService';
 
@@ -18,6 +21,16 @@ export default function AddTaskModal({
   isOpen,
   handleClose,
 }) {
+  const CustomDateInput = forwardRef(({ value, onClick }, ref) => (
+    <Input
+      label="Target Date"
+      css={style.addTaskModal_input}
+      onClick={onClick}
+      ref={ref}
+      value={value}
+    />
+  ));
+
   const {
     register,
     handleSubmit,
@@ -75,6 +88,7 @@ export default function AddTaskModal({
           render={({ field: { onChange } }) => <TextEditor onChange={onChange} />}
         />
       </div>
+      <DatePicker customInput={<CustomDateInput />} />
     </Modal>
   );
 }

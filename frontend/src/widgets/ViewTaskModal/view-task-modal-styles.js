@@ -4,6 +4,10 @@ export const viewTaskModal_input = css`
   margin: 0 0 16px 0;
 `;
 
+export const viewTaskModal_input___repository = css`
+  margin: 0 0 8px 0;
+`;
+
 export const viewTaskModal_label = (theme) => css`
   ${theme.text.bodyMD};
   color: ${theme.color.neutral[5]};
@@ -52,7 +56,7 @@ export const viewTaskModal_progress = (theme) => css`
   justify-content: start;
   align-items: center;
 
-  ${theme.text.bodyXS};
+  ${theme.text.bodySM};
   margin: 4px 0 0 0;
 `;
 

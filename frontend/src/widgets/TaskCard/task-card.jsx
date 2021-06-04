@@ -24,6 +24,7 @@ export default function TaskCard({
         <div css={style.taskCard_assignees}>
           {assignedDevs?.map((assignee) => (
             <UserImage
+              css={style.taskCard_userImage}
               key={`img-${assignee.id}`}
               id={assignee.id}
               name={assignee.username}
