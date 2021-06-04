@@ -31,6 +31,7 @@ describe('Tasks', function () {
         .send({
           board_id: 1,
           title: 'Sample Task',
+          target_date: '2021-04-20',
           description: 'This is a sample task',
         })
         .end(function (err, res) {
@@ -40,6 +41,7 @@ describe('Tasks', function () {
           res.body.should.have.property('board_id').eql(1);
           res.body.should.have.property('title').eql('Sample Task');
           res.body.should.have.property('description').eql('This is a sample task');
+          res.body.should.have.property('target_date').eql('2021-04-20');
           res.body.should.have.property('error_message').eql(null);
           done();
         });
@@ -54,6 +56,7 @@ describe('Tasks', function () {
           board_id: 1,
           title: 'Sample Task 2',
           description: 'This is a sample task',
+          target_date: '2021-04-20',
         })
         .end(function (err, res) {
           res.should.have.status(200);
@@ -62,6 +65,7 @@ describe('Tasks', function () {
           res.body.should.have.property('board_id').eql(1);
           res.body.should.have.property('title').eql('Sample Task 2');
           res.body.should.have.property('description').eql('This is a sample task');
+          res.body.should.have.property('target_date').eql('2021-04-20');
           res.body.should.have.property('error_message').eql(null);
           done();
         });
@@ -75,6 +79,7 @@ describe('Tasks', function () {
         .send({
           board_id: 1,
           description: 'This is a sample task',
+          target_date: '2021-04-20',
         })
         .end(function (err, res) {
           res.should.have.status(400);
@@ -83,7 +88,31 @@ describe('Tasks', function () {
           res.body.should.have.property('board_id').eql(null);
           res.body.should.have.property('title').eql(null);
           res.body.should.have.property('description').eql(null);
+          res.body.should.have.property('target_date').eql(null);
           res.body.should.have.property('error_message').eql('MISSING_TITLE');
+          done();
+        });
+    });
+
+    it('It should not add a task without a target date', function (done) {
+      chai
+        .request(server)
+        .post('/task')
+        .auth(accessToken, { type: 'bearer' })
+        .send({
+          board_id: 1,
+          title: 'Sample Task',
+          description: 'This is a sample task',
+        })
+        .end(function (err, res) {
+          res.should.have.status(400);
+          res.body.should.have.property('id').eql(null);
+          res.body.should.have.property('column_id').eql(null);
+          res.body.should.have.property('board_id').eql(null);
+          res.body.should.have.property('title').eql(null);
+          res.body.should.have.property('description').eql(null);
+          res.body.should.have.property('target_date').eql(null);
+          res.body.should.have.property('error_message').eql('MISSING_TARGET_DATE');
           done();
         });
     });
@@ -96,6 +125,7 @@ describe('Tasks', function () {
         .send({
           board_id: 1,
           title: 'sample',
+          target_date: '2021-04-20',
         })
         .end(function (err, res) {
           res.should.have.status(400);
@@ -104,12 +134,13 @@ describe('Tasks', function () {
           res.body.should.have.property('board_id').eql(null);
           res.body.should.have.property('title').eql(null);
           res.body.should.have.property('description').eql(null);
+          res.body.should.have.property('target_date').eql(null);
           res.body.should.have.property('error_message').eql('MISSING_DESCRIPTION');
           done();
         });
     });
 
-    it('It should not add a task without description a board id', function (done) {
+    it('It should not add a task without specifying a board id', function (done) {
       chai
         .request(server)
         .post('/task')
@@ -117,6 +148,7 @@ describe('Tasks', function () {
         .send({
           description: 'sample desc',
           title: 'sample',
+          target_date: '2021-04-20',
         })
         .end(function (err, res) {
           res.should.have.status(400);
@@ -125,6 +157,7 @@ describe('Tasks', function () {
           res.body.should.have.property('board_id').eql(null);
           res.body.should.have.property('title').eql(null);
           res.body.should.have.property('description').eql(null);
+          res.body.should.have.property('target_date').eql(null);
           res.body.should.have.property('error_message').eql('MISSING_BOARD_ID');
           done();
         });

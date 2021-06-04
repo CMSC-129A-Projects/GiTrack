@@ -62,7 +62,7 @@ const {
  *                 example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *               targetDate:
  *                 type: string
- *                 description: Target date of completion of the task, YYYY-MM-DD
+ *                 description: Target date of completion of the task, IOSO8601 format
  *                 example: 2021-04-20
  *     responses:
  *       200:
@@ -94,7 +94,7 @@ const {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
@@ -129,7 +129,7 @@ const {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
@@ -164,7 +164,7 @@ const {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
@@ -172,7 +172,7 @@ const {
  *                   example: MISSING_TITLE
  */
 router.post('/', authJWT, async (req, res) => {
-  const { board_id: boardId, title, description, targetDate } = req.body;
+  const { board_id: boardId, title, description, target_date: targetDate } = req.body;
   const { id: userId } = req.user;
 
   if (boardId === undefined) {
@@ -310,7 +310,7 @@ router.post('/', authJWT, async (req, res) => {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 branch_name:
  *                   type: string
@@ -349,7 +349,7 @@ router.post('/', authJWT, async (req, res) => {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 branch_name:
  *                   type: string
@@ -462,7 +462,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
@@ -497,7 +497,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
@@ -532,7 +532,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
  *                 target_date:
  *                   type: string
- *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   description: Target date of completion of the task, IOSO8601 format
  *                   example: 2021-04-20
  *                 error_message:
  *                   type: string

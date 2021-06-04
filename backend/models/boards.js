@@ -62,13 +62,12 @@ async function deleteBoard(boardId) {
     await db.run('DELETE FROM Memberships WHERE board_id = (?)', boardId);
     await db.run('DELETE FROM Repositories WHERE board_id = (?)', boardId);
     await db.run(
-      'DELETE a FROM Assignees a INNER JOIN Tasks t ON Assignees.task_id=Tasks.id WHERE board_id=(?)',
+      'DELETE FROM Assignees WHERE task_id IN ( SELECT id FROM Tasks WHERE board_id=(?) )',
       boardId
     );
     await db.run('DELETE FROM Tasks WHERE board_id = (?)', boardId);
   } catch (err) {
     debug(err);
-
     throw boardErrorMessages.DELETE_FAILED;
   }
 }
