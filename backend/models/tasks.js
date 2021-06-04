@@ -24,14 +24,15 @@ async function getTaskPermissions(userId, taskId, isDeveloper = 0) {
   }
 }
 
-async function addTask(title, description, boardId) {
+async function addTask(title, description, targetDate, boardId) {
   const db = await dbHandler;
 
   try {
     const taskResult = await db.run(
-      'INSERT INTO Tasks (title, description, board_id, column_id) VALUES (?, ?, ?, 0)',
+      'INSERT INTO Tasks (title, description, target_date, board_id, column_id) VALUES (?, ?, ?, ?, 0)',
       title,
       description,
+      targetDate,
       boardId
     );
 
