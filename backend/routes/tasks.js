@@ -60,6 +60,10 @@ const {
  *                 type: string
  *                 description: Description of the task
  *                 example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *               targetDate:
+ *                 type: string
+ *                 description: Target date of completion of the task, YYYY-MM-DD
+ *                 example: 2021-04-20
  *     responses:
  *       200:
  *         description: OK
@@ -88,6 +92,10 @@ const {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
  *                   description: Specific error message causing the error
@@ -119,6 +127,10 @@ const {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
  *                   description: Specific error message causing the error
@@ -150,13 +162,17 @@ const {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
  *                   description: Specific error message causing the error
  *                   example: MISSING_TITLE
  */
 router.post('/', authJWT, async (req, res) => {
-  const { board_id: boardId, title, description } = req.body;
+  const { board_id: boardId, title, description, targetDate } = req.body;
   const { id: userId } = req.user;
 
   if (boardId === undefined) {
@@ -166,6 +182,7 @@ router.post('/', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       error_message: taskErrorMessages.MISSING_BOARD_ID,
     });
   }
@@ -177,6 +194,7 @@ router.post('/', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       error_message: taskErrorMessages.MISSING_TITLE,
     });
   }
@@ -188,7 +206,20 @@ router.post('/', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       error_message: taskErrorMessages.MISSING_DESCRIPTION,
+    });
+  }
+
+  if (targetDate === undefined) {
+    return res.status(400).json({
+      id: null,
+      column_id: null,
+      board_id: null,
+      title: null,
+      description: null,
+      target_date: null,
+      error_message: taskErrorMessages.MISSING_TARGET_DATE,
     });
   }
 
@@ -202,12 +233,13 @@ router.post('/', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       error_message: err,
     });
   }
 
   try {
-    const taskId = await addTask(title, description, boardId);
+    const taskId = await addTask(title, description, targetDate, boardId);
 
     return res.json({
       id: taskId,
@@ -215,6 +247,7 @@ router.post('/', authJWT, async (req, res) => {
       board_id: boardId,
       title,
       description,
+      target_date: targetDate,
       error_message: null,
     });
   } catch (err) {
@@ -225,6 +258,7 @@ router.post('/', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       error_message: err,
     });
   }
@@ -274,6 +308,10 @@ router.post('/', authJWT, async (req, res) => {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 branch_name:
  *                   type: string
  *                   description: Name of the branch under which the task is assigned
@@ -309,6 +347,10 @@ router.post('/', authJWT, async (req, res) => {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 branch_name:
  *                   type: string
  *                   description: Name of the branch under which the task is assigned
@@ -333,6 +375,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       branch_name: null,
       error_message: err,
     });
@@ -345,6 +388,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       branch_name: null,
       error_message: taskErrorMessages.TASK_NOT_FOUND,
     });
@@ -360,6 +404,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       branch_name: null,
       error_message: err,
     });
@@ -415,6 +460,10 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
  *                   description: Specific error message causing the error
@@ -446,6 +495,10 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
  *                   description: Specific error message causing the error
@@ -477,6 +530,10 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
  *                   type: string
  *                   description: Description of the task
  *                   example: Get eggs from the supermarket by 5:00 PM on Feb 31
+ *                 target_date:
+ *                   type: string
+ *                   description: Target date of completion of the task, YYYY-MM-DD
+ *                   example: 2021-04-20
  *                 error_message:
  *                   type: string
  *                   description: Specific error message causing the error
@@ -496,7 +553,7 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
       column_id: null,
       board_id: null,
       title: null,
-      description: null,
+      target_date: null,
       error_message: err,
     });
   }
@@ -508,6 +565,7 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       error_message: boardErrorMessages.NOT_ENOUGH_PERMISSIONS,
     });
   }
@@ -522,6 +580,7 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
       board_id: null,
       title: null,
       description: null,
+      target_date: null,
       error_message: err,
     });
   }
