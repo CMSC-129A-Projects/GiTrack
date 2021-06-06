@@ -29,7 +29,7 @@ export const boardIndex_header_name = (theme) => css`
 export const boardIndex_columns = css`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 680px;
+  grid-template-rows: 660px;
   grid-gap: 32px;
 `;
 

@@ -21,13 +21,14 @@ export default function AddTaskModal({
   isOpen,
   handleClose,
 }) {
-  const CustomDateInput = forwardRef(({ value, onClick }, ref) => (
+  const CustomDateInput = forwardRef(({ value, onClick, error }, ref) => (
     <Input
       label="Target Date"
       css={style.addTaskModal_input}
       onClick={onClick}
       ref={ref}
       value={value}
+      error={error}
     />
   ));
 
@@ -38,12 +39,13 @@ export default function AddTaskModal({
     formState: { errors },
   } = useForm();
 
-  const onSubmit = ({ title, description }) => {
+  const onSubmit = ({ title, description, target_date: targetDate }) => {
     TaskService.create({
       body: {
         board_id: boardId,
         title,
         description,
+        target_date: new Date(targetDate).toISOString(),
       },
     }).then(() => {
       handleClose();
@@ -75,7 +77,7 @@ export default function AddTaskModal({
     >
       <Input
         css={style.addTaskModal_input}
-        label="Title"
+        label="*Title"
         error={errors.title ? errors.title.message : null}
         {...register('title', { required: 'Please input the title' })}
       />
@@ -88,7 +90,18 @@ export default function AddTaskModal({
           render={({ field: { onChange } }) => <TextEditor onChange={onChange} />}
         />
       </div>
-      <DatePicker customInput={<CustomDateInput />} />
+      <Controller
+        name="target_date"
+        control={control}
+        defaultValue={null}
+        render={({ field: { onChange, value } }) => (
+          <DatePicker
+            customInput={<CustomDateInput />}
+            onChange={onChange}
+            selected={value}
+          />
+        )}
+      />
     </Modal>
   );
 }

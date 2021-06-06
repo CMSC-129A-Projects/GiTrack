@@ -1,3 +1,4 @@
 .ReactModal__Overlay {
   background-color: rgba(158, 158, 158, 0.3) !important;
+  z-index: 2;
 }

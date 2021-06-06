@@ -36,6 +36,8 @@ export const viewTaskModal_bodyTitle = (theme) => css`
 export const viewTaskModal_bodyText = (theme) => css`
   ${theme.text.bodyMD};
   color: ${theme.color.neutral[7]};
+  display: flex;
+  align-items: center;
 `;
 
 export const viewTaskModal_list = (theme) => css`
@@ -81,4 +83,9 @@ export const viewTaskModal_optionsCard = (theme) => css`
   padding: 20px;
   box-shadow: none;
   border: 1px solid ${theme.color.neutral[3]};
+`;
+
+export const viewTaskModal_warningIcon = (theme) => css`
+  color: ${theme.color.red[3]};
+  margin: 0 0 0 4px;
 `;

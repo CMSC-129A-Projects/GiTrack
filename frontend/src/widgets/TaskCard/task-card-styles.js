@@ -17,6 +17,8 @@ export const taskCard_title = (theme) => css`
   ${theme.text.titleLG};
   color: ${theme.color.neutral[7]};
   margin: 0;
+  display: flex;
+  align-items: center;
 `;
 
 export const taskCard_tag = (theme) => css`
@@ -44,4 +46,13 @@ export const taskCard_userImage = css`
   p {
     font-size: 1rem;
   }
+`;
+
+export const taskCard___red = (theme) => css`
+  border-color: ${theme.color.red[3]};
+`;
+
+export const taskCard_warningIcon = (theme) => css`
+  color: ${theme.color.red[3]};
+  margin: 0 0 0 4px;
 `;

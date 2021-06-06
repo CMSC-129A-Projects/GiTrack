@@ -12,6 +12,7 @@ import Dropdown from 'components/Dropdown';
 import buttonVariants from 'components/Button/constants';
 import modalSizes from 'components/Modal/constants';
 import Card from 'components/Card';
+import Icon from 'components/Icon';
 
 // Style
 import * as style from './view-task-modal-styles';
@@ -29,6 +30,7 @@ export default function ViewTaskModal({
   const [selectedDevelopers, setSelectedDevelopers] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [isPastDeadline, setIsPastDeadline] = useState(false);
   const [options, setOptions] = useState([]);
 
   const { isLoading: isCommitsLoading, commits } = useCommits({ repoId: task.repo_id });
@@ -102,6 +104,16 @@ export default function ViewTaskModal({
     }
   };
 
+  const date = new Date(task.target_date);
+
+  useEffect(() => {
+    const dateNow = Date.now();
+
+    if (dateNow > date.getTime() && date.getTime() > 0) {
+      setIsPastDeadline(true);
+    }
+  }, []);
+
   return (
     <>
       {isRemoveTaskModalOpened && (
@@ -137,10 +149,25 @@ export default function ViewTaskModal({
         <p css={style.viewTaskModal_title}>{task.title}</p>
         <div css={style.viewTaskModal_body}>
           <div>
-            <p css={style.viewTaskModal_bodyTitle}>Description</p>
-            <p css={style.viewTaskModal_bodyText}>
-              <span dangerouslySetInnerHTML={{ __html: task.description }} />
-            </p>
+            {task.description !== '' && (
+              <>
+                <p css={style.viewTaskModal_bodyTitle}>Description</p>
+                <p css={style.viewTaskModal_bodyText}>
+                  <span dangerouslySetInnerHTML={{ __html: task.description }} />
+                </p>
+              </>
+            )}
+            {date.getTime() > 0 && (
+              <>
+                <p css={style.viewTaskModal_bodyTitle}>Target Date</p>
+                <p css={style.viewTaskModal_bodyText}>
+                  {task.target_date.split('T')[0]}
+                  {isPastDeadline && (
+                    <Icon icon="warning" css={style.viewTaskModal_warningIcon} />
+                  )}
+                </p>
+              </>
+            )}
             <p css={style.viewTaskModal_bodyTitle}>Progress</p>
             {commits.length > 0 ? (
               <>
