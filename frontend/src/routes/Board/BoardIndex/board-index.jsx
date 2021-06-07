@@ -215,6 +215,7 @@ export default function BoardIndex() {
                 title={task.title}
                 assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
+                targetDate={task.target_date}
               />
             ))}
           </Column>
@@ -229,6 +230,7 @@ export default function BoardIndex() {
                 title={task.title}
                 assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
+                targetDate={task.target_date}
                 tag={task.branch_name}
               />
             ))}
@@ -244,6 +246,7 @@ export default function BoardIndex() {
                 title={task.title}
                 assignees={task.assignee_ids}
                 onClick={() => setTaskToView(task)}
+                targetDate={task.target_date}
                 tag={task.branch_name}
               />
             ))}

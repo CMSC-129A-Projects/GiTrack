@@ -11,6 +11,7 @@ export const navbar = (theme) => css`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 1;
 `;
 
 export const navbar_nav = css`
