@@ -47,7 +47,7 @@ export default function Board() {
             <Add refreshBoards={refreshBoards} />
           </Route>
           <Route exact path={`${path}/:boardId`}>
-            <BoardIndex />
+            <BoardIndex refreshBoards={refreshBoards} />
           </Route>
           <Redirect to={`${path}/add`} />;
         </Switch>

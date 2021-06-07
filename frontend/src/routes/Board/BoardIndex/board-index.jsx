@@ -32,10 +32,12 @@ import ViewMemberModal from 'widgets/ViewMemberModal';
 import ViewRepoModal from 'widgets/ViewRepoModal';
 import RemoveBoardModal from 'widgets/RemoveConfirmationModal';
 
+import BoardService from 'services/BoardService';
+
 // Style
 import * as style from './board-index-styles';
 
-export default function BoardIndex() {
+export default function BoardIndex({ refreshBoards }) {
   const { boardId } = useParams();
   const settingsRef = useRef();
 
@@ -147,6 +149,12 @@ export default function BoardIndex() {
       <RemoveBoardModal
         isOpen={isRemoveBoardModalOpened}
         handleClose={() => setIsRemoveBoardModalOpened(false)}
+        handleSuccess={() =>
+          BoardService.remove({ boardId }).then(() => {
+            refreshBoards();
+            setIsRemoveBoardModalOpened(false);
+          })
+        }
         message="Are you sure you want to remove this board?"
       />
       {memberToView && (
