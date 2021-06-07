@@ -25,7 +25,7 @@ const BoardService = {
         repo_id: repoId,
       },
     }),
-  removeBoard: ({ boardId }) => axios.delete(`${BASE_URL}/${boardId}`),
+  remove: ({ boardId }) => axios.delete(`${BASE_URL}/${boardId}`),
 };
 
 export default BoardService;

@@ -150,7 +150,7 @@ export default function BoardIndex({ refreshBoards }) {
         isOpen={isRemoveBoardModalOpened}
         handleClose={() => setIsRemoveBoardModalOpened(false)}
         handleSuccess={() =>
-          BoardService.removeBoard({ boardId }).then(() => {
+          BoardService.remove({ boardId }).then(() => {
             refreshBoards();
             setIsRemoveBoardModalOpened(false);
           })
