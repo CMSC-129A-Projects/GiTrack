@@ -1,4 +1,5 @@
-import React from 'react';
+/** @jsxImportSource @emotion/react */
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import Button from './button';
 

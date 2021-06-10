@@ -1,4 +1,5 @@
-import React from 'react';
+/** @jsxImportSource @emotion/react */
+
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { render } from '@testing-library/react';

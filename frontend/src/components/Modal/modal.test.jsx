@@ -1,4 +1,5 @@
-import React from 'react';
+/** @jsxImportSource @emotion/react */
+
 import ContextProviders from 'components/App/components/ContextProviders';
 import buttonVariants from 'components/Button/constants';
 import { render, screen } from '@testing-library/react';

@@ -1,4 +1,5 @@
-import React from 'react';
+/** @jsxImportSource @emotion/react */
+
 import ContextProviders from 'components/App/components/ContextProviders';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Input from './input';
