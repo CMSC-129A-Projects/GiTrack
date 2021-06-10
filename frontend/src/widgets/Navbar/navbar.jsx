@@ -24,7 +24,7 @@ export default function Navbar({ user, boards, ...passedProps }) {
   useOnClickOutside(userRef, () => setIsUserDropdownOpen(false));
 
   return (
-    <div css={style.navbar} {...passedProps}>
+    <nav css={style.navbar} {...passedProps}>
       <div css={style.navbar_nav}>
         <div css={style.navbar_imageContainer}>
           <img src={Logo} alt="gitrack logo" css={style.navbar_image} />
@@ -83,6 +83,6 @@ export default function Navbar({ user, boards, ...passedProps }) {
           </Card>
         )}
       </div>
-    </div>
+    </nav>
   );
 }
