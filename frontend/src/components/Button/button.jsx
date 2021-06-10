@@ -18,6 +18,7 @@ export default function Button({
   const T = element;
   return (
     <T
+      data-test="button"
       type={type}
       css={style[`button___${variant}`]}
       onClick={onClick}

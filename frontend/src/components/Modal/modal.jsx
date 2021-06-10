@@ -31,6 +31,7 @@ export default function Modal({
       {actions?.map(
         ({ type, name, variant, onClick, disabled, element, ...passedProps }) => (
           <Button
+            key={`${title}-${name}`}
             css={style.modal_actions_button}
             type={type}
             variant={variant}
