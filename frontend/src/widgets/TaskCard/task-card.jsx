@@ -9,7 +9,6 @@ import UserImage from 'components/UserImage';
 import * as style from './task-card-styles';
 
 export default function TaskCard({
-  children,
   title,
   members,
   assignees,
@@ -32,6 +31,7 @@ export default function TaskCard({
 
   return (
     <Card
+      data-testid="taskCard"
       onClick={onClick}
       css={[style.taskCard, isPastDeadline ? style.taskCard___red : null]}
       {...passedProps}

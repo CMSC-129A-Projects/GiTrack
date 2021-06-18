@@ -10,10 +10,15 @@ export default function BoardMembers({
   setIsAddDeveloperModalOpened,
 }) {
   return (
-    <div css={style.boardMembers}>
+    <div css={style.boardMembers} data-testid="boardMembers">
       <Add onClick={() => setIsAddDeveloperModalOpened(true)} />
       {members.map((member) => (
-        <button css={style.boardMembers_member} onClick={() => setMemberToView(member)}>
+        <button
+          data-testid={`member-${member.id}`}
+          key={member.id}
+          css={style.boardMembers_member}
+          onClick={() => setMemberToView(member)}
+        >
           <UserImage id={member.id} name={member.username} />
         </button>
       ))}

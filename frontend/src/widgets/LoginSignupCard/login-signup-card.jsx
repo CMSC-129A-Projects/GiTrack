@@ -4,7 +4,7 @@ import Card from 'components/Card';
 import Button from 'components/Button';
 
 // Style
-import * as style from './loginsignupcard-styles';
+import * as style from './login-signup-card-styles';
 
 export default function LoginSignupCard({
   title,
@@ -17,7 +17,7 @@ export default function LoginSignupCard({
   ...passedProps
 }) {
   return (
-    <Card css={style.loginSignupCard} {...passedProps}>
+    <Card css={style.loginSignupCard} data-testid="loginSignupCard" {...passedProps}>
       <p css={style.loginSignupCard_title}>{title}</p>
       <form onSubmit={onSubmit}>
         {children}
