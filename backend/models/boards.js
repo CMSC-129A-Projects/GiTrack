@@ -103,30 +103,6 @@ async function getBoardById(boardId) {
   }
 }
 
-async function getBoardRepo(id) {
-  const db = await dbHandler;
-
-  try {
-    const repo = await db.get('SELECT full_name FROM Repositories WHERE id = ?', id);
-    return repo.full_name;
-  } catch (err) {
-    debug(err);
-    throw boardErrorMessages.GET_FAILED;
-  }
-}
-
-async function getBoardRepoId(boardId) {
-  const db = await dbHandler;
-
-  try {
-    const id = await db.get('SELECT id FROM Repositories WHERE board_id = ?', boardId);
-    return id;
-  } catch (err) {
-    debug(err);
-    throw boardErrorMessages.GET_FAILED;
-  }
-}
-
 async function userInBoard(boardId, userId) {
   const db = await dbHandler;
 
@@ -236,8 +212,6 @@ module.exports = {
   deleteBoard,
   getBoardById,
   getBoardsWithUser,
-  getBoardRepo,
-  getBoardRepoId,
   addDevToBoard,
   userInBoard,
   getBoardMembers,

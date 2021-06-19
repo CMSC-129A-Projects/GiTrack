@@ -15,7 +15,7 @@ const {
 
 const { moveTaskByBranchAndRepo } = require('../models/tasks');
 
-const { getBoardRepo } = require('../models/boards');
+const { getRepository } = require('../models/repositories');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -177,7 +177,7 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
   }
 
   try {
-    fullName = await getBoardRepo(id);
+    fullName = await getRepository(id);
   } catch (err) {
     return res.status(400).json({ branches: null, error_message: err });
   }
@@ -236,7 +236,7 @@ router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
   }
 
   try {
-    fullName = await getBoardRepo(id);
+    fullName = await getRepository(id);
   } catch (err) {
     return res.status(400).json({ branches: null, error_message: err });
   }
