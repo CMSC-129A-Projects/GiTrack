@@ -3,6 +3,11 @@ const dbHandler = require('../db');
 
 const { board: boardErrorMessages } = require('../constants/error-messages');
 
+/**
+ * Create a board
+ * @param {string} title - Title of the new board
+ * @param {number} userId - Id of the creator of the board. Automatically set as the PM
+ */
 async function createBoard(title, userId) {
   const db = await dbHandler;
 
@@ -21,6 +26,11 @@ async function createBoard(title, userId) {
   }
 }
 
+/**
+ * Edit board name
+ * @param {number} boardId - Id of the board
+ * @param {string} newName - New title of the board
+ */
 async function editBoard(boardId, newName) {
   const db = await dbHandler;
 
@@ -33,6 +43,10 @@ async function editBoard(boardId, newName) {
   }
 }
 
+/**
+ * Delete a board and all other rows that reference that board in other tables
+ * @param {number} boardId - Id of the board
+ */
 async function deleteBoard(boardId) {
   const db = await dbHandler;
 
@@ -51,6 +65,10 @@ async function deleteBoard(boardId) {
   }
 }
 
+/**
+ * Get a board using its ID
+ * @param {number} boardId - Id of the board
+ */
 async function getBoardById(boardId) {
   const db = await dbHandler;
 
