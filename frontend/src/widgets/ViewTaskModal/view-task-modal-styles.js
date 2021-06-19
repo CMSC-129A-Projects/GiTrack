@@ -38,6 +38,10 @@ export const viewTaskModal_bodyText = (theme) => css`
   color: ${theme.color.neutral[7]};
   display: flex;
   align-items: center;
+
+  p {
+    margin: 0;
+  }
 `;
 
 export const viewTaskModal_list = (theme) => css`
@@ -59,7 +63,7 @@ export const viewTaskModal_progress = (theme) => css`
   align-items: center;
 
   ${theme.text.bodySM};
-  margin: 4px 0 0 0;
+  margin: 12px 0;
 `;
 
 export const viewTaskModal_progressTime = (theme) => css`
@@ -76,6 +80,7 @@ export const viewTaskModal_progressTime = (theme) => css`
 export const viewTaskModal_progressText = (theme) => css`
   color: ${theme.color.neutral[7]};
   padding: 0 0 0 8px;
+  margin: 0;
 `;
 
 export const viewTaskModal_optionsCard = (theme) => css`
