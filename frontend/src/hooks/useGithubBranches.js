@@ -23,7 +23,12 @@ const useGithubBranches = ({ repoIds }) => {
 
     Promise.all(retrievePromises)
       .then((responses) => {
-        setGithubBranches(responses.map((response) => response.data));
+        setGithubBranches(
+          responses.map((response) => ({
+            repo_id: Number(response.data.branches[0].repo_id),
+            ...response.data,
+          }))
+        );
         setIsLoading(false);
       })
       .catch(() => {

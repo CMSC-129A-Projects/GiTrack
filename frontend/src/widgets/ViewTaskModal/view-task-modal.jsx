@@ -25,6 +25,7 @@ export default function ViewTaskModal({
   isOpen,
   handleClose,
   githubBranches,
+  boardRepos,
 }) {
   const [isRemoveTaskModalOpened, setIsRemoveTaskModalOpened] = useState(false);
   const [selectedDevelopers, setSelectedDevelopers] = useState([]);
@@ -32,8 +33,14 @@ export default function ViewTaskModal({
   const [hasChanges, setHasChanges] = useState(false);
   const [isPastDeadline, setIsPastDeadline] = useState(false);
   const [options, setOptions] = useState([]);
+  const [repoOptions, setRepoOptions] = useState([]);
+  const [selectedRepo, setSelectedRepo] = useState(null);
 
-  const { isLoading: isCommitsLoading, commits } = useCommits({ repoId: task.repo_id });
+  const {
+    isLoading: isCommitsLoading,
+    refresh: refreshCommits,
+    commits,
+  } = useCommits();
 
   useEffect(() => {
     task.assignee_ids.forEach((id) => {
@@ -64,8 +71,27 @@ export default function ViewTaskModal({
   }, [selectedBranch]);
 
   useEffect(() => {
+    const tempOptions = boardRepos?.repos.map((repo) => ({
+      ...repo,
+      label: repo.full_name,
+    }));
+
+    const currentRepo =
+      tempOptions.map((option) => option.id).indexOf(task.repo_id) ?? 0;
+
+    setRepoOptions(tempOptions);
+    setSelectedRepo(tempOptions[currentRepo]);
+    setSelectedBranch(null);
+  }, [boardRepos]);
+
+  useEffect(() => {
+    const index =
+      selectedRepo && githubBranches
+        ? githubBranches.map((branches) => branches.repo_id).indexOf(selectedRepo.id)
+        : 0;
+
     const tempOptions =
-      githubBranches?.[0]?.branches.map((branch) => ({
+      githubBranches?.[index]?.branches.map((branch) => ({
         ...branch,
         label: branch.name,
       })) ?? [];
@@ -74,7 +100,14 @@ export default function ViewTaskModal({
 
     setOptions(tempOptions);
     setSelectedBranch(tempOptions[currentBranch]);
-  }, [githubBranches]);
+  }, [githubBranches, selectedRepo]);
+
+  useEffect(() => {
+    refreshCommits({
+      newRepoId: selectedRepo?.id,
+      newBranchName: selectedBranch?.name,
+    });
+  }, [selectedBranch]);
 
   const handleSuccess = () => {
     refreshBoardTasks();
@@ -201,7 +234,11 @@ export default function ViewTaskModal({
             <Dropdown
               css={style.viewTaskModal_input___repository}
               label="Branch"
-              options={options}
+              value={selectedRepo}
+              options={repoOptions}
+              onChange={(option) => {
+                setSelectedRepo(option);
+              }}
               placeholder="Repository"
             />
             <Dropdown
@@ -211,6 +248,7 @@ export default function ViewTaskModal({
               onChange={(option) => {
                 setSelectedBranch(option);
               }}
+              placeholder="Branch"
             />
           </Card>
         </div>
