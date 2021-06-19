@@ -28,7 +28,7 @@ const { getTasksInBoard } = require('../models/tasks');
 
 const {
   connectRepository,
-  getReposInBoard,
+  getRepositoriesInBoard,
   removeRepositoryfromBoard,
 } = require('../models/repositories');
 
@@ -611,6 +611,120 @@ router.post('/:id(\\d+)/connect', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  /board/{id}/tasks:
+ *   get:
+ *     summary: Get all tasks of a board.
+ *     tags: [Boards]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the board to edit
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID of the task
+ *                         example: 1
+ *                       title:
+ *                         type: string
+ *                         description: Title of the Task
+ *                         example: Login
+ *                       description:
+ *                         type: string
+ *                         description: Description of the Task
+ *                         example: User can Login
+ *                       branch_name:
+ *                         type: string
+ *                         description: Branch that the task is connected to
+ *                         example: feat/login
+ *                       repo_id:
+ *                         type: number
+ *                         description: ID of the Repository that the task is connected
+ *                         example: 372441494
+ *                       board_id:
+ *                         type: integer
+ *                         description: Id of the board where the task is
+ *                         example: 1
+ *                       column_id:
+ *                         type: number
+ *                         description: ID of the column that the task is in
+ *                         example: 2
+ *                       assignee_ids:
+ *                         type: string
+ *                         description: IDs of the developers assigned to the task, separated by commas
+ *                         example: 2, 3, 5
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID of the task
+ *                         example: 1
+ *                       title:
+ *                         type: string
+ *                         description: Title of the Task
+ *                         example: Login
+ *                       description:
+ *                         type: string
+ *                         description: Description of the Task
+ *                         example: User can Login
+ *                       branch_name:
+ *                         type: string
+ *                         description: Branch that the task is connected to
+ *                         example: feat/login
+ *                       repo_id:
+ *                         type: number
+ *                         description: ID of the Repository that the task is connected
+ *                         example: 372441494
+ *                       board_id:
+ *                         type: integer
+ *                         description: Id of the board where the task is
+ *                         example: 1
+ *                       column_id:
+ *                         type: number
+ *                         description: ID of the column that the task is in
+ *                         example: 2
+ *                       assignee_ids:
+ *                         type: string
+ *                         description: IDs of the developers assigned to the task, separated by commas
+ *                         example: 2, 3, 5
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.get('/:id(\\d+)/tasks', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
@@ -645,6 +759,80 @@ router.get('/:id(\\d+)/tasks', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  /board/{id}/repos:
+ *   get:
+ *     summary: Get all repos of a board.
+ *     tags: [Boards]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the board to edit
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 repos:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID of the repository
+ *                         example: 1
+ *                       full_name:
+ *                         type: string
+ *                         description: Full name of the repository
+ *                         example: ohhskar/jollibee-delivery
+ *                       url:
+ *                         type: string
+ *                         description: URL of the repo
+ *                         example: https://api.github.com/repos/ohhskar/jollibee-delivery
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 repos:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID of the repository
+ *                         example: 1
+ *                       full_name:
+ *                         type: string
+ *                         description: Full name of the repository
+ *                         example: ohhskar/jollibee-delivery
+ *                       url:
+ *                         type: string
+ *                         description: URL of the repo
+ *                         example: https://api.github.com/repos/ohhskar/jollibee-delivery
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.get('/:id(\\d+)/repos', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
@@ -667,7 +855,7 @@ router.get('/:id(\\d+)/repos', authJWT, async (req, res) => {
   }
 
   try {
-    const repos = await getReposInBoard(id);
+    const repos = await getRepositoriesInBoard(id);
 
     return res.json({
       repos: repos === undefined ? null : repos,
@@ -1058,6 +1246,67 @@ router.delete('/:id(\\d+)/remove-members', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  /board/{id}/remove-repository:
+ *   delete:
+ *     summary: Remove developers from a board.
+ *     tags: [Boards]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         required: true
+ *         description: Numeric ID of the board to edit
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               repo_id:
+ *                 type: number
+ *                 description: ID of the repository
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       403:
+ *         description: User lacking permissions to perform current action
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error_message:
+ *                   type: string
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.delete('/:id(\\d+)/remove-repository', authJWT, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user;
