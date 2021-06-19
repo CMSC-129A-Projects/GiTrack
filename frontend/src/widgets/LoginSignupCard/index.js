@@ -1,1 +1,1 @@
-export { default } from './loginsignupcard';
+export { default } from './login-signup-card';

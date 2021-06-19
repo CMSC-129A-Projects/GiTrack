@@ -31,6 +31,7 @@ export default function Navbar({ user, boards, ...passedProps }) {
         </div>
         <div css={style.navbar_boardsContainer} ref={boardRef}>
           <button
+            data-testid="boardsButton"
             css={style.navbar_boardsButton}
             onClick={() => setIsBoardsDropdownOpen(!isBoardsDropdownOpen)}
           >
@@ -38,12 +39,13 @@ export default function Navbar({ user, boards, ...passedProps }) {
             <Icon icon="expand_more" />
           </button>
           {isBoardsDropdownOpen && (
-            <Card css={style.navbar_boardsDropdown}>
+            <Card css={style.navbar_boardsDropdown} data-testid="boardsDropdown">
               {boards.map((board) => (
                 <Link
                   to={`/board/${board.id}`}
                   css={style.navbar_boardsDropdown_button}
                   onClick={() => setIsBoardsDropdownOpen(false)}
+                  key={board.id}
                 >
                   <Icon
                     css={style.navbar_boardsDropdown_button_icon}
@@ -69,13 +71,14 @@ export default function Navbar({ user, boards, ...passedProps }) {
       </div>
       <div css={style.navbar_user} ref={userRef}>
         <button
+          data-testid="userButton"
           css={style.navbar_userButton}
           onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
         >
           <UserImage id={user.id} name={user.username} />
         </button>
         {isUserDropdownOpen && (
-          <Card css={style.navbar_actionsDropdown}>
+          <Card css={style.navbar_actionsDropdown} data-testid="userDropdown">
             <Link to="/logout" css={style.navbar_actionsDropdown_button}>
               <Icon css={style.navbar_actionsDropdown_button_icon} icon="exit_to_app" />
               Logout
