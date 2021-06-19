@@ -6,6 +6,12 @@ const {
   membership: membershipErrorMessages,
 } = require('../constants/error-messages');
 
+/**
+ * Check if the user has permissions to edit the board
+ * @param {number} userId - ID of the user
+ * @param {number} boardId - ID of the board
+ * @param {number|undefined} isDeveloper - Set to 1 to check if the person is a developer. Defaults to checking if PM only
+ */
 async function getPermissions(userId, boardId, isDeveloper = 0) {
   const db = await dbHandler;
   try {
@@ -15,6 +21,7 @@ async function getPermissions(userId, boardId, isDeveloper = 0) {
       boardId
     );
 
+    // userPermission is set to 0 if a PM, 1 if a developer
     if (userPermission === undefined || userPermission > isDeveloper) {
       throw membershipErrorMessages.NOT_ENOUGH_PERMISSIONS;
     }
@@ -24,6 +31,10 @@ async function getPermissions(userId, boardId, isDeveloper = 0) {
   }
 }
 
+/**
+ * Get board id and title of all boards that the user is a member
+ * @param {number} userId - ID of the user
+ */
 async function getBoardsByUser(userId) {
   const db = await dbHandler;
 
@@ -41,6 +52,11 @@ async function getBoardsByUser(userId) {
   }
 }
 
+/**
+ * Check if the user is a member of the board
+ * @param {number} boardId - ID of the board
+ * @param {number} userId - ID of the user
+ */
 async function isUserInBoard(boardId, userId) {
   const db = await dbHandler;
 
@@ -56,9 +72,15 @@ async function isUserInBoard(boardId, userId) {
   }
 }
 
+/**
+ * Add developers to a board
+ * @param {number} boardId - ID of the board
+ * @param {Array.<number>} devIds - IDs of the developers
+ */
 async function addDevToBoard(boardId, devIds) {
   const db = await dbHandler;
 
+  // Check if the user exists
   const userCheck = await db.prepare('SELECT id FROM Users WHERE id = ?');
   const users = devIds.map((devId) => userCheck.get(boardId, devId));
 
@@ -91,6 +113,10 @@ async function addDevToBoard(boardId, devIds) {
     });
 }
 
+/**
+ * Get all members in a board
+ * @param {number} boardId - ID of the board
+ */
 async function getMembersInBoard(boardId) {
   const db = await dbHandler;
 
@@ -107,9 +133,15 @@ async function getMembersInBoard(boardId) {
   }
 }
 
+/**
+ * Remove members of a board
+ * @param {number} boardId - ID of the board
+ * @param {Array.<number>} memberIds- IDs of all members to be removed
+ */
 async function removeMembers(boardId, memberIds) {
   const db = await dbHandler;
 
+  // Check if a member to be removed is a PM
   const boardPM = await db.get(
     'SELECT user_id FROM Memberships WHERE board_id = ? AND is_developer = 0',
     boardId
