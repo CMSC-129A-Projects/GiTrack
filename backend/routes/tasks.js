@@ -8,7 +8,7 @@ const {
   addTask,
   getTask,
   removeTask,
-  getTaskBoard,
+  getBoardIdByTask,
   connectBranch,
   getTasksInBoard,
 } = require('../models/tasks');
@@ -733,7 +733,7 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
   let boardId = null;
 
   try {
-    boardId = await getTaskBoard(id);
+    boardId = await getBoardIdByTask(id);
   } catch (err) {
     debug(err);
     return res.status(500).json({ name: null, repo_id: null, error_message: err });
