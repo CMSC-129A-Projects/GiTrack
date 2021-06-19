@@ -7,17 +7,20 @@ const router = express.Router();
 
 // Models
 const {
-  getPermissions,
   createBoard,
   deleteBoard,
-  getBoardsWithUser,
   getBoardById,
   editBoard,
-  addDevToBoard,
-  getBoardMembers,
-  userInBoard,
-  removeMembers,
 } = require('../models/boards');
+
+const {
+  getPermissions,
+  getBoardsByUser,
+  addDevToBoard,
+  getMembersInBoard,
+  isUserInBoard,
+  removeMembers,
+} = require('../models/memberships');
 
 const { getGithubToken } = require('../models/users');
 
@@ -124,7 +127,7 @@ router.get('/', authJWT, async (req, res) => {
   const { id: userId } = req.user;
 
   try {
-    const boardId = await getBoardsWithUser(userId);
+    const boardId = await getBoardsByUser(userId);
 
     return res.json({ boards: boardId, error_message: null });
   } catch (err) {
@@ -801,7 +804,7 @@ router.post('/:id(\\d+)/add-developer', authJWT, async (req, res) => {
   }
 
   for (let i = 0; i < devIds.length; i += 1) {
-    if ((await userInBoard(id, devIds[i])) === undefined) {
+    if ((await isUserInBoard(id, devIds[i])) === undefined) {
       devsToAdd.push(devIds[i]);
     }
   }
@@ -921,7 +924,7 @@ router.get('/:id(\\d+)/members', authJWT, async (req, res) => {
   }
 
   try {
-    const mem = await getBoardMembers(id);
+    const mem = await getMembersInBoard(id);
 
     return res.json({ board_id: id, members: mem, error_message: null });
   } catch (err) {

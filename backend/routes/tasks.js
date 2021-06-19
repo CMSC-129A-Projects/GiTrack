@@ -15,7 +15,7 @@ const {
 
 const { setAssignees, replaceAssignees } = require('../models/assignees');
 
-const { getPermissions } = require('../models/boards');
+const { getPermissions } = require('../models/memberships');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
