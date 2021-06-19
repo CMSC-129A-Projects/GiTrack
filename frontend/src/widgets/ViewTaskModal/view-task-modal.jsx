@@ -161,7 +161,7 @@ export default function ViewTaskModal({
               <>
                 <p css={style.viewTaskModal_bodyTitle}>Target Date</p>
                 <p css={style.viewTaskModal_bodyText}>
-                  {task.target_date.split('T')[0]}
+                  {date.toDateString()}
                   {isPastDeadline && (
                     <Icon icon="warning" css={style.viewTaskModal_warningIcon} />
                   )}
