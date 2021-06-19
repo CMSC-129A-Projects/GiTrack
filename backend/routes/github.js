@@ -15,7 +15,7 @@ const {
 
 const { moveTaskByBranchAndRepo } = require('../models/tasks');
 
-const { getBoardRepo } = require('../models/boards');
+const { getRepository } = require('../models/repositories');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -29,6 +29,39 @@ const { GH_API_CLIENT_ID, GH_API_SECRET } = require('../constants/keys');
 
 let states = [];
 
+/**
+ * @swagger
+ * tags:
+ *  name: Github
+ *  description: Perform operations relating to Github
+ */
+
+/**
+ * @swagger
+ * /github/link:
+ *   get:
+ *     summary: Get link for github authentication.
+ *     tags: [Github]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   description: URL for oauth authorization
+ *                   example: https://github.com/login/oauth/authorize?scope=repo%20write:repo_hook&client_id=afcb6a7747d3e1abef5a&state=eyJybmQiOiJhMmFkNWYxMjcwYTlhNDY3YjU4OTc2YTk0MmE2YmM4OCIsImlkIjoyfQ==
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.get('/link', authJWT, (req, res) => {
   const scope = ['repo', 'write:repo_hook'];
 
@@ -49,6 +82,65 @@ router.get('/link', authJWT, (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /github/link/callback:
+ *   get:
+ *     summary: Handle github callback after user has granted access.
+ *     tags: [Github]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Code value as required by Github auth token
+ *       - in: query
+ *         name: state
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: State value as required by Github auth token
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       403:
+ *         description: Forbidden. Error in state
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.get('/link/callback', async (req, res) => {
   const { code, state } = req.query;
 
@@ -102,6 +194,109 @@ router.get('/link/callback', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /github/repos:
+ *   get:
+ *     summary: Get all repos of user
+ *     tags: [Github]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 repos:
+ *                   type: array
+ *                   description: Repositories that the user has access
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: number
+ *                         description: Repository ID
+ *                         example: 344388465
+ *                       full_name:
+ *                         type: string
+ *                         description: Full name of the repository
+ *                         example: 'CMSC-129A-Projects/Ayo'
+ *                       url:
+ *                         type: string
+ *                         description: API URI
+ *                         example: 'https://api.github.com/repos/CMSC-129A-Projects/Ayo'
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 repos:
+ *                   type: array
+ *                   description: Repositories that the user has access
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: number
+ *                         description: Repository ID
+ *                         example: 344388465
+ *                       full_name:
+ *                         type: string
+ *                         description: Full name of the repository
+ *                         example: 'CMSC-129A-Projects/Ayo'
+ *                       url:
+ *                         type: string
+ *                         description: API URI
+ *                         example: 'https://api.github.com/repos/CMSC-129A-Projects/Ayo'
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       403:
+ *         description: Forbidden. Error in state
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 repos:
+ *                   type: array
+ *                   description: Repositories that the user has access
+ *                   nullable: true
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: number
+ *                         description: Repository ID
+ *                         example: 344388465
+ *                       full_name:
+ *                         type: string
+ *                         description: Full name of the repository
+ *                         example: 'CMSC-129A-Projects/Ayo'
+ *                       url:
+ *                         type: string
+ *                         description: API URI
+ *                         example: 'https://api.github.com/repos/CMSC-129A-Projects/Ayo'
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.get('/repos', authJWT, async (req, res) => {
   const { id: userId } = req.user;
 
@@ -142,6 +337,48 @@ router.get('/repos', authJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /github/token-status:
+ *   get:
+ *     summary: Check if the user is already authenticated with github
+ *     tags: [Github]
+ *     security:
+ *       - JWTBearerAuth: []
+ *     responses:
+ *       200:
+ *         description:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 properties:
+ *                   github_authenticated:
+ *                     type: boolean
+ *                     description: Status of github authentication
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ *       400:
+ *         description: Error parsing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 properties:
+ *                   github_authenticated:
+ *                     type: boolean
+ *                     description: Status of github authentication
+ *                 error_message:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Specific error message causing the error
+ *                   example: MISSING_TITLE
+ */
 router.get('/token-status', authJWT, async (req, res) => {
   const { id: userId } = req.user;
 
@@ -177,7 +414,7 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
   }
 
   try {
-    fullName = await getBoardRepo(id);
+    fullName = await getRepository(id);
   } catch (err) {
     return res.status(400).json({ branches: null, error_message: err });
   }
@@ -236,7 +473,7 @@ router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
   }
 
   try {
-    fullName = await getBoardRepo(id);
+    fullName = await getRepository(id);
   } catch (err) {
     return res.status(400).json({ branches: null, error_message: err });
   }

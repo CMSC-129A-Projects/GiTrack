@@ -5,25 +5,13 @@ const { task: taskErrorMessages } = require('../constants/error-messages');
 
 const { getAssignees } = require('./assignees');
 
-// NOT TESTED
-async function getTaskPermissions(userId, taskId, isDeveloper = 0) {
-  const db = await dbHandler;
-  try {
-    const userPermission = await db.get(
-      'SELECT is_developer FROM Memberships WHERE user_id = (?) AND board_id = (SELECT board_id FROM Tasks where task_id = ?)',
-      userId,
-      taskId
-    );
-
-    if (userPermission === undefined || userPermission > isDeveloper) {
-      throw taskErrorMessages.NOT_ENOUGH_PERMISSIONS;
-    }
-  } catch (err) {
-    debug(err);
-    throw taskErrorMessages.NOT_ENOUGH_PERMISSIONS;
-  }
-}
-
+/**
+ * Adds a task to a board
+ * @param {string} title - Title of the task
+ * @param {string} description - description of the task. In HTML or plaintext
+ * @param {string} targetDate - Date of the task. In ISO8601
+ * @param {number} boardId - Id of the board the task is to be added
+ */
 async function addTask(title, description, targetDate, boardId) {
   const db = await dbHandler;
 
@@ -44,6 +32,10 @@ async function addTask(title, description, targetDate, boardId) {
   }
 }
 
+/**
+ * Get a task by its id
+ * @param {number} id - ID of the task
+ */
 async function getTask(id) {
   const db = await dbHandler;
 
@@ -63,6 +55,10 @@ async function getTask(id) {
   }
 }
 
+/**
+ * Remove a task by its id
+ * @param {number} id - ID of the task
+ */
 async function removeTask(id) {
   const db = await dbHandler;
 
@@ -81,6 +77,10 @@ async function removeTask(id) {
   }
 }
 
+/**
+ * Get all tasks that are in a board
+ * @param {number} boardId - ID of the board
+ */
 async function getTasksInBoard(boardId) {
   const db = await dbHandler;
   const tasks = [];
@@ -88,6 +88,7 @@ async function getTasksInBoard(boardId) {
   try {
     const taskList = await db.all('SELECT * FROM Tasks WHERE board_id = ?', boardId);
 
+    // Get all assignees in a task and add to final return value
     const assigneePromise = taskList.map((task) => getAssignees(task.id));
 
     const assignees = await Promise.all(assigneePromise);
@@ -103,10 +104,17 @@ async function getTasksInBoard(boardId) {
   }
 }
 
+/**
+ * Connect a Github branch and repository to a task
+ * @param {number} taskID - ID of the task
+ * @param {string} branch - Name of the branch
+ * @param {number} repoId - ID of the repo
+ */
 async function connectBranch(taskId, branch, repoId) {
   const db = await dbHandler;
 
   try {
+    // Automatically sets the task to doing whenever a branch is connected
     await db.run(
       'UPDATE Tasks SET branch_name = ?, repo_id = ?, column_id = ? WHERE id = ?',
       branch,
@@ -120,7 +128,11 @@ async function connectBranch(taskId, branch, repoId) {
   }
 }
 
-async function getTaskBoard(taskId) {
+/**
+ * Get the board that the task is on
+ * @param {number} taskID - ID of the task
+ */
+async function getBoardIdByTask(taskId) {
   const db = await dbHandler;
 
   try {
@@ -132,6 +144,12 @@ async function getTaskBoard(taskId) {
   }
 }
 
+/**
+ * Moves a task to a specified column id using the repoId and branch name as the identifying feature
+ * @param {string} branchName - name of the branch
+ * @param {number} repoId - ID of the repo
+ * @param {number} columnId - ID of the column. 0 for todo, 1 for doing, 2 for completed
+ */
 async function moveTaskByBranchAndRepo(branchName, repoId, columnId) {
   const db = await dbHandler;
 
@@ -151,12 +169,11 @@ async function moveTaskByBranchAndRepo(branchName, repoId, columnId) {
 }
 
 module.exports = {
-  getTaskPermissions,
   addTask,
   getTask,
   removeTask,
   getTasksInBoard,
   connectBranch,
-  getTaskBoard,
+  getBoardIdByTask,
   moveTaskByBranchAndRepo,
 };

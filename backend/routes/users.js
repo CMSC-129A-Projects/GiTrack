@@ -1,11 +1,10 @@
-/* eslint-disable no-await-in-loop */
 const express = require('express');
 const debug = require('debug')('backend:routes-users');
 
 const router = express.Router();
 
 // Models
-const { findUser, usersExist } = require('../models/users');
+const { doesUserExistById, doUsersExistsByEmail } = require('../models/users');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -78,7 +77,7 @@ router.get('/:id(\\d+)', authJWT, async (req, res) => {
   }
 
   try {
-    await findUser(id);
+    await doesUserExistById(id);
 
     return res.json({ user_id: id, error_message: null });
   } catch (err) {
@@ -150,7 +149,8 @@ router.get('/exists', authJWT, async (req, res) => {
   }
 
   try {
-    const ids = await usersExist(emails.split(','));
+    const ids = await doUsersExistsByEmail(emails.split(','));
+    debug(ids);
 
     return res.json({ ids, error_message: null });
   } catch (err) {

@@ -28,8 +28,6 @@ const board = {
   MISSING_URL: 'MISSING_URL',
   USER_ALREADY_IN_BOARD: 'USER_ALREADY_IN_BOARD',
   REMOVE_FAILED: 'REMOVE_FAILED',
-  CANNOT_REMOVE_PM: 'CANNOT_REMOVE_PM',
-  MEMBER_NOT_FOUND: 'MEMBER_NOT_FOUND',
 };
 
 const task = {
@@ -74,4 +72,12 @@ const assignee = {
   REPLACE_FAILED: 'REPLACE_FAILED',
 };
 
-module.exports = { user, board, logic, task, github, repo, assignee };
+const membership = {
+  NOT_ENOUGH_PERMISSIONS: 'NOT_ENOUGH_PERMISSIONS',
+  INSERT_FAILED: 'INSERT_FAILED',
+  GET_FAILED: 'GET_FAILED',
+  CANNOT_REMOVE_PM: 'CANNOT_REMOVE_PM',
+  MEMBER_NOT_FOUND: 'MEMBER_NOT_FOUND',
+};
+
+module.exports = { user, board, logic, task, github, repo, assignee, membership };

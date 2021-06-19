@@ -3,6 +3,9 @@ const crypto = require('crypto');
 
 const { GH_SHA_SECRET } = require('../constants/keys');
 
+/**
+ * Middleware function that checks if the data from Github API is not tampered
+ */
 function verifyPostData(req, res, next) {
   if (!req.rawBody) {
     debug('Request Body Empty');

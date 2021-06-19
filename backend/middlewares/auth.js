@@ -3,6 +3,9 @@ const debug = require('debug')('backend:middlewares-auth');
 
 const { ACCESS_TOKEN_SECRET } = require('../constants/keys');
 
+/**
+ * Middleware function that checks if JWT is valid for the request.
+ */
 function authJWT(req, res, next) {
   const authHeader = req.headers.authorization;
 

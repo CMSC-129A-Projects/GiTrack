@@ -8,14 +8,13 @@ const {
   addTask,
   getTask,
   removeTask,
-  getTaskBoard,
+  getBoardIdByTask,
   connectBranch,
-  getTasksInBoard,
 } = require('../models/tasks');
 
 const { setAssignees, replaceAssignees } = require('../models/assignees');
 
-const { getPermissions } = require('../models/boards');
+const { getPermissions } = require('../models/memberships');
 
 // Middlewares
 const { authJWT } = require('../middlewares/auth');
@@ -598,21 +597,6 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
   }
 });
 
-// TODO: Move to /board/{id}/tasks
-router.get('/get-board-tasks', authJWT, async (req, res) => {
-  const { id } = req.body;
-
-  try {
-    const tasks = await getTasksInBoard(id);
-
-    return res.json(tasks);
-  } catch (err) {
-    debug(err);
-
-    return res.status(204).json({ title: null, error_message: err });
-  }
-});
-
 /**
  * @swagger
  *  /task/{id}/connect:
@@ -733,7 +717,7 @@ router.patch('/:id(\\d+)/connect', authJWT, async (req, res) => {
   let boardId = null;
 
   try {
-    boardId = await getTaskBoard(id);
+    boardId = await getBoardIdByTask(id);
   } catch (err) {
     debug(err);
     return res.status(500).json({ name: null, repo_id: null, error_message: err });
