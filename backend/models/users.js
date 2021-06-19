@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const debug = require('debug')('backend:models-users');
@@ -14,6 +13,12 @@ const { AES_SECRET } = require('../constants/keys');
 
 const AES_KEY = Buffer.from(AES_SECRET.split('.').map(Number));
 
+/**
+ * Registers a user. Password is hashed using bcrypt using 10 salt rounds
+ * @param {string} username - Username of the user
+ * @param {string} password - Password of the user
+ * @param {string} email - Email of the user
+ */
 async function registerUser(username, password, email) {
   let hash = null;
   try {
@@ -53,10 +58,17 @@ async function registerUser(username, password, email) {
   }
 }
 
+/**
+ * Logs a user in based on username and password
+ * @param {string} username - Username of the user
+ * @param {string} password - Password of the user
+ */
 async function loginUser(username, password) {
   const db = await dbHandler;
 
   let result = null;
+
+  // Check if user is in DB
   if (username !== null) {
     result = await db.get(
       'SELECT password, id FROM Users WHERE username = ?',
@@ -68,6 +80,7 @@ async function loginUser(username, password) {
     }
   }
 
+  // Check if password is corret
   try {
     const success = await bcrypt.compare(password, result.password);
     if (!success) {
@@ -85,6 +98,10 @@ async function loginUser(username, password) {
   }
 }
 
+/**
+ * Encrypts the github auth token using aes-192
+ * @param {string} token - Github token
+ */
 function encrypt(token) {
   debug(token);
   const iv = crypto.randomBytes(16);
@@ -93,6 +110,12 @@ function encrypt(token) {
   return { token: encrypted.toString('hex'), iv: iv.toString('hex') };
 }
 
+/**
+ * Decrpyts the github auth token
+ * @param {Object} tokenObj - Github token
+ * @param {string} tokenObj.iv - Initialization vector of the token
+ * @param {string} tokenObj.token - Initialization vector of the token
+ */
 function decrypt(tokenObj) {
   const iv = Buffer.from(tokenObj.iv, 'hex');
   const token = Buffer.from(tokenObj.token, 'hex');
@@ -101,9 +124,15 @@ function decrypt(tokenObj) {
   return decrypted.toString();
 }
 
+/**
+ * Add the encrypted github token to the user
+ * @param {number} id - ID of the user
+ * @param {string} githubAuthToken - unencrypted auth token from GitHub
+ */
 async function addGithubToken(id, githubAuthToken) {
   const db = await dbHandler;
 
+  // Check if auth already exists
   const currentAuth = await db.get('SELECT github_auth FROM Users WHERE id = ?', id);
 
   if (currentAuth && currentAuth.github_auth !== null) {
@@ -125,6 +154,10 @@ async function addGithubToken(id, githubAuthToken) {
   }
 }
 
+/**
+ * Gets the unencrypted github token of the user
+ * @param {number} id - ID of the user
+ */
 async function getGithubToken(id) {
   const db = await dbHandler;
 
@@ -140,6 +173,10 @@ async function getGithubToken(id) {
   return decrypt({ token: auth.github_auth, iv: auth.github_iv });
 }
 
+/**
+ * Removes the Github token of the user
+ * @param {number} id - ID of the user
+ */
 async function removeGithubToken(id) {
   const db = await dbHandler;
 
@@ -149,7 +186,11 @@ async function removeGithubToken(id) {
   );
 }
 
-async function findUser(id) {
+/**
+ * Checks if user exists through ID
+ * @param {number} id - ID of the user
+ */
+async function doesUserExistById(id) {
   const db = await dbHandler;
 
   try {
@@ -162,23 +203,35 @@ async function findUser(id) {
   }
 }
 
-async function usersExist(emails) {
+/**
+ * Checks if users exists through email
+ * @param {Array.<string>} emails - Emails of the user to check
+ */
+async function doUsersExistsByEmail(emails) {
   const db = await dbHandler;
-  const users = [];
 
-  try {
-    for (let i = 0; i < emails.length; i += 1) {
-      const user = await db.get('SELECT id FROM Users WHERE email = ?', emails[i]);
-      users.push(user.id);
-    }
+  const select = await db.prepare('SELECT id FROM Users WHERE email = ?');
 
-    return users;
-  } catch (err) {
-    debug(err);
-    throw userErrorMessages.USER_NOT_FOUND;
-  }
+  const selectPromises = emails.map((email) => select.get(email));
+
+  const ids = await Promise.all(selectPromises)
+    .catch((err) => {
+      debug(err);
+      throw userErrorMessages.USER_NOT_FOUND;
+    })
+    .finally(async () => {
+      debug('Selected Users based on Email');
+      await select.finalize();
+    });
+
+  return ids.map((id) => id.id);
 }
 
+/**
+ * Change password of user
+ * @param {number} id - ID of user
+ * @param {string} password - unencrypted password
+ */
 async function changePassword(id, password) {
   let hash = null;
   try {
@@ -205,7 +258,7 @@ module.exports = {
   addGithubToken,
   getGithubToken,
   removeGithubToken,
-  findUser,
-  usersExist,
+  doesUserExistById,
+  doUsersExistsByEmail,
   changePassword,
 };
