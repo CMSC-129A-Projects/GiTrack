@@ -10,7 +10,6 @@ const {
   removeTask,
   getBoardIdByTask,
   connectBranch,
-  getTasksInBoard,
 } = require('../models/tasks');
 
 const { setAssignees, replaceAssignees } = require('../models/assignees');
@@ -595,21 +594,6 @@ router.delete('/:id(\\d+)', authJWT, async (req, res) => {
   } catch (err) {
     debug(err);
     return res.status(404).json({ title: null, error_message: err });
-  }
-});
-
-// TODO: Move to /board/{id}/tasks
-router.get('/get-board-tasks', authJWT, async (req, res) => {
-  const { id } = req.body;
-
-  try {
-    const tasks = await getTasksInBoard(id);
-
-    return res.json(tasks);
-  } catch (err) {
-    debug(err);
-
-    return res.status(204).json({ title: null, error_message: err });
   }
 });
 
