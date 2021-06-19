@@ -452,6 +452,7 @@ router.get('/:id(\\d+)/branches', authJWT, async (req, res) => {
 
 router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
   const { id } = req.params;
+  const { branch_name: branchName } = req.query;
   const { id: userId } = req.user;
 
   let authToken = null;
@@ -463,6 +464,14 @@ router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
       id: null,
       title: null,
       error_message: githubErrorMessages.MISSING_REPO_ID,
+    });
+  }
+
+  if (branchName === undefined) {
+    return res.status(400).json({
+      id: null,
+      title: null,
+      error_message: githubErrorMessages.MISSING_BRANCH_NAME,
     });
   }
 
@@ -487,6 +496,7 @@ router.get('/:id(\\d+)/commits', authJWT, async (req, res) => {
       },
       owner: rep[0],
       repo: rep[1],
+      sha: branchName,
     });
 
     const commits = data.map((curr) => ({
