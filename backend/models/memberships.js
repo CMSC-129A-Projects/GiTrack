@@ -82,7 +82,7 @@ async function addDevToBoard(boardId, devIds) {
 
   // Check if the user exists
   const userCheck = await db.prepare('SELECT id FROM Users WHERE id = ?');
-  const users = devIds.map((devId) => userCheck.get(boardId, devId));
+  const users = devIds.map((devId) => userCheck.get(devId));
 
   Promise.all(users)
     .then((check) => {
