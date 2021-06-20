@@ -150,7 +150,6 @@ router.get('/exists', authJWT, async (req, res) => {
 
   try {
     const ids = await doUsersExistsByEmail(emails.split(','));
-    debug(ids);
 
     return res.json({ ids, error_message: null });
   } catch (err) {

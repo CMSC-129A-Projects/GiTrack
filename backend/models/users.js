@@ -212,7 +212,7 @@ async function doUsersExistsByEmail(emails) {
 
   const select = await db.prepare('SELECT id FROM Users WHERE email = ?');
 
-  const selectPromises = emails.map((email) => select.get(email));
+  const selectPromises = emails.map((email) => select.get(email.trim()));
 
   const ids = await Promise.all(selectPromises)
     .catch((err) => {
@@ -224,7 +224,15 @@ async function doUsersExistsByEmail(emails) {
       await select.finalize();
     });
 
-  return ids.map((id) => id.id);
+  debug(ids);
+
+  ids.forEach((id) => {
+    if (id === undefined) {
+      throw userErrorMessages.USER_NOT_FOUND;
+    }
+  });
+
+  return ids.map((id) => (id ? id.id : null));
 }
 
 /**
